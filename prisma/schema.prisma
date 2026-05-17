@@ -1,0 +1,283 @@
+// ReplacedByAI — internal platform schema
+// SQLite acum, migrabil la PostgreSQL (Supabase) prin schimbarea provider.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./platform.db"
+}
+
+// ─── AUTH ─────────────────────────────────────────────
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+}
+
+// ─── LEADS (din formularul de contact public) ─────────
+model Lead {
+  id            String   @id @default(cuid())
+  name          String
+  business      String
+  phone         String
+  email         String
+  message       String?
+  source        String   @default("contact_form") // contact_form | call | wa | other
+  status        String   @default("new")          // new | contacted | qualified | won | lost
+  notes         String?
+
+  // Qualification fields (formular complex)
+  cui           String?   // CIF / CUI firmă
+  cuiValid      Boolean   @default(false)
+  cuiVerifiedAt DateTime?
+  sector        String?   // horeca | retail | medical | beauty | imobiliare | servicii | altul
+  employees     String?   // 1 | 2-5 | 6-20 | 21-50 | 50+
+  monthlyBudget String?   // <500 | 500-1500 | 1500-3000 | 3000+
+  urgency       String?   // asap | 1-3luni | 3-6luni | exploring
+  painPoints    String?   // JSON array stringified
+  agentsWanted  String?   // JSON array stringified
+  city          String?
+  website       String?
+
+  // Lead scoring (0-100)
+  score         Int       @default(0)
+  scoreReason   String?   // breakdown text
+
+  // UTM / atribuire
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  referrer      String?
+
+  // Anti-spam
+  ipHash        String?
+  userAgent     String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([score])
+}
+
+// ─── AUDIT LOG (acțiuni admin) ─────────────────────────
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?  // adminUser.id
+  actorEmail String?
+  action     String   // e.g. "lead.status_changed", "client.created"
+  targetType String?  // "lead" | "client" | "agent" | "payment"
+  targetId   String?
+  metadata   String?  // JSON
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  @@index([action, createdAt])
+  @@index([targetType, targetId])
+}
+
+// ─── CLIENȚI (lead-uri convertite) ────────────────────
+model Client {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  businessName    String
+  contactName     String
+  email           String   @unique
+  phone           String
+  cui             String?
+  address         String?
+  website         String?
+
+  // Status
+  status          String   @default("onboarding") // onboarding | live | paused | churned
+  contractSignedAt DateTime?
+  goLiveAt        DateTime?
+
+  // Pricing
+  plan            String?  // starter | pro | enterprise | custom
+  setupFee        Int?     // EUR cenți
+  monthlyFee      Int?     // EUR cenți
+
+  // Client portal auth
+  passwordHash    String?
+  mustSetPassword Boolean  @default(true)
+  lastLoginAt     DateTime?
+
+  // Intake token (link unic pentru completare formular)
+  intakeToken     String   @unique
+  intakeSubmittedAt DateTime?
+
+  // Relations
+  intake          ClientIntake?
+  agents          ClientAgent[]
+  tasks           ImplementationTask[]
+  notes           ClientNote[]
+  purchaseRequests AgentPurchaseRequest[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── INTAKE FORM (ce ne trimite clientul) ─────────────
+model ClientIntake {
+  id           String   @id @default(cuid())
+  clientId     String   @unique
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // SECȚIUNEA 1 — Business
+  cui          String?
+  address      String?
+  website      String?
+  logoUrl      String?
+  brandColors  String?
+  toneOfVoice  String?
+
+  // SECȚIUNEA 2 — Operațional
+  workingHours String?  // JSON string
+  locations    String?
+  services     String?  // JSON string (servicii + durată + preț)
+  notOffered   String?
+
+  // SECȚIUNEA 3 — Comunicare
+  mainPhone    String?
+  contactEmail String?
+  whatsappActive Boolean @default(false)
+  calendarSystem String?
+  crmSystem    String?
+
+  // SECȚIUNEA 4 — Integrări (booleans pentru ce ne dau acces)
+  hasGoogleWorkspace Boolean @default(false)
+  hasMetaBusiness    Boolean @default(false)
+  hasPosErp          Boolean @default(false)
+  hasStripe          Boolean @default(false)
+
+  // SECȚIUNEA 5 — Date sensibile
+  euDataOnly          Boolean @default(false)
+  hasMedicalData      Boolean @default(false)
+  regulatedDomain     String?
+
+  // SECȚIUNEA 6 — FAQ-uri
+  faqText             String?
+
+  // SECȚIUNEA 7 — Contacte
+  testerName          String?
+  testerPhone         String?
+  testerEmail         String?
+  backupDecisionMaker String?
+  doNotDisturb        String?
+
+  // Files
+  uploads             ClientUpload[]
+
+  submittedAt         DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+// ─── FILES (logo, FAQ PDF, audio kickoff) ─────────────
+model ClientUpload {
+  id        String       @id @default(cuid())
+  intakeId  String
+  intake    ClientIntake @relation(fields: [intakeId], references: [id], onDelete: Cascade)
+  filename  String
+  url       String       // path local /uploads/... sau URL R2/S3
+  size      Int
+  mime      String
+  category  String       // logo | faq | audio | other
+  createdAt DateTime     @default(now())
+}
+
+// ─── AGENȚI per client (instanțiere agent generic) ────
+model ClientAgent {
+  id            String   @id @default(cuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  agentSlug     String   // voicebot, schedulerbot, salesbot etc.
+  status        String   @default("planned") // planned | configuring | testing | live | paused
+  configNotes   String?
+  promptOverride String?
+  goLiveAt      DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([clientId, agentSlug])
+}
+
+// ─── TASKS implementare (din docul 08) ────────────────
+model ImplementationTask {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  phase     String   // setup | config | integrations | testing | preview
+  title     String
+  description String?
+  done      Boolean  @default(false)
+  doneAt    DateTime?
+  orderIdx  Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── NOTES interne per client ─────────────────────────
+model ClientNote {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+}
+
+// ─── CERERI cumpărare agenți din portal client ────────
+model AgentPurchaseRequest {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agentSlug String
+  status    String   @default("pending") // pending | approved | rejected | implemented
+  message   String?
+  adminNote String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// --- PASSWORD RESETS ----------------------------------
+model PasswordReset {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userType  String   // "admin" | "client"
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, userType])
+}
+
+// --- PAYMENTS (Stripe) --------------------------------
+model Payment {
+  id              String   @id @default(cuid())
+  clientId        String?
+  stripeSessionId String?  @unique
+  stripeIntentId  String?  @unique
+  amount          Int      // EUR cen?i
+  currency        String   @default("eur")
+  status          String   @default("pending") // pending | paid | failed | refunded
+  description     String?
+  agentSlug       String?  // daca plata e pt un agent specific
+  metadata        String?  // JSON string
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([clientId])
+}
+
