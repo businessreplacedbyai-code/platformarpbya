@@ -13,16 +13,15 @@ export function VideoDemo() {
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [progress, setProgress] = useState(0);
-  // Start as false to avoid SSR/client hydration mismatch.
-  // useEffect enables video only after hydration, if URL is configured.
   const [hasVideo, setHasVideo] = useState(false);
+  const userPaused = useRef(false);
 
   useEffect(() => {
     if (DEMO_VIDEO_URL) setHasVideo(true);
   }, []);
 
   useEffect(() => {
-    if (isInView && videoRef.current && !playing && hasVideo) {
+    if (isInView && videoRef.current && !playing && hasVideo && !userPaused.current) {
       videoRef.current.play().catch(() => setHasVideo(false));
       setPlaying(true);
     }
@@ -30,8 +29,13 @@ export function VideoDemo() {
 
   const togglePlay = () => {
     if (!videoRef.current) return;
-    if (playing) videoRef.current.pause();
-    else videoRef.current.play().catch(() => {});
+    if (playing) {
+      videoRef.current.pause();
+      userPaused.current = true;
+    } else {
+      videoRef.current.play().catch(() => {});
+      userPaused.current = false;
+    }
     setPlaying(!playing);
   };
 
