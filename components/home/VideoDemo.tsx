@@ -4,7 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 
 // Set NEXT_PUBLIC_DEMO_VIDEO_URL in .env.local to enable the demo player.
-const DEMO_VIDEO_URL = process.env.NEXT_PUBLIC_DEMO_VIDEO_URL || "";
+const DEMO_VIDEO_URL = process.env.NEXT_PUBLIC_DEMO_VIDEO_URL || "/replacedbyai-16x9.mp4";
 
 export function VideoDemo() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -45,10 +45,10 @@ export function VideoDemo() {
     <section ref={sectionRef} className="relative px-6 py-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <p className="eyebrow mb-4">Demo live</p>
+          <p className="eyebrow mb-4">Vezi în acțiune</p>
           <h2 className="h-display text-4xl md:text-5xl">
-            Vezi cum vorbește un agent <br />
-            <span className="gradient-text">cu clienții tăi.</span>
+            Agentul tău AI care lucrează <br />
+            <span className="gradient-text">24/7 în locul tău.</span>
           </h2>
         </div>
 
