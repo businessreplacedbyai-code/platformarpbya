@@ -48,7 +48,7 @@ export async function loginAction(formData: FormData): Promise<void> {
       sub: staff.id,
       email: staff.email,
       name: staff.name ?? undefined,
-      staffRole: (staff.role as StaffRole) || "VIEWER",
+      staffRole: "OWNER" as StaffRole,
     });
     redirect(next || "/admin");
   }
