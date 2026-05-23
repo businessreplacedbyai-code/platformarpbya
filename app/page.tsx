@@ -10,6 +10,7 @@ import { ROICalculator } from "@/components/home/ROICalculator";
 import { ContactCTA } from "@/components/home/ContactCTA";
 import { FAQ } from "@/components/home/FAQ";
 import { CTAFinal } from "@/components/home/CTAFinal";
+import { AdsShowcase } from "@/components/home/AdsShowcase";
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
       <VideoDemo />
       <Agents />
       <ROICalculator />
+      <AdsShowcase />
       <ContactCTA />
       <FAQ />
       <CTAFinal />

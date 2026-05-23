@@ -37,8 +37,8 @@ export const agents: Agent[] = [
     short: "Preia apeluri 24/7 cu voce AI realistă.",
     description:
       "Voce AI realistă care preia apeluri, ia comenzi și programează clienți. Răspunde la 100% dintre apeluri, fără pauze.",
-    setupFrom: 799,
-    monthlyFrom: 299,
+    setupFrom: 99,
+    monthlyFrom: 179,
   },
   {
     slug: "schedulerbot",
@@ -48,8 +48,8 @@ export const agents: Agent[] = [
     short: "Programări automate pe WhatsApp, web și telefon.",
     description:
       "Clientul programează când vrea, oriunde. Reminder-uri automate, no-show redus cu 70%.",
-    setupFrom: 399,
-    monthlyFrom: 199,
+    setupFrom: 79,
+    monthlyFrom: 99,
   },
   {
     slug: "salesbot",
@@ -59,8 +59,8 @@ export const agents: Agent[] = [
     short: "Califică lead-uri și urmărește pipeline-ul.",
     description:
       "Califică lead-uri, trimite oferte, urmărește pipeline-ul. Vânzătorul tău AI nu obosește niciodată.",
-    setupFrom: 599,
-    monthlyFrom: 299,
+    setupFrom: 99,
+    monthlyFrom: 149,
   },
   {
     slug: "supportbot",
@@ -70,8 +70,8 @@ export const agents: Agent[] = [
     short: "Răspunsuri instant pe baza documentelor tale.",
     description:
       "Răspunde la întrebările clienților pe baza documentelor afacerii tale. Escaladează cazurile complexe la tine.",
-    setupFrom: 399,
-    monthlyFrom: 199,
+    setupFrom: 59,
+    monthlyFrom: 89,
   },
   {
     slug: "socialbot",
@@ -81,8 +81,8 @@ export const agents: Agent[] = [
     short: "Calendar editorial și postare automată.",
     description:
       "Calendar editorial, generare conținut, postare automată pe toate platformele. Brandul tău activ zilnic.",
-    setupFrom: 299,
-    monthlyFrom: 149,
+    setupFrom: 69,
+    monthlyFrom: 119,
   },
   {
     slug: "contentbot",
@@ -92,8 +92,8 @@ export const agents: Agent[] = [
     short: "Articole, e-mailuri și texte de vânzare.",
     description:
       "Generează articole de blog, newsletter-uri și landing pages. Copy adaptat brandului tău.",
-    setupFrom: 299,
-    monthlyFrom: 149,
+    setupFrom: 49,
+    monthlyFrom: 89,
   },
   {
     slug: "accountbot",
@@ -103,8 +103,8 @@ export const agents: Agent[] = [
     short: "Facturi automate, urmărire plăți restante.",
     description:
       "Facturi automate, urmărire plăți restante, rapoarte lunare. Contabilul tău AI nu uită niciodată o factură.",
-    setupFrom: 399,
-    monthlyFrom: 199,
+    setupFrom: 79,
+    monthlyFrom: 69,
   },
   {
     slug: "financebot",
@@ -114,8 +114,8 @@ export const agents: Agent[] = [
     short: "Dashboard-uri și prognoze cash-flow.",
     description:
       "Rapoarte financiare, analize de profitabilitate, prognoze de cash-flow în timp real.",
-    setupFrom: 499,
-    monthlyFrom: 249,
+    setupFrom: 99,
+    monthlyFrom: 129,
   },
   {
     slug: "designbot",
@@ -125,8 +125,8 @@ export const agents: Agent[] = [
     short: "Vizualuri pentru social, ads și site.",
     description:
       "Generează bannere, postări sociale și creative pentru reclame, păstrând identitatea brandului.",
-    setupFrom: 299,
-    monthlyFrom: 149,
+    setupFrom: 59,
+    monthlyFrom: 119,
   },
   {
     slug: "reviewbot",
@@ -136,8 +136,8 @@ export const agents: Agent[] = [
     short: "Răspunde și monitorizează review-urile.",
     description:
       "Răspunde automat la review-uri Google, monitorizează menționările brandului și raportează tendințele.",
-    setupFrom: 299,
-    monthlyFrom: 149,
+    setupFrom: 39,
+    monthlyFrom: 79,
   },
   {
     slug: "hrbot",
@@ -147,8 +147,8 @@ export const agents: Agent[] = [
     short: "Screening CV-uri și interviuri inițiale.",
     description:
       "Filtrează aplicanți, susține interviuri inițiale și programează interviurile finale cu tine.",
-    setupFrom: 399,
-    monthlyFrom: 199,
+    setupFrom: 79,
+    monthlyFrom: 119,
   },
   {
     slug: "inventorybot",
@@ -158,8 +158,8 @@ export const agents: Agent[] = [
     short: "Stoc monitorizat și recomandări de comandă.",
     description:
       "Monitorizează stocul, anticipează rupturile și plasează automat comenzi de reaprovizionare.",
-    setupFrom: 499,
-    monthlyFrom: 249,
+    setupFrom: 89,
+    monthlyFrom: 109,
   },
   {
     slug: "leadbot",
@@ -169,8 +169,8 @@ export const agents: Agent[] = [
     short: "Prospectează și califică lead-uri B2B.",
     description:
       "Caută prospecți relevanți, îi contactează prin e-mail/LinkedIn și îi califică înainte de transfer la vânzări.",
-    setupFrom: 499,
-    monthlyFrom: 249,
+    setupFrom: 89,
+    monthlyFrom: 109,
   },
   {
     slug: "trainingbot",
@@ -180,8 +180,8 @@ export const agents: Agent[] = [
     short: "Onboarding și training pentru echipă.",
     description:
       "Materiale de training personalizate, quiz-uri și asistent intern pentru angajații tăi noi.",
-    setupFrom: 399,
-    monthlyFrom: 199,
+    setupFrom: 69,
+    monthlyFrom: 99,
   },
   {
     slug: "advisorbot",
@@ -191,8 +191,8 @@ export const agents: Agent[] = [
     short: "Analize și recomandări strategice.",
     description:
       "Analizează datele afacerii și sugerează decizii strategice bazate pe benchmark-uri din industria ta.",
-    setupFrom: 599,
-    monthlyFrom: 299,
+    setupFrom: 99,
+    monthlyFrom: 149,
   },
 ];
 

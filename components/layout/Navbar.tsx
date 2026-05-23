@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/Button";
 const links = [
   { href: "/servicii", label: "Servicii" },
   { href: "/agenti", label: "Agenți" },
+  { href: "/preturi", label: "Prețuri" },
   { href: "/comparatie", label: "Comparație" },
   { href: "/quiz", label: "Quiz" },
-  { href: "/rezultate", label: "Rezultate" },
   { href: "/blog", label: "Blog" },
 ];
 

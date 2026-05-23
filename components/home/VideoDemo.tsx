@@ -49,11 +49,14 @@ export function VideoDemo() {
     <section ref={sectionRef} className="relative px-6 py-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <p className="eyebrow mb-4">Vezi în acțiune</p>
+          <p className="eyebrow mb-4">De ce ReplacedByAI</p>
           <h2 className="h-display text-4xl md:text-5xl">
-            Agentul tău AI care lucrează <br />
-            <span className="gradient-text">24/7 în locul tău.</span>
+            Concurenții tăi deja folosesc AI. <br />
+            <span className="gradient-text">Tu mai aștepți?</span>
           </h2>
+          <p className="mt-4 text-white/60 text-lg max-w-xl mx-auto">
+            Automatizează vânzările, suportul și marketingul cu agenți AI care nu dorm, nu greșesc și nu cer mărire de salariu.
+          </p>
         </div>
 
         <motion.div

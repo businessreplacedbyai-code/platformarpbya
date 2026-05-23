@@ -25,7 +25,6 @@ export async function proxy(req: NextRequest) {
     if (!ok) {
       const url = req.nextUrl.clone();
       url.pathname = "/login";
-      url.searchParams.set("type", "admin");
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
@@ -37,7 +36,6 @@ export async function proxy(req: NextRequest) {
     if (!ok) {
       const url = req.nextUrl.clone();
       url.pathname = "/login";
-      url.searchParams.set("type", "client");
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }

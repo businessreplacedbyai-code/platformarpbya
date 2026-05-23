@@ -13,13 +13,28 @@ function getSecret() {
   return new TextEncoder().encode(secret);
 }
 
+export type StaffRole = "OWNER" | "ADMIN" | "EDITOR" | "VIEWER";
+
 export type SessionPayload = {
   sub: string;
   email: string;
   name?: string;
   role: "admin" | "client";
+  staffRole?: StaffRole; // doar pentru sesiunile admin
   clientSlug?: string;
 };
+
+const STAFF_RANK: Record<StaffRole, number> = {
+  VIEWER: 1,
+  EDITOR: 2,
+  ADMIN: 3,
+  OWNER: 4,
+};
+
+export function staffCan(role: StaffRole | undefined, min: StaffRole) {
+  if (!role) return false;
+  return STAFF_RANK[role] >= STAFF_RANK[min];
+}
 
 async function sign(payload: SessionPayload) {
   return new SignJWT({ ...payload })
@@ -29,7 +44,9 @@ async function sign(payload: SessionPayload) {
     .sign(getSecret());
 }
 
-export async function createAdminSession(p: Omit<SessionPayload, "role">) {
+export async function createAdminSession(
+  p: Omit<SessionPayload, "role"> & { staffRole?: StaffRole }
+) {
   const token = await sign({ ...p, role: "admin" });
   const jar = await cookies();
   jar.set(ADMIN_COOKIE, token, {

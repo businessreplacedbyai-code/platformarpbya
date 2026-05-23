@@ -122,7 +122,7 @@ export default async function AgentPage({
           <div className="rounded-3xl border border-[var(--border)] bg-[var(--bg-2)] p-8 md:p-10">
             <p className="eyebrow mb-3">Setup unic</p>
             <div className="h-display text-5xl md:text-6xl mb-2 text-[var(--ink)]">
-              de la €{a.setupFrom}
+              €{a.setupFrom}
             </div>
             <p className="text-[14px] text-[var(--ink-3)] leading-relaxed">
               Configurare, integrare cu sistemele tale (CRM, telefonie, calendar),
@@ -132,7 +132,7 @@ export default async function AgentPage({
           <div className="rounded-3xl border border-[var(--border)] bg-[var(--bg-2)] p-8 md:p-10">
             <p className="eyebrow mb-3">Abonament lunar</p>
             <div className="h-display text-5xl md:text-6xl mb-2 text-[var(--ink)]">
-              de la €{a.monthlyFrom}
+              €{a.monthlyFrom}
               <span className="text-[var(--ink-3)] text-2xl">/lună</span>
             </div>
             <p className="text-[14px] text-[var(--ink-3)] leading-relaxed">

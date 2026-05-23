@@ -64,6 +64,46 @@ export async function POST(req: Request) {
         }
         break;
       }
+      // ─── Abonament client (Growth/Scale/Enterprise/…) ─────────────────
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
+        const sub = event.data.object as {
+          id: string;
+          customer: string;
+          status: string;
+          current_period_end?: number;
+          metadata?: { clientId?: string; planKey?: string };
+        };
+        const clientId = sub.metadata?.clientId;
+        if (clientId) {
+          await prisma.client.update({
+            where: { id: clientId },
+            data: {
+              stripeSubscriptionId: sub.id,
+              stripeCustomerId: sub.customer,
+              subscriptionStatus: sub.status,
+              planKey: sub.metadata?.planKey ?? undefined,
+              currentPeriodEnd: sub.current_period_end
+                ? new Date(sub.current_period_end * 1000)
+                : null,
+            },
+          });
+        }
+        break;
+      }
+      case "customer.subscription.deleted": {
+        const sub = event.data.object as {
+          id: string;
+          metadata?: { clientId?: string };
+        };
+        if (sub.metadata?.clientId) {
+          await prisma.client.update({
+            where: { id: sub.metadata.clientId },
+            data: { subscriptionStatus: "canceled" },
+          });
+        }
+        break;
+      }
       default:
         // ignore other events
         break;

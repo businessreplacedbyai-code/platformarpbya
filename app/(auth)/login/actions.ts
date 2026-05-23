@@ -9,70 +9,75 @@ import {
   createClientSession,
   destroyAdminSession,
   destroyClientSession,
+  type StaffRole,
 } from "@/lib/auth";
 
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
-  type: z.enum(["admin", "client"]),
   next: z.string().optional(),
 });
 
-function loginError(type: string, msg: string, next?: string): never {
-  const params = new URLSearchParams({ type, error: msg });
+function fail(next?: string): never {
+  const params = new URLSearchParams({ error: "1" });
   if (next) params.set("next", next);
   redirect(`/login?${params.toString()}`);
 }
 
+/**
+ * Login UNIFICAT — un singur formular pentru toți (clienți + angajații tăi).
+ * Verifică silențios mai întâi tabela AdminUser (staff), apoi Client. Mesajul
+ * de eroare e generic ca să nu se afle din afară că există tabel admin.
+ */
 export async function loginAction(formData: FormData): Promise<void> {
   const parsed = schema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
-    type: formData.get("type"),
     next: formData.get("next") || undefined,
   });
-  if (!parsed.success) loginError("admin", "Date invalide");
+  if (!parsed.success) fail();
 
-  const { email, password, type, next } = parsed.data;
+  const { email, password, next } = parsed.data;
 
-  if (type === "admin") {
-    const user = await prisma.adminUser.findUnique({ where: { email } });
-    if (!user) {
-      // Bootstrap primul admin din env, dacă nu există încă niciunul
-      const bootEmail = process.env.ADMIN_BOOTSTRAP_EMAIL;
-      const bootPass = process.env.ADMIN_BOOTSTRAP_PASSWORD;
-      const count = await prisma.adminUser.count();
-      if (count === 0 && bootEmail && bootPass && email === bootEmail && password === bootPass) {
-        const hash = await bcrypt.hash(password, 10);
-        const created = await prisma.adminUser.create({
-          data: { email, passwordHash: hash, name: "Owner" },
-        });
-        await createAdminSession({
-          sub: created.id,
-          email: created.email,
-          name: created.name ?? undefined,
-        });
-        redirect(next || "/admin");
-      }
-      loginError(type, "Email sau parolă incorectă", next);
-    }
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) loginError(type, "Email sau parolă incorectă", next);
-
+  // 1) Staff (AdminUser) — încercare silențioasă
+  const staff = await prisma.adminUser.findUnique({ where: { email } });
+  if (staff) {
+    const ok = await bcrypt.compare(password, staff.passwordHash);
+    if (!ok) fail(next);
     await createAdminSession({
-      sub: user.id,
-      email: user.email,
-      name: user.name ?? undefined,
+      sub: staff.id,
+      email: staff.email,
+      name: staff.name ?? undefined,
+      staffRole: (staff.role as StaffRole) || "VIEWER",
     });
     redirect(next || "/admin");
-  } else {
-    const client = await prisma.client.findUnique({ where: { email } });
-    if (!client || !client.passwordHash) {
-      loginError(type, "Cont inexistent. Cere admin-ului acces.", next);
-    }
-    const ok = await bcrypt.compare(password, client.passwordHash);
-    if (!ok) loginError(type, "Email sau parolă incorectă", next);
+  }
 
+  // 2) Bootstrap primul Owner din env, doar dacă nu există niciun staff
+  const bootEmail = process.env.ADMIN_BOOTSTRAP_EMAIL;
+  const bootPass = process.env.ADMIN_BOOTSTRAP_PASSWORD;
+  if (bootEmail && bootPass && email === bootEmail && password === bootPass) {
+    const count = await prisma.adminUser.count();
+    if (count === 0) {
+      const hash = await bcrypt.hash(password, 10);
+      const created = await prisma.adminUser.create({
+        data: { email, passwordHash: hash, name: "Owner", role: "OWNER" },
+      });
+      await createAdminSession({
+        sub: created.id,
+        email: created.email,
+        name: created.name ?? undefined,
+        staffRole: "OWNER",
+      });
+      redirect(next || "/admin");
+    }
+  }
+
+  // 3) Client
+  const client = await prisma.client.findUnique({ where: { email } });
+  if (client?.passwordHash) {
+    const ok = await bcrypt.compare(password, client.passwordHash);
+    if (!ok) fail(next);
     await createClientSession({
       sub: client.id,
       email: client.email,
@@ -85,14 +90,17 @@ export async function loginAction(formData: FormData): Promise<void> {
     });
     redirect(next || "/portal");
   }
+
+  // Nimeni — același mesaj generic.
+  fail(next);
 }
 
 export async function logoutAdmin() {
   await destroyAdminSession();
-  redirect("/login?type=admin");
+  redirect("/login");
 }
 
 export async function logoutClient() {
   await destroyClientSession();
-  redirect("/login?type=client");
+  redirect("/login");
 }

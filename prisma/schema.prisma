@@ -17,6 +17,8 @@ model AdminUser {
   email        String   @unique
   passwordHash String
   name         String?
+  // Staff role: OWNER (acces total) > ADMIN > EDITOR > VIEWER
+  role         String   @default("OWNER")
   createdAt    DateTime @default(now())
 }
 
@@ -112,6 +114,16 @@ model Client {
   // Intake token (link unic pentru completare formular)
   intakeToken     String   @unique
   intakeSubmittedAt DateTime?
+
+  // Stripe subscription
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  subscriptionStatus   String?  @default("inactive") // active | trialing | past_due | canceled | inactive
+  currentPeriodEnd     DateTime?
+  planKey              String?  // growth | scale | enterprise | horeca | medical | agent_<slug>
+
+  apiKeys         ClientApiKey[]
+  webhooks        ClientWebhook[]
 
   // Relations
   intake          ClientIntake?
@@ -281,3 +293,34 @@ model Payment {
   @@index([clientId])
 }
 
+
+// --- CLIENT API KEYS (pentru integrare n8n / Zapier / custom) -------------
+model ClientApiKey {
+  id         String   @id @default(cuid())
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name       String
+  hashedKey  String   @unique
+  prefix     String
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([clientId])
+}
+
+// --- CLIENT WEBHOOKS (outbound, către n8n / make.com) ---------------------
+model ClientWebhook {
+  id              String   @id @default(cuid())
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  event           String   // conversation.created | payment.succeeded | agent.deployed | ...
+  url             String
+  active          Boolean  @default(true)
+  secret          String?  // HMAC signing
+  lastDeliveredAt DateTime?
+  lastStatus      Int?
+  createdAt       DateTime @default(now())
+
+  @@index([clientId])
+}
