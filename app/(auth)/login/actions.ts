@@ -61,7 +61,7 @@ export async function loginAction(formData: FormData): Promise<void> {
     if (count === 0) {
       const hash = await bcrypt.hash(password, 10);
       const created = await prisma.adminUser.create({
-        data: { email, passwordHash: hash, name: "Owner", role: "OWNER" },
+        data: { email, passwordHash: hash, name: "Owner" },
       });
       await createAdminSession({
         sub: created.id,
