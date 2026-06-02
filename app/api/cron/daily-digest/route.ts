@@ -77,7 +77,114 @@ export async function GET(req: NextRequest) {
     html,
   });
 
-  return NextResponse.json({ ok: true, leads24h, hot: hotLeads.length, newClients24h });
+  // Email sequences onboarding
+  const seqResults = await runOnboardingSequences();
+
+  return NextResponse.json({ ok: true, leads24h, hot: hotLeads.length, newClients24h, sequences: seqResults });
+}
+
+async function runOnboardingSequences() {
+  const now = new Date();
+  const day3ago = new Date(now.getTime() - 3 * 86400000);
+  const day7ago = new Date(now.getTime() - 7 * 86400000);
+  let sent = 0;
+
+  // Day 3: intake reminder dacă nu e completat
+  const needIntakeReminder = await prisma.client.findMany({
+    where: {
+      createdAt: { lte: day3ago },
+      intakeSubmittedAt: null,
+      intakeReminderSentAt: null,
+      status: { not: "churned" },
+    },
+    select: { id: true, email: true, contactName: true, slug: true, intakeToken: true },
+  });
+
+  for (const c of needIntakeReminder) {
+    const intakeUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.replacedbyai.ro"}/intake/${c.intakeToken}`;
+    await sendEmail({
+      to: c.email,
+      subject: "Completează formularul de configurare — ReplacedByAI",
+      html: intakeReminderEmail(c.contactName, intakeUrl),
+    }).catch(() => {});
+    await prisma.client.update({
+      where: { id: c.id },
+      data: { intakeReminderSentAt: now },
+    });
+    sent++;
+  }
+
+  // Day 7 post go-live: email de feedback
+  const needFeedback = await prisma.client.findMany({
+    where: {
+      goLiveAt: { lte: day7ago, not: null },
+      goLiveFeedbackSentAt: null,
+      status: "live",
+    },
+    select: { id: true, email: true, contactName: true, slug: true },
+  });
+
+  for (const c of needFeedback) {
+    await sendEmail({
+      to: c.email,
+      subject: "Cum merge agentul tău? — ReplacedByAI",
+      html: goLiveFeedbackEmail(c.contactName, c.slug),
+    }).catch(() => {});
+    await prisma.client.update({
+      where: { id: c.id },
+      data: { goLiveFeedbackSentAt: now },
+    });
+    sent++;
+  }
+
+  return { sent };
+}
+
+function intakeReminderEmail(name: string, intakeUrl: string) {
+  return `
+    <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <div style="background:#111;padding:24px 28px;">
+        <p style="color:#aaa;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.08em;">ReplacedByAI</p>
+        <h1 style="color:#fff;margin:8px 0 0;font-size:22px;">Avem nevoie de câteva date</h1>
+      </div>
+      <div style="padding:24px 28px;">
+        <p style="font-size:15px;color:#111;margin:0 0 12px;">Bună ${name},</p>
+        <p style="font-size:14px;color:#374151;line-height:1.6;margin:0 0 20px;">
+          Pentru a configura agentul tău AI, avem nevoie de câteva informații despre afacerea ta.
+          Completarea durează aproximativ <strong>5-10 minute</strong> și ne permite să livrăm exact ce ți se potrivește.
+        </p>
+        <a href="${intakeUrl}" style="display:inline-block;background:#111;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;text-decoration:none;">
+          Completează formularul →
+        </a>
+      </div>
+      <div style="padding:16px 28px;background:#f9fafb;border-top:1px solid #e5e7eb;">
+        <p style="font-size:12px;color:#9ca3af;margin:0;">Ai întrebări? Răspunde la acest email sau scrie-ne la contact@replacedbyai.ro</p>
+      </div>
+    </div>`;
+}
+
+function goLiveFeedbackEmail(name: string, slug: string) {
+  const portalUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.replacedbyai.ro"}/portal`;
+  return `
+    <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <div style="background:#111;padding:24px 28px;">
+        <p style="color:#aaa;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.08em;">ReplacedByAI</p>
+        <h1 style="color:#fff;margin:8px 0 0;font-size:22px;">🚀 7 zile live — cum merge?</h1>
+      </div>
+      <div style="padding:24px 28px;">
+        <p style="font-size:15px;color:#111;margin:0 0 12px;">Bună ${name},</p>
+        <p style="font-size:14px;color:#374151;line-height:1.6;margin:0 0 20px;">
+          Au trecut 7 zile de când agentul tău AI e live. Sperăm că totul merge excelent!
+          Dacă ai observații, ceva ce vrei să ajustăm, sau vrei să adaugi un agent nou — suntem la dispoziție.
+        </p>
+        <a href="${portalUrl}" style="display:inline-block;background:#111;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;text-decoration:none;">
+          Deschide portalul →
+        </a>
+      </div>
+      <div style="padding:16px 28px;background:#f9fafb;border-top:1px solid #e5e7eb;">
+        <p style="font-size:12px;color:#9ca3af;margin:0;">Răspunde la acest email cu orice feedback — le citim pe toate.</p>
+      </div>
+    </div>`;
 }
 
 function escape(s: string) {

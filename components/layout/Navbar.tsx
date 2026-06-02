@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 const links = [
   { href: "/servicii", label: "Servicii" },
   { href: "/agenti", label: "Agenți" },
+  { href: "/website-premium", label: "Site-uri 3D" },
   { href: "/preturi", label: "Prețuri" },
   { href: "/comparatie", label: "Comparație" },
   { href: "/quiz", label: "Quiz" },
@@ -78,14 +79,6 @@ export function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-1 lg:gap-2">
-            <a
-              href="tel:+40700000000"
-              className="hidden lg:inline-flex items-center gap-1.5 text-[13px] text-[var(--ink-2)] hover:text-[var(--ink)] px-2.5 py-1.5 transition-colors whitespace-nowrap"
-              aria-label="Sună-ne"
-            >
-              <Phone size={13} />
-              +40 700 000 000
-            </a>
             <Link
               href="/login"
               className="inline-flex items-center gap-1.5 text-[13px] text-[var(--ink-1)] hover:text-[var(--ink)] px-2.5 py-1.5 rounded-full border border-[var(--border)] hover:bg-[var(--bg-3)] transition-all whitespace-nowrap"

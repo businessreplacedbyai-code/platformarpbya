@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const ADS = [
-  { src: "/ads/ad-statement.png", alt: "Lasă AI-ul să răspundă la telefon", w: 1080, h: 1080, rotate: "-2deg" },
-  { src: "/ads/ad-editorial.png", alt: "Cine îți răspunde la 3:24 dimineața?", w: 1080, h: 1350, rotate: "0deg" },
-  { src: "/ads/ad-how-it-works.png", alt: "De la zero la agent activ în 48 ore", w: 1080, h: 1920, rotate: "2deg" },
+  { src: "/ads/ad-statement.png", alt: "Lasă AI-ul să răspundă la telefon", w: 1080, h: 1080 },
+  { src: "/ads/ad-editorial.png", alt: "Cine îți răspunde la 3:24 dimineața?", w: 1080, h: 1350 },
+  { src: "/ads/ad-how-it-works.png", alt: "De la zero la agent activ — pas cu pas", w: 1080, h: 1920 },
 ];
 
 export function AdsShowcase() {
@@ -39,7 +39,7 @@ export function AdsShowcase() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 items-end">
+        <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
           {ADS.map((ad, i) => (
             <motion.div
               key={ad.src}
@@ -47,9 +47,8 @@ export function AdsShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.6, delay: i * 0.12 }}
-              whileHover={{ y: -8, rotate: "0deg", scale: 1.02 }}
-              style={{ rotate: ad.rotate }}
-              className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-[0_8px_40px_-12px_rgba(0,0,0,0.15)] hover:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.25)] transition-shadow duration-500"
+              whileHover={{ y: -6, scale: 1.02 }}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-[0_8px_40px_-12px_rgba(0,0,0,0.15)] hover:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.25)] transition-shadow duration-500 w-full md:w-auto"
             >
               <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" style={{ boxShadow: "inset 0 0 0 2px var(--accent)" }} />
               <Image
@@ -57,7 +56,8 @@ export function AdsShowcase() {
                 alt={ad.alt}
                 width={ad.w}
                 height={ad.h}
-                className="w-full h-auto block"
+                className="block w-full md:w-[300px] lg:w-[340px] h-auto"
+                sizes="(max-width: 768px) 100vw, 340px"
               />
             </motion.div>
           ))}

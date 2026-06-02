@@ -346,3 +346,16 @@ body {
   animation: wave-pulse 0.9s ease-in-out infinite;
   transform-origin: center;
 }
+
+/* Blog article prose */
+.prose-rbai { font-size: 16px; line-height: 1.8; color: var(--ink-1); }
+.prose-rbai p { margin: 0 0 1.4em; }
+.prose-rbai h2 { font-family: var(--font-geist); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 2.2em 0 0.7em; color: var(--ink); }
+.prose-rbai h3 { font-family: var(--font-geist); font-size: 1.15rem; font-weight: 600; margin: 1.8em 0 0.5em; color: var(--ink); }
+.prose-rbai ul { margin: 0 0 1.4em 1.2em; list-style: disc; }
+.prose-rbai ol { margin: 0 0 1.4em 1.2em; list-style: decimal; }
+.prose-rbai li { margin-bottom: 0.4em; }
+.prose-rbai strong { color: var(--ink); font-weight: 600; }
+.prose-rbai blockquote { border-left: 3px solid var(--border); margin: 1.6em 0; padding: 0.8em 1.2em; background: var(--bg-2); border-radius: 0 10px 10px 0; font-style: italic; color: var(--ink-2); }
+.prose-rbai a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.prose-rbai a:hover { opacity: 0.7; }

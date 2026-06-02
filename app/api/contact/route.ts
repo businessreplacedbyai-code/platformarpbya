@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { sendEmail, newLeadAdminEmail } from "@/lib/mail";
+import { sendEmail, newLeadAdminEmail, leadConfirmationEmail } from "@/lib/mail";
 import { getClientIp, rateLimit, hashIp } from "@/lib/rate-limit";
 import {
   lookupCUI,
@@ -153,6 +153,7 @@ export async function POST(req: Request) {
       console.error("Lead save failed:", dbErr);
     }
 
+    // Notificare admin
     sendEmail({
       to: ADMIN_NOTIFY,
       subject: `${score >= 65 ? "🔥 HOT" : score >= 35 ? "⚡" : "📝"} Lead — ${data.business} (${score}/100)`,
@@ -164,6 +165,13 @@ export async function POST(req: Request) {
         message: data.message,
       }),
     }).catch((e) => console.error("notify email failed", e));
+
+    // Confirmare automată pentru persoana care a completat formularul
+    sendEmail({
+      to: data.email,
+      subject: "Am primit cererea ta — ReplacedByAI",
+      html: leadConfirmationEmail(data.name, anafName || data.business),
+    }).catch((e) => console.error("lead confirmation email failed", e));
 
     return NextResponse.json({ success: true, leadId, score });
   } catch (err) {

@@ -106,6 +106,43 @@ export async function startCheckout(formData: FormData) {
   redirect("/portal/billing?status=error");
 }
 
+/**
+ * One-time payment Checkout (mode: "payment") — pentru achiziții unice
+ * (ex: doar setup, top-up minute, plată single-shot fără abonament).
+ * Folosește SETUP_IDS (default) sau orice price one-time pasat ca priceKey.
+ */
+export async function startOneTimePayment(formData: FormData) {
+  const session = await getClientSession();
+  if (!session?.sub) redirect("/login?next=/portal/billing");
+
+  const planKey = String(formData.get("planKey") || "");
+  // Default: cumpără setup-ul. Poți pasa "kind=monthly" pentru a folosi recurring price-ul ca one-time.
+  const kind = String(formData.get("kind") || "setup");
+  const priceId =
+    kind === "monthly" ? PRICE_IDS[planKey] : SETUP_IDS[planKey];
+
+  if (!priceId) redirect("/portal/billing?status=missing_price");
+
+  const { stripe, customerId } = await ensureCustomer(session.sub);
+
+  const checkout = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer: customerId,
+    line_items: [{ price: priceId, quantity: 1 }],
+    allow_promotion_codes: true,
+    billing_address_collection: "auto",
+    success_url: `${APP_URL}/portal/billing?status=onetime_success`,
+    cancel_url: `${APP_URL}/portal/billing?status=cancel`,
+    payment_intent_data: {
+      metadata: { clientId: session.sub, planKey, kind },
+    },
+    metadata: { clientId: session.sub, planKey, kind, mode: "onetime" },
+  });
+
+  if (checkout.url) redirect(checkout.url);
+  redirect("/portal/billing?status=error");
+}
+
 export async function openBillingPortal() {
   const session = await getClientSession();
   if (!session?.sub) redirect("/login?next=/portal/billing");

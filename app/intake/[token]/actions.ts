@@ -2,6 +2,9 @@
 
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { sendEmail, intakeCompletedAdminEmail, intakeConfirmationClientEmail } from "@/lib/mail";
+
+const ADMIN_NOTIFY = process.env.ADMIN_NOTIFY_EMAIL || "contact@replacedbyai.ro";
 
 export async function submitIntake(token: string, formData: FormData) {
   const client = await prisma.client.findUnique({ where: { intakeToken: token } });
@@ -56,6 +59,24 @@ export async function submitIntake(token: string, formData: FormData) {
     where: { id: client.id },
     data: { intakeSubmittedAt: new Date() },
   });
+
+  // Notificare admin că poate începe implementarea
+  sendEmail({
+    to: ADMIN_NOTIFY,
+    subject: `✅ Intake completat — ${client.businessName}`,
+    html: intakeCompletedAdminEmail({
+      clientName: client.contactName,
+      businessName: client.businessName,
+      slug: client.slug,
+    }),
+  }).catch((e) => console.error("intake admin email failed", e));
+
+  // Confirmare pentru client
+  sendEmail({
+    to: client.email,
+    subject: "Am primit toate informațiile — pornim! | ReplacedByAI",
+    html: intakeConfirmationClientEmail(client.contactName),
+  }).catch((e) => console.error("intake client email failed", e));
 
   redirect(`/intake/${token}/thanks`);
 }

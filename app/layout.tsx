@@ -17,16 +17,16 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const SITE_URL = "https://replacedbyai.ro";
+const SITE_URL = "https://www.replacedbyai.ro";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "ReplacedByAI — Agenția AI nr. 1 pentru afaceri din România",
+    default: "ReplacedByAI — Agenți AI pentru afaceri din România",
     template: "%s | ReplacedByAI",
   },
   description:
-    "ReplacedByAI este prima agenție din România care implementează agenți AI ce înlocuiesc munca angajaților: preiau apeluri, vând, programează, răspund clienților și facturează — 24/7, fără greșeli, cu setup în 48 de ore.",
+    "ReplacedByAI este prima agenție din România care implementează agenți AI ce înlocuiesc munca angajaților: preiau apeluri, vând, programează, răspund clienților și facturează — 24/7, fără greșeli.",
   applicationName: "ReplacedByAI",
   authors: [{ name: "ReplacedByAI", url: SITE_URL }],
   creator: "ReplacedByAI",
@@ -52,9 +52,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "ReplacedByAI — Agenția AI nr. 1 pentru afaceri din România",
+    title: "ReplacedByAI — Agenți AI pentru afaceri din România",
     description:
-      "Agenți AI care preiau apeluri, vând, programează și răspund clienților 24/7. Înlocuiește jobs repetitive cu inteligență artificială. Setup în 48 de ore.",
+      "Agenți AI care preiau apeluri, vând, programează și răspund clienților 24/7. Înlocuiește joburile repetitive cu inteligență artificială.",
     url: SITE_URL,
     siteName: "ReplacedByAI",
     locale: "ro_RO",
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ReplacedByAI — Agenția AI nr. 1 din România",
+    title: "ReplacedByAI — Agenți AI pentru afaceri din România",
     description:
-      "Agenți AI care preiau apeluri, vând, programează și facturează 24/7. Setup în 48h.",
+      "Agenți AI care preiau apeluri, vând, programează și facturează 24/7.",
   },
   robots: {
     index: true,
@@ -85,21 +85,21 @@ export const metadata: Metadata = {
 
 const orgSchema = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": ["Organization", "ProfessionalService"],
   name: "ReplacedByAI",
   alternateName: "Replaced By AI",
   url: SITE_URL,
   logo: `${SITE_URL}/logo-mark.png`,
+  image: `${SITE_URL}/opengraph-image`,
   description:
-    "Agenția AI care implementează agenți de inteligență artificială pentru afaceri din România.",
-  email: "hello@replacedbyai.ro",
-  telephone: "+40-700-000-000",
+    "ReplacedByAI implementează agenți de inteligență artificială pentru afaceri din România. Agenți vocali, programări automate, vânzări și suport clienți 24/7.",
+  email: "contact@replacedbyai.ro",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Botoșani",
     addressCountry: "RO",
   },
   areaServed: { "@type": "Country", name: "Romania" },
+  knowsAbout: ["Artificial Intelligence", "AI Agents", "Business Automation", "Voice AI", "Chatbots"],
   sameAs: [
     "https://www.linkedin.com/company/replacedbyai",
     "https://www.facebook.com/replacedbyai",

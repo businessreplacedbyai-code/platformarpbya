@@ -3,8 +3,8 @@ import { CTAFinal } from "@/components/home/CTAFinal";
 export const metadata = {
   title: "Despre noi — cine suntem și de ce existam",
   description:
-    "ReplacedByAI este agenția AI din România care construiește angajați artificiali pentru IMM-uri. Misiune, valori, echipă și viziune — totul despre cea mai rapidă cale de a automatiza o afacere.",
-  alternates: { canonical: "https://replacedbyai.ro/despre" },
+    "ReplacedByAI este agenția AI din România care construiește angajați artificiali pentru IMM-uri. Misiune, valori și viziune — automatizare AI pentru afaceri românești.",
+  alternates: { canonical: "https://www.replacedbyai.ro/despre" },
 };
 
 const values = [
@@ -41,9 +41,9 @@ export default function DesprePage() {
             în același timp.
           </p>
           <p>
-            Am început să construim agenți AI în 2024. Astăzi rulăm peste 200 de
-            agenți pentru afaceri din România — de la restaurante și clinici la
-            magazine online și firme de servicii.
+            Am început să construim agenți AI în 2024. Implementăm agenți
+            personalizați pentru afaceri din România — de la restaurante și clinici
+            la magazine online și firme de servicii.
           </p>
           <p className="text-[var(--ink-2)]">
             Misiunea noastră: să facem din fiecare IMM din România o companie care

@@ -88,6 +88,7 @@ export async function loginAction(formData: FormData): Promise<void> {
       where: { id: client.id },
       data: { lastLoginAt: new Date() },
     });
+    if (client.mustSetPassword) redirect("/portal/account?setup=1");
     redirect(next || "/portal");
   }
 

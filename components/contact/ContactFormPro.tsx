@@ -319,7 +319,7 @@ function Step1({
     <>
       <Header
         title="Hai să facem cunoștință"
-        sub="Cum te contactăm? Răspundem în max 4 ore lucrătoare."
+        sub="Cum te contactăm? Răspundem în cel mai scurt timp posibil."
       />
       <div className="grid md:grid-cols-2 gap-4">
         <Input
@@ -712,9 +712,9 @@ function SuccessCard({ score }: { score: number | null }) {
       </div>
       <h3 className="h-display-sm text-2xl">Mulțumim! Am primit cererea ta.</h3>
       <p className="text-[var(--ink-3)] max-w-md">
-        Te contactăm în <strong>maximum 4 ore</strong> lucrătoare. Dacă e urgent, sună-ne la{" "}
-        <a className="underline" href="tel:+40700000000">
-          0700 000 000
+        Te contactăm în <strong>cel mai scurt timp posibil</strong> lucrătoare. Poți scrie și direct la{" "}
+        <a className="underline" href="mailto:contact@replacedbyai.ro">
+          contact@replacedbyai.ro
         </a>
         .
       </p>

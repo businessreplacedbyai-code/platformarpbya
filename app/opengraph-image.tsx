@@ -59,7 +59,7 @@ export default function OGImage() {
         >
           <span>Afacerea ta nu mai are</span>
           <span>
-            nevoie de{" "}
+            {"nevoie de "}
             <span
               style={{
                 background: "linear-gradient(90deg, #D4AF37, #f472b6, #a78bfa)",
@@ -83,8 +83,6 @@ export default function OGImage() {
           }}
         >
           <span>15 agenți AI</span>
-          <span style={{ color: "#44403C" }}>·</span>
-          <span>Setup în 48h</span>
           <span style={{ color: "#44403C" }}>·</span>
           <span>24/7, fără greșeli</span>
         </div>

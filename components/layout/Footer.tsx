@@ -41,8 +41,6 @@ export function Footer() {
             </Link>
             <p className="text-[15px] text-[var(--ink-2)] max-w-sm leading-relaxed mb-6">
               Construim agenți AI care fac munca oamenilor din afacerea ta.
-              <br />
-              <span className="text-[var(--ink-3)]">Cea mai mare agenție AI din România.</span>
             </p>
             <div className="flex gap-2">
               <a href="#" aria-label="LinkedIn" className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--ink-2)] hover:text-[var(--ink)] hover:border-[var(--ink)] transition-colors">
@@ -80,8 +78,8 @@ export function Footer() {
           <div className="md:col-span-3">
             <h4 className="text-[13px] font-medium mb-4 text-[var(--ink)]">Contact</h4>
             <ul className="space-y-2.5 text-[14px] text-[var(--ink-3)]">
-              <li><a href="mailto:hello@replacedbyai.ro" className="hover:text-[var(--ink)] transition-colors">hello@replacedbyai.ro</a></li>
-              <li>Botoșani, România</li>
+              <li><a href="mailto:contact@replacedbyai.ro" className="hover:text-[var(--ink)] transition-colors">contact@replacedbyai.ro</a></li>
+              <li>România</li>
               <li>Luni–Vineri · 9:00–18:00</li>
             </ul>
           </div>
@@ -89,7 +87,7 @@ export function Footer() {
 
         <div className="mt-16 pt-8 border-t border-[var(--border)] flex flex-wrap justify-between items-center gap-4">
           <p className="text-[13px] text-[var(--ink-3)]">
-            © {new Date().getFullYear()} ReplacedByAI SRL · Toate drepturile rezervate
+            © {new Date().getFullYear()} ReplacedByAI · Toate drepturile rezervate
           </p>
           <div className="flex gap-6 text-[13px] text-[var(--ink-3)]">
             <Link href="/termeni" className="hover:text-[var(--ink)] transition-colors">Termeni</Link>
@@ -99,21 +97,18 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Wordmark bottom — fit la viewport, gradient fade subtle */}
-      <div className="relative overflow-hidden pointer-events-none select-none">
-        <div className="px-4 md:px-8">
-          <h2
-            aria-hidden
-            className="h-display text-center leading-[0.85] tracking-tighter bg-clip-text text-transparent whitespace-nowrap"
-            style={{
-              fontSize: "clamp(48px, 15.5vw, 240px)",
-              backgroundImage:
-                "linear-gradient(180deg, var(--ink-4) 0%, var(--bg-3) 75%, transparent 100%)",
-              opacity: 0.45,
-            }}
+      {/* CTA strip */}
+      <div className="border-t border-[var(--border)]">
+        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[14px] text-[var(--ink-2)]">
+            Gata să automatizezi? <span className="text-[var(--ink-3)]">Audit gratuit în 30 minute.</span>
+          </p>
+          <Link
+            href="/contact"
+            className="shrink-0 h-10 px-6 rounded-full text-[13px] font-medium flex items-center gap-2 border border-[var(--border)] hover:border-[var(--ink)] hover:text-[var(--ink)] text-[var(--ink-2)] transition-colors"
           >
-            ReplacedByAI
-          </h2>
+            Programează acum →
+          </Link>
         </div>
       </div>
     </footer>

@@ -5,13 +5,13 @@ import { Clock, ShieldCheck, Zap, Headphones } from "lucide-react";
 const badges = [
   {
     icon: Clock,
-    label: "Răspuns în 4h",
+    label: "Răspuns rapid",
     sub: "în zilele lucrătoare",
   },
   {
     icon: Zap,
-    label: "Setup în 48h",
-    sub: "primul agent live",
+    label: "Implementare simplă",
+    sub: "noi ne ocupăm de tot",
   },
   {
     icon: ShieldCheck,

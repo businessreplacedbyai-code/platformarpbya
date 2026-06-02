@@ -1,7 +1,7 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Phone, Mail, MessageCircle, MapPin } from "lucide-react";
+import { Mail, MessageCircle, MapPin, Clock } from "lucide-react";
 
 export function ContactCTA() {
   const ref = useRef(null);
@@ -26,35 +26,34 @@ export function ContactCTA() {
           >
             <p className="eyebrow mb-4">Contact direct</p>
             <h2 className="h-display text-4xl md:text-5xl lg:text-6xl mb-6 leading-[1.05]">
-              Sună-ne și vorbește cu{" "}
-              <span className="gradient-text">agentul nostru AI.</span>
+              Scrie-ne și primești{" "}
+              <span className="gradient-text">analiza gratuită.</span>
             </h2>
             <p className="text-lg text-[var(--ink-2)] leading-relaxed mb-8 max-w-xl">
-              La numărul de mai jos răspunde VoiceBot — propriul nostru agent
-              vocal. Îți pune câteva întrebări despre afacere, îți recomandă
-              agenții potriviți și îți programează o discuție cu echipa.
-              Funcționează 24/7.
+              Completează formularul de contact și îți trimitem în cel mai scurt timp posibil
+              o analiză a proceselor din afacerea ta care pot fi automatizate.
+              Fără obligații, fără jargon.
             </p>
 
             <div className="flex flex-wrap gap-3">
               <a
-                href="tel:+40700000000"
+                href="/contact"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[var(--ink)] text-[var(--bg-2)] text-[15px] font-medium hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] transition-all"
               >
-                <Phone size={16} />
-                +40 700 000 000
+                <MessageCircle size={16} />
+                Trimite cererea
               </a>
               <a
-                href="/contact"
+                href="mailto:contact@replacedbyai.ro"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[var(--border)] text-[var(--ink)] hover:bg-[var(--bg-3)] transition-all text-[15px]"
               >
-                <MessageCircle size={16} />
-                Scrie-ne în schimb
+                <Mail size={16} />
+                contact@replacedbyai.ro
               </a>
             </div>
 
             <p className="mt-5 text-[13px] text-[var(--ink-3)]">
-              Apel gratuit · Răspuns instant · Fără așteptare
+              Răspuns rapid · Analiză gratuită · Fără obligații
             </p>
           </motion.div>
 
@@ -65,31 +64,30 @@ export function ContactCTA() {
             className="grid gap-3"
           >
             <ContactCard
-              icon={Phone}
-              label="Telefon"
-              value="+40 700 000 000"
-              href="tel:+40700000000"
-              hint="Răspunde VoiceBot 24/7"
-            />
-            <ContactCard
               icon={Mail}
               label="Email"
-              value="hello@replacedbyai.ro"
-              href="mailto:hello@replacedbyai.ro"
-              hint="Răspundem în maximum 4 ore"
+              value="contact@replacedbyai.ro"
+              href="mailto:contact@replacedbyai.ro"
+              hint="Răspundem în cel mai scurt timp posibil"
             />
             <ContactCard
               icon={MessageCircle}
-              label="WhatsApp"
-              value="+40 700 000 000"
-              href="https://wa.me/40700000000"
-              hint="Mesaj direct, fără așteptare"
+              label="Formular contact"
+              value="replacedbyai.ro/contact"
+              href="/contact"
+              hint="Analiză gratuită după trimitere"
             />
             <ContactCard
               icon={MapPin}
               label="Birou"
-              value="Botoșani, România"
+              value="România"
               hint="Luni–Vineri · 9:00–18:00"
+            />
+            <ContactCard
+              icon={Clock}
+              label="Timp răspuns"
+              value="Cât mai repede"
+              hint="În zilele lucrătoare"
             />
           </motion.div>
         </div>
@@ -105,7 +103,7 @@ function ContactCard({
   hint,
   href,
 }: {
-  icon: typeof Phone;
+  icon: typeof Mail;
   label: string;
   value: string;
   hint: string;

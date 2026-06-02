@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Bot, ShoppingBag, ListChecks, LogOut, CreditCard, Plug } from "lucide-react";
+import { LayoutDashboard, Bot, ShoppingBag, ListChecks, LogOut, CreditCard, UserCircle } from "lucide-react";
 
 const nav = [
   { href: "/portal", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -10,7 +10,7 @@ const nav = [
   { href: "/portal/marketplace", label: "Adaugă agent", icon: ShoppingBag },
   { href: "/portal/implementation", label: "Implementare", icon: ListChecks },
   { href: "/portal/billing", label: "Facturare", icon: CreditCard },
-  { href: "/portal/integrations", label: "Integrări", icon: Plug },
+  { href: "/portal/account", label: "Cont", icon: UserCircle },
 ];
 
 export function ClientNav({

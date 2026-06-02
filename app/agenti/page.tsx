@@ -6,7 +6,7 @@ export const metadata = {
   title: "Agenți AI — catalogul complet de 15 angajați artificiali",
   description:
     "Cei 15 agenți AI ReplacedByAI: VoiceBot, SchedulerBot, SalesBot, SupportBot, SocialBot și încă 10 — fiecare cu rol, capabilități și preț estimativ. Alege agentul potrivit pentru afacerea ta.",
-  alternates: { canonical: "https://replacedbyai.ro/agenti" },
+  alternates: { canonical: "https://www.replacedbyai.ro/agenti" },
 };
 
 export default function AgentiPage() {

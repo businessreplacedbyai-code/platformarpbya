@@ -5,10 +5,18 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
-import { sendEmail, clientWelcomeEmail } from "@/lib/mail";
+import { sendEmail, clientWelcomeEmail, agentRequestUpdateEmail, agentLiveEmail } from "@/lib/mail";
+import { getAdminSession, staffCan } from "@/lib/auth";
+
+async function requireAdmin(minRole: "VIEWER" | "EDITOR" | "ADMIN" | "OWNER" = "EDITOR") {
+  const session = await getAdminSession();
+  if (!session || session.role !== "admin") throw new Error("Unauthorized");
+  if (!staffCan(session.staffRole, minRole)) throw new Error("Insufficient permissions");
+}
 
 // ───── Client portal access ─────
 export async function generateClientPassword(clientId: string, slug: string) {
+  await requireAdmin("ADMIN");
   const tempPassword = nanoid(12);
   const hash = await bcrypt.hash(tempPassword, 10);
   const client = await prisma.client.update({
@@ -28,6 +36,7 @@ export async function generateClientPassword(clientId: string, slug: string) {
 }
 
 export async function revokeClientAccess(clientId: string, slug: string) {
+  await requireAdmin("ADMIN");
   await prisma.client.update({
     where: { id: clientId },
     data: { passwordHash: null, mustSetPassword: true },
@@ -41,6 +50,7 @@ export async function addAgentToClient(
   slug: string,
   agentSlug: string
 ) {
+  await requireAdmin("EDITOR");
   await prisma.clientAgent.upsert({
     where: { clientId_agentSlug: { clientId, agentSlug } },
     update: {},
@@ -54,19 +64,47 @@ export async function updateAgentStatus(
   status: string,
   clientSlug: string
 ) {
-  await prisma.clientAgent.update({
+  const agent = await prisma.clientAgent.update({
     where: { id: agentId },
     data: {
       status,
       goLiveAt: status === "live" ? new Date() : undefined,
     },
+    include: { client: true },
   });
+
+  // Notifică clientul când agentul devine live
+  if (status === "live") {
+    sendEmail({
+      to: agent.client.email,
+      subject: `${agent.agentSlug} este live! 🚀 | ReplacedByAI`,
+      html: agentLiveEmail(agent.client.contactName, agent.agentSlug),
+    }).catch((e) => console.error("agent live email failed", e));
+  }
+
   revalidatePath(`/admin/clients/${clientSlug}/agents`);
 }
 
 export async function removeAgent(agentId: string, clientSlug: string) {
   await prisma.clientAgent.delete({ where: { id: agentId } });
   revalidatePath(`/admin/clients/${clientSlug}/agents`);
+}
+
+export async function saveAgentConfig(
+  agentId: string,
+  clientSlug: string,
+  configNotes: string,
+  promptOverride: string
+) {
+  await prisma.clientAgent.update({
+    where: { id: agentId },
+    data: {
+      configNotes: configNotes || null,
+      promptOverride: promptOverride || null,
+    },
+  });
+  revalidatePath(`/admin/clients/${clientSlug}`);
+  revalidatePath(`/admin/clients/${clientSlug}/agents/${agentId}`);
 }
 
 // ───── Purchase requests (din portal client) ─────
@@ -97,6 +135,22 @@ export async function updatePurchaseRequest(
         status: status === "implemented" ? "live" : "planned",
       },
     });
+  }
+
+  // Notifică clientul despre decizie (approved sau rejected)
+  if (status === "approved" || status === "rejected") {
+    sendEmail({
+      to: req.client.email,
+      subject: status === "approved"
+        ? `Cerere aprobată — ${req.agentSlug} | ReplacedByAI`
+        : `Cerere respinsă — ${req.agentSlug} | ReplacedByAI`,
+      html: agentRequestUpdateEmail(
+        req.client.contactName,
+        req.agentSlug,
+        status as "approved" | "rejected",
+        adminNote
+      ),
+    }).catch((e) => console.error("purchase request update email failed", e));
   }
 
   revalidatePath("/admin/requests");

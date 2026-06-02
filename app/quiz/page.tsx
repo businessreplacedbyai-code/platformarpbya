@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Quiz — Care agent AI ți se potrivește?",
   description:
     "Răspunde la 5 întrebări scurte și află care dintre cei 15 agenți AI ReplacedByAI rezolvă cea mai mare problemă a afacerii tale.",
-  alternates: { canonical: "https://replacedbyai.ro/quiz" },
+  alternates: { canonical: "https://www.replacedbyai.ro/quiz" },
 };
 
 export default function QuizPage() {

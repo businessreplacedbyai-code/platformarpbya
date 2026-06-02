@@ -32,7 +32,7 @@ const rows: Row[] = [
   {
     criterion: "Training inițial",
     human: { text: "3–6 luni", positive: false },
-    ai: { text: "48 ore", positive: true },
+    ai: { text: "Rapid", positive: true },
   },
   {
     criterion: "Consistență",

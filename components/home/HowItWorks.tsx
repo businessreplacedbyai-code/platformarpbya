@@ -45,7 +45,7 @@ export function HowItWorks() {
           <h2 className="h-display text-4xl md:text-6xl">
             De la idee la agent activ <br />
             <span className="bg-gradient-to-r from-white via-white/80 to-white/30 bg-clip-text text-transparent">
-              în 48 de ore.
+              simplu și rapid.
             </span>
           </h2>
         </div>

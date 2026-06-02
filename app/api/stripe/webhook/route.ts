@@ -50,6 +50,27 @@ export async function POST(req: Request) {
             create: { clientId, agentSlug, status: "planned" },
           });
         }
+
+        // ─── One-time payment (mode: "payment") — log Payment ───
+        if (s.mode === "payment" && clientId && s.metadata?.mode === "onetime") {
+          await prisma.payment.create({
+            data: {
+              clientId,
+              stripeSessionId: s.id,
+              stripeIntentId:
+                typeof s.payment_intent === "string" ? s.payment_intent : null,
+              amount: s.amount_total ?? 0,
+              currency: s.currency ?? "eur",
+              status: "paid",
+              paidAt: new Date(),
+              description: `One-time · ${s.metadata?.planKey ?? "purchase"} (${
+                s.metadata?.kind ?? "setup"
+              })`,
+              agentSlug: s.metadata?.planKey ?? null,
+              metadata: JSON.stringify(s.metadata ?? {}),
+            },
+          });
+        }
         break;
       }
       case "checkout.session.expired":

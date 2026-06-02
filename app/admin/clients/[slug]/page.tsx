@@ -1,8 +1,9 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { prisma } from "@/lib/db";
+import { type ClientIntake } from "@prisma/client";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Circle, ExternalLink, KeyRound, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, ExternalLink, KeyRound, Settings2, Sparkles, Trash2 } from "lucide-react";
 import {
   toggleTask,
   addNote,
@@ -160,6 +161,13 @@ export default async function ClientDetailPage({
                       >
                         <AgentStatusSelect defaultValue={ca.status} />
                       </form>
+                      <Link
+                        href={`/admin/clients/${client.slug}/agents/${ca.id}`}
+                        className="p-1.5 text-[var(--ink-3)] hover:text-[var(--ink)] rounded-lg hover:bg-[var(--bg-3)] transition-colors"
+                        title="Configurează agent"
+                      >
+                        <Settings2 size={14} />
+                      </Link>
                       <form
                         action={async () => {
                           "use server";
@@ -263,6 +271,9 @@ export default async function ClientDetailPage({
         </div>
 
         <div className="space-y-6">
+          {/* Intake completeness */}
+          <IntakeCompletenessCard intake={client.intake} slug={client.slug} />
+
           {/* Notes */}
           <Card title="Note interne">
             <form
@@ -346,6 +357,74 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
       <span className="w-20 text-[12px] eyebrow text-[var(--ink-3)]">{label}</span>
       <span className="flex-1">{value}</span>
     </div>
+  );
+}
+
+const INTAKE_FIELDS: { key: keyof ClientIntake; label: string }[] = [
+  { key: "toneOfVoice", label: "Ton comunicare" },
+  { key: "workingHours", label: "Program lucru" },
+  { key: "locations", label: "Locații" },
+  { key: "services", label: "Servicii oferite" },
+  { key: "mainPhone", label: "Telefon principal" },
+  { key: "contactEmail", label: "Email contact" },
+  { key: "calendarSystem", label: "Calendar" },
+  { key: "crmSystem", label: "CRM" },
+  { key: "faqText", label: "FAQ-uri" },
+  { key: "testerName", label: "Tester" },
+];
+
+function intakeScore(intake: ClientIntake | null): { filled: number; total: number; missing: string[] } {
+  if (!intake) return { filled: 0, total: INTAKE_FIELDS.length, missing: INTAKE_FIELDS.map((f) => f.label) };
+  const missing: string[] = [];
+  let filled = 0;
+  for (const { key, label } of INTAKE_FIELDS) {
+    const val = intake[key];
+    if (val !== null && val !== undefined && String(val).trim().length > 0) filled++;
+    else missing.push(label);
+  }
+  return { filled, total: INTAKE_FIELDS.length, missing };
+}
+
+function IntakeCompletenessCard({
+  intake,
+  slug,
+}: {
+  intake: ClientIntake | null;
+  slug: string;
+}) {
+  const { filled, total, missing } = intakeScore(intake);
+  const pct = Math.round((filled / total) * 100);
+  const color = pct === 100 ? "bg-emerald-500" : pct >= 60 ? "bg-amber-400" : "bg-red-400";
+  const textColor = pct === 100 ? "text-emerald-700" : pct >= 60 ? "text-amber-700" : "text-red-700";
+
+  return (
+    <Card title="Completitudine intake">
+      <div className="flex items-center justify-between mb-2">
+        <span className={`text-[13px] font-medium ${textColor}`}>
+          {filled}/{total} câmpuri completate
+        </span>
+        <span className={`text-[12px] font-mono tabular-nums ${textColor}`}>{pct}%</span>
+      </div>
+      <div className="h-2 rounded-full bg-[var(--bg-3)] overflow-hidden mb-3">
+        <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+      {missing.length > 0 && (
+        <div className="text-[11.5px] text-[var(--ink-3)] space-y-0.5 mb-3">
+          {missing.map((m) => (
+            <div key={m} className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-300 shrink-0" />
+              {m}
+            </div>
+          ))}
+        </div>
+      )}
+      <Link
+        href={`/admin/clients/${slug}/intake`}
+        className="text-[12px] text-[var(--ink-3)] hover:text-[var(--ink)] flex items-center gap-1"
+      >
+        <ExternalLink size={11} /> Vizualizează intake complet
+      </Link>
+    </Card>
   );
 }
 

@@ -1,8 +1,8 @@
 import { Resend } from "resend";
 
-const FROM = process.env.RESEND_FROM || "ReplacedByAI <hello@replacedbyai.ro>";
-const REPLY_TO = process.env.RESEND_REPLY_TO || "hello@replacedbyai.ro";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://replacedbyai.ro";
+const FROM = process.env.RESEND_FROM || "ReplacedByAI <contact@replacedbyai.ro>";
+const REPLY_TO = process.env.RESEND_REPLY_TO || "contact@replacedbyai.ro";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.replacedbyai.ro";
 
 function getClient() {
   const key = process.env.RESEND_API_KEY;
@@ -15,26 +15,26 @@ type SendArgs = {
   subject: string;
   html: string;
   text?: string;
+  replyTo?: string;
 };
 
-export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; error?: string }> {
+export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; id?: string; error?: string }> {
   const client = getClient();
   if (!client) {
-    // Graceful no-op în dev fără API key
     console.warn("[mail] RESEND_API_KEY missing, email not sent:", args.subject);
     return { ok: false, error: "no_api_key" };
   }
   try {
-    const { error } = await client.emails.send({
+    const { data, error } = await client.emails.send({
       from: FROM,
       to: args.to,
-      replyTo: REPLY_TO,
+      replyTo: args.replyTo ?? REPLY_TO,
       subject: args.subject,
       html: args.html,
       text: args.text,
     });
     if (error) return { ok: false, error: String(error.message || error) };
-    return { ok: true };
+    return { ok: true, id: data?.id };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "unknown" };
   }
@@ -53,7 +53,7 @@ function wrap(title: string, body: string) {
     <div style="font-size:15px;line-height:1.6;color:#333;">${body}</div>
     <hr style="margin:40px 0 20px;border:none;border-top:1px solid #e7e5e4;" />
     <p style="font-size:12px;color:#888;margin:0;">
-      ReplacedByAI SRL · Botoșani, România · <a href="${SITE_URL}" style="color:#888;">replacedbyai.ro</a>
+      ReplacedByAI · România · <a href="${SITE_URL}" style="color:#888;">replacedbyai.ro</a>
     </p>
   </div>
 </body></html>`;
@@ -120,6 +120,131 @@ export function newPurchaseRequestAdminEmail(args: {
          Vezi cererea
        </a>
      </p>`
+  );
+}
+
+export function replyToLeadEmail(name: string, subject: string, message: string) {
+  return wrap(
+    subject,
+    `<p>Bună ziua${name ? ", " + name.split(" ")[0] : ""},</p>
+     <div style="white-space:pre-wrap;">${message.replace(/\n/g, "<br/>")}</div>
+     <p style="margin-top:24px;">Cu respect,<br/><strong>Echipa ReplacedByAI</strong></p>`
+  );
+}
+
+// 1. Confirmare imediată pentru persoana care a completat formularul de contact
+export function leadConfirmationEmail(name: string, business: string) {
+  const firstName = name.split(" ")[0];
+  return wrap(
+    "Am primit cererea ta!",
+    `<p>Salut ${firstName},</p>
+     <p>Am primit cererea ta pentru <strong>${business}</strong> și o analizăm acum.</p>
+     <p>Te contactăm în maxim <strong>4 ore</strong> (în zilele lucrătoare) pentru a stabili un apel de descoperire.</p>
+     <p style="background:#f0fdf4;border-left:3px solid #22c55e;padding:14px 16px;border-radius:0 8px 8px 0;font-size:14px;">
+       Între timp, poți vedea toți agenții noștri disponibili pe site →
+     </p>
+     <p style="margin-top:24px;">
+       <a href="${SITE_URL}/agenti" style="background:#1a1a1a;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:13px;display:inline-block;">
+         Explorează agenții →
+       </a>
+     </p>
+     <p style="margin-top:24px;">Cu respect,<br/><strong>Echipa ReplacedByAI</strong></p>`
+  );
+}
+
+// 2. Notificare admin când un client completează intake-ul
+export function intakeCompletedAdminEmail(args: { clientName: string; businessName: string; slug: string }) {
+  return wrap(
+    "Intake completat — poți începe implementarea",
+    `<p><strong>${args.clientName}</strong> de la <strong>${args.businessName}</strong> a completat formularul de onboarding.</p>
+     <p>Toate informațiile sunt disponibile în panoul de admin. Poți trece la configurarea agenților.</p>
+     <p style="margin-top:24px;">
+       <a href="${SITE_URL}/admin/clients/${args.slug}" style="background:#1a1a1a;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:13px;display:inline-block;">
+         Deschide profilul clientului →
+       </a>
+     </p>`
+  );
+}
+
+// 3. Confirmare pentru client că intake-ul a fost primit
+export function intakeConfirmationClientEmail(name: string) {
+  const firstName = name.split(" ")[0];
+  return wrap(
+    "Am primit toate informațiile — pornim!",
+    `<p>Salut ${firstName},</p>
+     <p>Formularul tău de onboarding a fost primit cu succes. Echipa noastră are tot ce îi trebuie pentru a configura agenții tăi.</p>
+     <p><strong>Ce urmează:</strong></p>
+     <ul style="font-size:14px;line-height:2;">
+       <li>Configurăm și personalizăm agenții în funcție de business-ul tău</li>
+       <li>Te contactăm în 24-48h pentru a programa sesiunea de testare</li>
+       <li>Go-live după aprobare finală</li>
+     </ul>
+     <p>Poți urmări progresul implementării în portalul tău:</p>
+     <p style="margin-top:20px;">
+       <a href="${SITE_URL}/portal/implementation" style="background:#1a1a1a;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:13px;display:inline-block;">
+         Vezi implementarea →
+       </a>
+     </p>
+     <p style="margin-top:24px;">Cu respect,<br/><strong>Echipa ReplacedByAI</strong></p>`
+  );
+}
+
+// 4. Confirmare pentru client la cerere agent din portal
+export function agentRequestConfirmationEmail(name: string, agentSlug: string) {
+  const firstName = name.split(" ")[0];
+  const agentLabel = agentSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return wrap(
+    `Cerere primită — ${agentLabel}`,
+    `<p>Salut ${firstName},</p>
+     <p>Am primit cererea ta pentru implementarea agentului <strong>${agentLabel}</strong>.</p>
+     <p>Echipa noastră o va analiza și te contactăm în <strong>24 de ore</strong> cu detalii despre implementare și costuri.</p>
+     <p style="margin-top:20px;">
+       <a href="${SITE_URL}/portal" style="background:#1a1a1a;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:13px;display:inline-block;">
+         Înapoi la portal →
+       </a>
+     </p>
+     <p style="margin-top:24px;">Cu respect,<br/><strong>Echipa ReplacedByAI</strong></p>`
+  );
+}
+
+// 5. Notificare client că cererea de agent a fost aprobată sau respinsă
+export function agentRequestUpdateEmail(name: string, agentSlug: string, status: "approved" | "rejected", adminNote?: string | null) {
+  const firstName = name.split(" ")[0];
+  const agentLabel = agentSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const approved = status === "approved";
+  return wrap(
+    approved ? `Cerere aprobată — ${agentLabel}` : `Cerere respinsă — ${agentLabel}`,
+    `<p>Salut ${firstName},</p>
+     ${approved
+       ? `<p>Cererea ta pentru agentul <strong>${agentLabel}</strong> a fost <strong style="color:#16a34a;">aprobată</strong>. Echipa noastră începe implementarea.</p>`
+       : `<p>Din păcate, cererea ta pentru agentul <strong>${agentLabel}</strong> nu poate fi procesată momentan.</p>`
+     }
+     ${adminNote ? `<p style="background:#f5f5f4;padding:14px;border-radius:10px;font-size:14px;"><strong>Notă:</strong> ${adminNote}</p>` : ""}
+     <p style="margin-top:20px;">
+       <a href="${SITE_URL}/portal" style="background:#1a1a1a;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:13px;display:inline-block;">
+         Înapoi la portal →
+       </a>
+     </p>
+     <p style="margin-top:24px;">Cu respect,<br/><strong>Echipa ReplacedByAI</strong></p>`
+  );
+}
+
+// 6. Notificare client că agentul lui este live
+export function agentLiveEmail(name: string, agentSlug: string) {
+  const firstName = name.split(" ")[0];
+  const agentLabel = agentSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return wrap(
+    `${agentLabel} este live! 🚀`,
+    `<p>Salut ${firstName},</p>
+     <p>Agentul tău <strong>${agentLabel}</strong> este acum <strong style="color:#16a34a;">activ și funcțional</strong>.</p>
+     <p>De acum înainte preia automat sarcinile pentru care a fost configurat — 24/7, fără pauze.</p>
+     <p>Urmărește activitatea și performanța din portal:</p>
+     <p style="margin-top:20px;">
+       <a href="${SITE_URL}/portal/agents" style="background:#1a1a1a;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:13px;display:inline-block;">
+         Vezi agenții tăi →
+       </a>
+     </p>
+     <p style="margin-top:24px;">Cu respect,<br/><strong>Echipa ReplacedByAI</strong></p>`
   );
 }
 

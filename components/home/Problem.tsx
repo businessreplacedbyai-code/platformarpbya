@@ -50,7 +50,7 @@ const STATES: Record<
   },
   after: {
     label: "Cu agenți AI",
-    sub: "Cum arată ziua peste 48h de la setup.",
+    sub: "Cum arată ziua cu agenții activi.",
     points: [
       {
         icon: PhoneCall,

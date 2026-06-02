@@ -48,3 +48,5 @@ next-env.d.ts
 # uploads locale (logo, FAQ etc.)
 /public/uploads
 
+
+.vercel

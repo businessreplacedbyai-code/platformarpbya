@@ -12,7 +12,11 @@ import {
   ShoppingBag,
   BarChart3,
   History,
+  CalendarDays,
+  Mail,
+  Crosshair,
 } from "lucide-react";
+import { GlobalSearch } from "./GlobalSearch";
 
 export function AdminNav({
   email,
@@ -26,8 +30,11 @@ export function AdminNav({
   const items = [
     { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
+    { href: "/admin/outreach", icon: Crosshair, label: "Outreach" },
     { href: "/admin/leads", icon: Inbox, label: "Leads" },
     { href: "/admin/clients", icon: Users, label: "Clienți" },
+    { href: "/admin/inbox", icon: Mail, label: "Inbox email" },
+    { href: "/admin/calendar", icon: CalendarDays, label: "Calendar" },
     { href: "/admin/agents", icon: Sparkles, label: "Catalog agenți" },
     { href: "/admin/requests", icon: ShoppingBag, label: "Cereri agenți" },
     { href: "/admin/audit", icon: History, label: "Audit log" },
@@ -46,6 +53,10 @@ export function AdminNav({
             <div className="text-[11px] text-[var(--ink-3)] leading-tight">Admin panel</div>
           </div>
         </Link>
+      </div>
+
+      <div className="px-3 py-3 border-b border-[var(--border)]">
+        <GlobalSearch />
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">

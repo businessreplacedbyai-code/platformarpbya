@@ -20,6 +20,8 @@ import {
   updateLeadStatus,
   updateLeadNotes,
   convertLeadToClient,
+  replyToLead,
+  setLeadFollowUp,
 } from "../../admin-actions";
 
 export default async function LeadDetailPage({
@@ -185,6 +187,33 @@ export default async function LeadDetailPage({
             </Card>
           )}
 
+          <Card title="Răspunde pe email">
+            <form action={replyToLead} className="space-y-3">
+              <input type="hidden" name="leadId" value={lead.id} />
+              <div>
+                <div className="text-[11.5px] text-[var(--ink-3)] mb-1">Către: {lead.email}</div>
+                <input
+                  name="subject"
+                  defaultValue={`Re: cerere ${lead.business}`}
+                  placeholder="Subiect email"
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[13.5px] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/20"
+                />
+              </div>
+              <textarea
+                name="message"
+                rows={5}
+                placeholder="Scrie mesajul tău..."
+                className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/20"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-xl bg-[var(--ink)] text-[var(--bg-2)] text-[13px]"
+              >
+                Trimite email →
+              </button>
+            </form>
+          </Card>
+
           <Card title="Note interne">
             <form
               action={async (fd) => {
@@ -235,6 +264,56 @@ export default async function LeadDetailPage({
               >
                 Salvează
               </button>
+            </form>
+          </Card>
+
+          {/* Follow-up reminder */}
+          <Card title="Follow-up programat">
+            <form
+              action={async (fd) => {
+                "use server";
+                await setLeadFollowUp(lead.id, String(fd.get("followUpAt") ?? ""));
+              }}
+              className="space-y-3"
+            >
+              <input
+                type="date"
+                name="followUpAt"
+                defaultValue={
+                  lead.followUpAt
+                    ? new Date(lead.followUpAt).toISOString().split("T")[0]
+                    : ""
+                }
+                className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/20"
+              />
+              {lead.followUpAt && (
+                <p className="text-[12px] text-amber-700">
+                  Programat:{" "}
+                  {new Date(lead.followUpAt).toLocaleDateString("ro-RO", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="flex-1 px-3 py-2 rounded-xl bg-[var(--ink)] text-[var(--bg-2)] text-[13px]"
+                >
+                  Setează
+                </button>
+                {lead.followUpAt && (
+                  <button
+                    type="submit"
+                    name="followUpAt"
+                    value=""
+                    className="px-3 py-2 rounded-xl border border-[var(--border)] text-[12px] hover:bg-[var(--bg-3)]"
+                  >
+                    Șterge
+                  </button>
+                )}
+              </div>
             </form>
           </Card>
 

@@ -12,8 +12,8 @@ export default function IntakeThanksPage() {
           Am primit datele. Echipa noastră începe configurarea agentului și revine
           în maximum 24h cu următorii pași.
         </p>
-        <Link href="/" className="text-[14px] text-[var(--ink)] hover:underline">
-          ← Înapoi la replacedbyai.com
+        <Link href="/portal/implementation" className="text-[14px] text-[var(--ink)] hover:underline">
+          ← Înapoi la portalul tău
         </Link>
       </div>
     </main>

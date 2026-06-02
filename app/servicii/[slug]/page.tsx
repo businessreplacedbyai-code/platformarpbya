@@ -17,13 +17,13 @@ export async function generateMetadata({
   const s = services.find((x) => x.slug === slug);
   if (!s) return { title: "Serviciu" };
   return {
-    title: `${s.title} — implementare în 48h | ReplacedByAI`,
+    title: `${s.title} | ReplacedByAI`,
     description: `${s.tagline} ${s.description}`,
-    alternates: { canonical: `https://replacedbyai.ro/servicii/${s.slug}` },
+    alternates: { canonical: `https://www.replacedbyai.ro/servicii/${s.slug}` },
     openGraph: {
       title: s.title,
       description: s.tagline,
-      url: `https://replacedbyai.ro/servicii/${s.slug}`,
+      url: `https://www.replacedbyai.ro/servicii/${s.slug}`,
       type: "article",
     },
   };

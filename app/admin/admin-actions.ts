@@ -5,10 +5,50 @@ import { redirect } from "next/navigation";
 import { nanoid } from "nanoid";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { sendEmail, statusChangeClientEmail } from "@/lib/mail";
+import bcrypt from "bcryptjs";
+import { sendEmail, clientWelcomeEmail, statusChangeClientEmail, replyToLeadEmail } from "@/lib/mail";
 import { audit } from "@/lib/audit";
+import { getAdminSession, staffCan } from "@/lib/auth";
+
+async function requireAdmin(minRole: "VIEWER" | "EDITOR" | "ADMIN" | "OWNER" = "EDITOR") {
+  const session = await getAdminSession();
+  if (!session || session.role !== "admin") throw new Error("Unauthorized");
+  if (!staffCan(session.staffRole, minRole)) throw new Error("Insufficient permissions");
+  return session;
+}
+
+export async function replyToLead(formData: FormData) {
+  await requireAdmin("EDITOR");
+  const leadId = String(formData.get("leadId") || "");
+  const subject = String(formData.get("subject") || "").trim();
+  const message = String(formData.get("message") || "").trim();
+  if (!leadId || !subject || !message) return;
+
+  const lead = await prisma.lead.findUnique({
+    where: { id: leadId },
+    select: { email: true, name: true, notes: true },
+  });
+  if (!lead) return;
+
+  await sendEmail({
+    to: lead.email,
+    subject,
+    html: replyToLeadEmail(lead.name, subject, message),
+  });
+
+  const timestamp = new Date().toLocaleString("ro-RO");
+  const note = `\n\n[Răspuns trimis ${timestamp}]\nSubiect: ${subject}\n${message}`;
+  await prisma.lead.update({
+    where: { id: leadId },
+    data: { notes: ((lead.notes || "") + note).trim() },
+  });
+
+  await audit({ action: "lead.reply", targetType: "Lead", targetId: leadId });
+  revalidatePath(`/admin/leads/${leadId}`);
+}
 
 export async function updateLeadStatus(leadId: string, status: string) {
+  await requireAdmin("EDITOR");
   await prisma.lead.update({ where: { id: leadId }, data: { status } });
   await audit({ action: "lead.status.update", targetType: "Lead", targetId: leadId, metadata: { status } });
   revalidatePath(`/admin/leads/${leadId}`);
@@ -16,14 +56,30 @@ export async function updateLeadStatus(leadId: string, status: string) {
 }
 
 export async function updateLeadNotes(leadId: string, notes: string) {
+  await requireAdmin("EDITOR");
   await prisma.lead.update({ where: { id: leadId }, data: { notes } });
   await audit({ action: "lead.notes.update", targetType: "Lead", targetId: leadId });
   revalidatePath(`/admin/leads/${leadId}`);
 }
 
+export async function setLeadFollowUp(leadId: string, followUpAt: string) {
+  const date = followUpAt ? new Date(followUpAt) : null;
+  await prisma.lead.update({ where: { id: leadId }, data: { followUpAt: date } });
+  revalidatePath(`/admin/leads/${leadId}`);
+  revalidatePath("/admin/leads");
+  revalidatePath("/admin");
+}
+
 export async function convertLeadToClient(leadId: string) {
+  await requireAdmin("ADMIN");
   const lead = await prisma.lead.findUnique({ where: { id: leadId } });
   if (!lead) throw new Error("Lead inexistent");
+
+  // Dacă există deja un client cu același email, redirecționează la el
+  const existing = await prisma.client.findUnique({ where: { email: lead.email } });
+  if (existing) {
+    redirect(`/admin/clients/${existing.slug}`);
+  }
 
   const baseSlug = slugify(lead.business);
   let slug = baseSlug;
@@ -31,6 +87,9 @@ export async function convertLeadToClient(leadId: string) {
   while (await prisma.client.findUnique({ where: { slug } })) {
     slug = `${baseSlug}-${i++}`;
   }
+
+  const tempPassword = nanoid(12);
+  const passwordHash = await bcrypt.hash(tempPassword, 10);
 
   const client = await prisma.client.create({
     data: {
@@ -40,6 +99,8 @@ export async function convertLeadToClient(leadId: string) {
       email: lead.email,
       phone: lead.phone,
       intakeToken: nanoid(24),
+      passwordHash,
+      mustSetPassword: true,
       tasks: { create: defaultTasks() },
     },
   });
@@ -50,7 +111,14 @@ export async function convertLeadToClient(leadId: string) {
   });
   await audit({ action: "lead.convert", targetType: "Lead", targetId: leadId, metadata: { clientSlug: client.slug } });
 
-  redirect(`/admin/clients/${client.slug}`);
+  // Trimite email de bun venit cu credențiale portal (best-effort)
+  sendEmail({
+    to: client.email,
+    subject: "Acces portal ReplacedByAI",
+    html: clientWelcomeEmail(client.contactName, client.slug, tempPassword),
+  }).catch((e) => console.error("welcome email failed", e));
+
+  redirect(`/admin/clients/${client.slug}?newPassword=${encodeURIComponent(tempPassword)}`);
 }
 
 const newClientSchema = z.object({
@@ -62,6 +130,7 @@ const newClientSchema = z.object({
 });
 
 export async function createClient(formData: FormData) {
+  await requireAdmin("ADMIN");
   const parsed = newClientSchema.safeParse({
     businessName: formData.get("businessName"),
     contactName: formData.get("contactName"),
@@ -98,6 +167,7 @@ export async function createClient(formData: FormData) {
 }
 
 export async function toggleTask(taskId: string, done: boolean, clientSlug: string) {
+  await requireAdmin("EDITOR");
   await prisma.implementationTask.update({
     where: { id: taskId },
     data: { done, doneAt: done ? new Date() : null },

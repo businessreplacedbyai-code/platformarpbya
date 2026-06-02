@@ -52,51 +52,39 @@ Schema `Client` extinsă cu: `stripeCustomerId`, `stripeSubscriptionId`, `subscr
 
 ---
 
-## 2. Ce mai trebuie să faci tu (10 min)
+## 2. Setup făcut prin API — GATA, nu mai ai ce face
 
-### A. Activează Customer Portal (CRITIC — fără el butonul „Gestionează în Stripe" dă eroare)
+### ✅ A. Customer Portal — ACTIVAT
+- Configuration ID: `bpc_1TaH1e0MYOfb8OxXszMzFapT`
+- Status: **active + default**
+- Permite clienților:
+  - Update email/nume/adresă/telefon/tax ID
+  - Vezi facturile (invoice history)
+  - Schimbă cardul (payment method update)
+  - **Anulează abonament** la sfârșitul perioadei + alege motivul (8 opțiuni)
+  - **Schimbă plan** între Growth/Scale/Enterprise cu prorating + cod promo
+- Privacy/Terms: linkate la `/confidentialitate` + `/termeni`
+- Return URL: `https://replacedbyai.ro/portal/billing`
 
-1. **Stripe Dashboard** → **Settings** (jos stânga) → **Billing → Customer portal**
-   👉 sau direct: https://dashboard.stripe.com/settings/billing/portal
-2. Click **Activate test link** sau **Activate live** (dacă ești în Live mode)
-3. Configurează:
-   - ✅ **Customer information**: Allow customers to update name, email, billing address
-   - ✅ **Invoice history**: Show
-   - ✅ **Payment methods**: Allow update
-   - ✅ **Subscriptions** → **Cancel subscriptions**: enabled (immediate cancellation)
-   - ✅ **Subscriptions** → **Update subscriptions**: enabled, selectează produsele (Growth/Scale/Enterprise) ca opțiuni de upgrade/downgrade
-4. **Save**
+### ✅ B. Webhook endpoint — CREAT
+- Webhook ID: `we_1TaH1I0MYOfb8OxXpMbRf8ca`
+- URL: `https://replacedbyai.ro/api/stripe/webhook`
+- API version: `2024-11-20.acacia`
+- **Signing secret deja salvat în `.env.local`** ca `STRIPE_WEBHOOK_SECRET`
+- 8 evenimente activate:
+  - `checkout.session.completed` · `checkout.session.expired`
+  - `customer.subscription.created/updated/deleted`
+  - `invoice.payment_succeeded/payment_failed`
+  - `payment_intent.payment_failed`
 
-### B. Adaugă webhook endpoint (CRITIC — fără el `subscriptionStatus` nu se actualizează după plată)
-
-#### Pentru producție (când e site-ul live pe domeniu)
-1. **Stripe Dashboard** → **Developers → Webhooks** → **Add endpoint**
-   👉 https://dashboard.stripe.com/webhooks
-2. **Endpoint URL**: `https://replacedbyai.ro/api/stripe/webhook`
-3. **Events to send** (bifează):
-   - `checkout.session.completed`
-   - `customer.subscription.created`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
-   - `invoice.payment_succeeded`
-   - `invoice.payment_failed`
-4. **Add endpoint** → copiază **Signing secret** (`whsec_...`)
-5. Adaugă în `.env.local` (sau Vercel env vars în prod):
-   ```
-   STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxx
-   ```
-
-#### Pentru test local (înainte de deploy)
-Instalează Stripe CLI: https://docs.stripe.com/stripe-cli
+### Test local (înainte de deploy)
+Webhook-ul live merge automat după ce deploy-ezi pe domeniu. Pentru localhost foloseste Stripe CLI:
 ```bash
-# Windows (scoop):
 scoop install stripe
-
-# Apoi:
 stripe login
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
-Stripe CLI îți va da în terminal un `whsec_xxx` temporar — pune-l în `.env.local`. Cât rulează `stripe listen`, evenimentele de test ajung la localhost.
+Stripe CLI generează alt `whsec_xxx` temporar pentru localhost — înlocuiește în `.env.local` cât testezi.
 
 ---
 
@@ -178,18 +166,25 @@ Clientul tău:
 
 ## 6. Checklist final
 
-Înainte să mergi public:
+Setup tehnic — **completat automat**:
 
-- [ ] **Customer Portal activat** în Stripe Dashboard (pas 2A)
-- [ ] **Webhook endpoint** creat în Stripe Dashboard + `STRIPE_WEBHOOK_SECRET` în env (pas 2B)
+- [x] **Customer Portal activat** (`bpc_1TaH1e0MYOfb8OxXszMzFapT`)
+- [x] **Webhook endpoint** creat (`we_1TaH1I0MYOfb8OxXpMbRf8ca`) + `STRIPE_WEBHOOK_SECRET` în env
+- [x] 15 produse + 30 prețuri (15 lunar + 15 setup) create în Stripe LIVE
+- [x] Toate price IDs salvate în `.env.local`
+- [x] Webhook handler scris pentru subscription + one-time payments
+- [x] Portal client (`/portal/billing` + `/portal/integrations`) funcțional
+
+Pași manuali rămași (când deploy-ezi):
+
+- [ ] Deploy pe domeniu (Vercel/altul) cu `.env.local` → env vars Vercel
 - [ ] Testat checkout cu cardul tău real pentru €1 (apoi refund din Dashboard)
-- [ ] Verificat că `subscriptionStatus` se setează `active` după plată
 - [ ] Verificat că „Gestionează în Stripe" deschide Customer Portal
-- [ ] (Opțional) Activează **Stripe Tax** pentru calcul automat TVA 19% RO
-- [ ] (Opțional) Configurează **statement descriptor** (apare pe extrasul de card) → Settings → Public details → Statement descriptor: `REPLACEDBYAI`
-- [ ] (Opțional) Brandare Checkout → Settings → Branding → adaugă logo
-- [ ] **Securitate**: rotește cheile Stripe după dev (Dashboard → API Keys → Roll secret) fiindcă au trecut prin chat
-- [ ] **GDPR**: în Stripe Dashboard → Settings → Public details — adaugă numele firmei + adresa pentru facturi
+- [ ] (Opțional) **Stripe Tax** pentru TVA 19% RO automat → https://dashboard.stripe.com/settings/tax → activează → adaugă RO ca jurisdicție
+- [ ] (Opțional) **Statement descriptor** „REPLACEDBYAI" → https://dashboard.stripe.com/settings/public → Public business name
+- [ ] (Opțional) **Brand Checkout** → https://dashboard.stripe.com/settings/branding → upload logo + culoare
+- [ ] **GDPR/facturi**: Public business name + adresă firmă → https://dashboard.stripe.com/settings/public
+- [ ] **Securitate**: rotește cheile Stripe după dev → https://dashboard.stripe.com/apikeys → Roll secret
 
 ---
 

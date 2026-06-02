@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { ChevronRight, PlusCircle, Users2 } from "lucide-react";
 import { ClientsToolbar } from "@/components/admin/ClientsToolbar";
+import { computeHealthScore } from "@/lib/client-health";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,14 @@ export default async function ClientsPage({
       include: {
         _count: { select: { tasks: true } },
         tasks: { where: { done: true }, select: { id: true } },
+        agents: { select: { status: true } },
+        intake: {
+          select: {
+            toneOfVoice: true, workingHours: true, locations: true,
+            services: true, mainPhone: true, contactEmail: true,
+            calendarSystem: true, crmSystem: true, faqText: true, testerName: true,
+          },
+        },
       },
     }),
     prisma.client.groupBy({
@@ -77,6 +86,19 @@ export default async function ClientsPage({
               const done = c.tasks.length;
               const total = c._count.tasks;
               const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+              const health = computeHealthScore({
+                intakeSubmittedAt: c.intakeSubmittedAt,
+                intake: c.intake as Record<string, unknown> | null,
+                agents: c.agents,
+                tasksDone: done,
+                tasksTotal: total,
+                lastLoginAt: c.lastLoginAt,
+              });
+              const healthCls = {
+                emerald: "text-emerald-700 bg-emerald-50 border-emerald-200",
+                amber: "text-amber-700 bg-amber-50 border-amber-200",
+                red: "text-red-700 bg-red-50 border-red-200",
+              }[health.color];
               return (
                 <li key={c.id}>
                   <Link
@@ -94,16 +116,17 @@ export default async function ClientsPage({
                         {c.contactName} · {c.phone} · {c.plan ?? "fără plan"}
                       </div>
                     </div>
-                    <div className="w-32">
+                    <div className="w-28 hidden md:block">
                       <div className="text-[11px] text-[var(--ink-3)] mb-1">
                         {done}/{total} taskuri
                       </div>
                       <div className="h-1.5 rounded-full bg-[var(--bg-3)] overflow-hidden">
-                        <div
-                          className="h-full bg-[var(--ink)]"
-                          style={{ width: `${pct}%` }}
-                        />
+                        <div className="h-full bg-[var(--ink)]" style={{ width: `${pct}%` }} />
                       </div>
+                    </div>
+                    <div className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-medium ${healthCls}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${health.color === "emerald" ? "bg-emerald-500" : health.color === "amber" ? "bg-amber-400" : "bg-red-500"}`} />
+                      {health.score}
                     </div>
                     <ChevronRight size={16} className="text-[var(--ink-3)]" />
                   </Link>

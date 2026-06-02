@@ -85,7 +85,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 1.1 }}
           className="mt-6 text-[13px] text-[var(--ink-3)]"
         >
-          Răspundem în 4 ore · Setup în 48h · Fără contract pe termen lung
+          Răspundem cât mai repede · Fără contract pe termen lung
         </motion.p>
 
         {/* Product preview mockup */}

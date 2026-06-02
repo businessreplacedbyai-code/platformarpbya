@@ -4,7 +4,7 @@ export const metadata = {
   title: "Rezultate — studii de caz și cifre din afaceri reale",
   description:
     "Cifre măsurate la clienții ReplacedByAI: apeluri preluate, no-show redus, lead-uri calificate, costuri salvate. Doar rezultate verificate, fără promisiuni goale.",
-  alternates: { canonical: "https://replacedbyai.ro/rezultate" },
+  alternates: { canonical: "https://www.replacedbyai.ro/rezultate" },
 };
 
 export default function RezultatePage() {

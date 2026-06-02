@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   BUNDLES,
   INDUSTRY_BUNDLES,
@@ -9,9 +8,17 @@ import {
 } from "@/lib/pricing";
 
 export const metadata = {
-  title: "Prețuri agenți AI · ReplacedByAI",
+  title: "Prețuri agenți AI — Growth, Scale, Enterprise | ReplacedByAI",
   description:
-    "Pachete clare în EUR pentru afaceri din România. Growth €249, Scale €499, Enterprise €1.200. Garanție 30 zile.",
+    "Prețuri transparente pentru agenți AI: Growth de la €249/lună, Scale €499/lună, Enterprise €1.200/lună. Fără costuri ascunse. Garanție 30 de zile sau bani înapoi.",
+  alternates: { canonical: "https://www.replacedbyai.ro/preturi" },
+  openGraph: {
+    title: "Prețuri agenți AI | ReplacedByAI",
+    description: "Pachete clare în EUR pentru afaceri din România. Growth €249, Scale €499, Enterprise €1.200. Garanție 30 zile.",
+    url: "https://www.replacedbyai.ro/preturi",
+    type: "website",
+    images: [{ url: "https://www.replacedbyai.ro/opengraph-image", width: 1200, height: 630 }],
+  },
 };
 
 export default function PreturiPage() {
@@ -175,6 +182,33 @@ export default function PreturiPage() {
               </Link>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* WEBSITE PREMIUM BANNER */}
+      <section className="px-6 pb-10 max-w-6xl mx-auto">
+        <div
+          className="rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+          style={{ background: "var(--ink)", color: "var(--bg)" }}
+        >
+          <div>
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-60 mb-3 block">
+              Serviciu nou
+            </span>
+            <h3 className="text-[22px] md:text-[26px] font-medium tracking-tight mb-2">
+              Site-uri premium cu animații 3D
+            </h3>
+            <p className="text-[14px] opacity-65 max-w-lg leading-relaxed">
+              Design unic, WebGL, Three.js — site-uri care transformă vizitatorii în clienți. De la €299 one-time.
+            </p>
+          </div>
+          <Link
+            href="/website-premium"
+            className="shrink-0 h-12 px-7 rounded-xl grid place-items-center text-[14px] font-medium whitespace-nowrap"
+            style={{ background: "var(--bg)", color: "var(--ink)" }}
+          >
+            Vezi pachete →
+          </Link>
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = "https://replacedbyai.ro";
+const SITE_URL = "https://www.replacedbyai.ro";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,7 +8,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/"],
+        disallow: [
+          "/api/",
+          "/_next/",
+          "/admin/",
+          "/portal/",
+          "/login",
+          "/intake/",
+          "/rezultate/quiz",
+        ],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

@@ -5,7 +5,9 @@ import { getClientSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-import { sendEmail, newPurchaseRequestAdminEmail } from "@/lib/mail";
+import { nanoid } from "nanoid";
+import { sendEmail, newPurchaseRequestAdminEmail, agentRequestConfirmationEmail } from "@/lib/mail";
+import { hashApiKey } from "@/lib/client-api";
 
 const ADMIN_NOTIFY = process.env.ADMIN_NOTIFY_EMAIL || "contact@replacedbyai.ro";
 
@@ -21,6 +23,11 @@ async function requireClient() {
 
 export async function requestAgent(agentSlug: string, message?: string) {
   const client = await requireClient();
+
+  // Verifică onboarding complet
+  if (!client.intakeSubmittedAt) {
+    redirect("/portal/implementation?warn=intake");
+  }
 
   // Verifică să nu fie deja activ
   const existing = await prisma.clientAgent.findUnique({
@@ -47,7 +54,7 @@ export async function requestAgent(agentSlug: string, message?: string) {
     },
   });
 
-  // Notifică admin (best-effort)
+  // Notifică admin
   sendEmail({
     to: ADMIN_NOTIFY,
     subject: `Cerere nouă agent — ${client.businessName}`,
@@ -59,9 +66,34 @@ export async function requestAgent(agentSlug: string, message?: string) {
     }),
   }).catch((e) => console.error("purchase email failed", e));
 
+  // Confirmare pentru client
+  sendEmail({
+    to: client.email,
+    subject: `Cerere primită — ReplacedByAI`,
+    html: agentRequestConfirmationEmail(client.contactName, agentSlug),
+  }).catch((e) => console.error("agent request confirm email failed", e));
+
   revalidatePath("/portal/marketplace");
   revalidatePath("/portal");
   return { ok: true };
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const current = String(formData.get("current") || "");
+  const next = String(formData.get("next") || "");
+  const confirm = String(formData.get("confirm") || "");
+
+  if (next !== confirm) {
+    redirect("/portal/account?err=" + encodeURIComponent("Parolele nu coincid."));
+  }
+  if (next.length < 8) {
+    redirect("/portal/account?err=" + encodeURIComponent("Parola trebuie să aibă minim 8 caractere."));
+  }
+  const result = await changePassword(current, next);
+  if (!result.ok) {
+    redirect("/portal/account?err=" + encodeURIComponent(result.error || "Eroare necunoscută."));
+  }
+  redirect("/portal/account?ok=1");
 }
 
 export async function changePassword(currentPassword: string, newPassword: string) {
@@ -80,5 +112,84 @@ export async function changePassword(currentPassword: string, newPassword: strin
     where: { id: client.id },
     data: { passwordHash: hash, mustSetPassword: false },
   });
+  return { ok: true };
+}
+
+// ─── API KEYS ─────────────────────────────────────────────────────────────────
+
+export async function createApiKey(
+  name: string
+): Promise<{ ok: true; rawKey: string; keyId: string } | { ok: false; error: string }> {
+  const client = await requireClient();
+  if (!name.trim()) return { ok: false, error: "Trebuie să dai un nume cheii." };
+
+  const active = await prisma.clientApiKey.count({
+    where: { clientId: client.id, revokedAt: null },
+  });
+  if (active >= 5) return { ok: false, error: "Maxim 5 chei active pe cont." };
+
+  const rawKey = `rbai_${nanoid(32)}`;
+  const prefix = rawKey.slice(0, 12);
+  const record = await prisma.clientApiKey.create({
+    data: { clientId: client.id, name: name.trim(), hashedKey: hashApiKey(rawKey), prefix },
+  });
+
+  revalidatePath("/portal/integrations");
+  return { ok: true, rawKey, keyId: record.id };
+}
+
+export async function revokeApiKey(
+  keyId: string
+): Promise<{ ok: boolean; error?: string }> {
+  const client = await requireClient();
+  const key = await prisma.clientApiKey.findUnique({ where: { id: keyId } });
+  if (!key || key.clientId !== client.id) return { ok: false, error: "Cheie negăsită." };
+
+  await prisma.clientApiKey.update({ where: { id: keyId }, data: { revokedAt: new Date() } });
+  revalidatePath("/portal/integrations");
+  return { ok: true };
+}
+
+// ─── WEBHOOKS ─────────────────────────────────────────────────────────────────
+
+const VALID_EVENTS = [
+  "conversation.created",
+  "payment.succeeded",
+  "agent.deployed",
+  "agent.status_changed",
+] as const;
+
+export async function addWebhook(
+  url: string,
+  event: string
+): Promise<{ ok: boolean; secret?: string; error?: string }> {
+  const client = await requireClient();
+
+  try { new URL(url); } catch { return { ok: false, error: "URL invalid." }; }
+  if (!(VALID_EVENTS as readonly string[]).includes(event)) {
+    return { ok: false, error: "Eveniment invalid." };
+  }
+
+  const count = await prisma.clientWebhook.count({ where: { clientId: client.id } });
+  if (count >= 5) return { ok: false, error: "Maxim 5 webhook-uri pe cont." };
+
+  const secret = `whsec_${nanoid(24)}`;
+  await prisma.clientWebhook.create({
+    data: { clientId: client.id, event, url: url.trim(), secret, active: true },
+  });
+
+  revalidatePath("/portal/integrations");
+  return { ok: true, secret };
+}
+
+export async function deleteWebhook(
+  webhookId: string
+): Promise<{ ok: boolean; error?: string }> {
+  const client = await requireClient();
+  const wh = await prisma.clientWebhook.findUnique({ where: { id: webhookId } });
+  if (!wh || wh.clientId !== client.id) return { ok: false, error: "Webhook negăsit." };
+
+  await prisma.clientWebhook.delete({ where: { id: webhookId } });
+  revalidatePath("/portal/integrations");
   return { ok: true };
 }

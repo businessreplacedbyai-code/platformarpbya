@@ -12,18 +12,18 @@ export function CTAFinal() {
         <div className="relative">
           <span className="inline-flex items-center gap-2 mb-8 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur text-[12px] text-white/80 border border-white/10">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot" />
-            Răspundem în maximum 4 ore
+            Răspundem în cel mai scurt timp posibil
           </span>
           <h2 className="h-display text-4xl md:text-6xl lg:text-7xl mb-8 leading-[0.95]">
-            Vorbește acum cu
+            Gata să automatizezi
             <br />
             <span className="bg-gradient-to-r from-white via-white to-white/40 bg-clip-text text-transparent">
-              agentul nostru AI.
+              afacerea ta?
             </span>
           </h2>
           <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Sună sau scrie-ne. Îți răspunde VoiceBot — agentul vocal AI — și îți face o
-            <span className="text-white"> analiză gratuită în 4 minute.</span>
+            Completează formularul și primești o analiză gratuită a proceselor din afacerea ta care pot fi
+            <span className="text-white"> automatizate cu AI — fără obligații.</span>
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a
@@ -33,7 +33,7 @@ export function CTAFinal() {
               Cere analiza gratuită →
             </a>
             <a
-              href="mailto:hello@replacedbyai.ro"
+              href="mailto:contact@replacedbyai.ro"
               className="btn px-6 py-3 text-[15px] rounded-full border border-white/20 text-white hover:bg-white/10 transition-all"
             >
               Scrie-ne direct

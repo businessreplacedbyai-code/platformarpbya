@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   title: "Angajat uman vs Agent AI — comparație directă",
   description:
     "Cost, disponibilitate, erori, training, concediu medical. Vezi diferența reală între un angajat uman și un agent AI ReplacedByAI pentru afacerea ta.",
-  alternates: { canonical: "https://replacedbyai.ro/comparatie" },
+  alternates: { canonical: "https://www.replacedbyai.ro/comparatie" },
   openGraph: {
     title: "Angajat uman vs Agent AI | ReplacedByAI",
     description:
       "Cost total anual, disponibilitate, erori, concediu medical — compară direct.",
-    url: "https://replacedbyai.ro/comparatie",
+    url: "https://www.replacedbyai.ro/comparatie",
   },
 };
 

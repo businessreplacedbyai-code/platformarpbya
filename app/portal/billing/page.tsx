@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getClientSession } from "@/lib/auth";
 import { BUNDLES, INDUSTRY_BUNDLES, AGENT_PRICES } from "@/lib/pricing";
-import { startCheckout, openBillingPortal } from "@/lib/portal-billing";
+import { startCheckout, startOneTimePayment, openBillingPortal } from "@/lib/portal-billing";
 
 export const metadata = { title: "Facturare · Portal ReplacedByAI" };
 
@@ -16,6 +16,7 @@ const STATUS_LABEL: Record<string, { t: string; color: string }> = {
 
 const BANNERS: Record<string, { t: string; ok: boolean }> = {
   success: { t: "Abonament activat. Mulțumim!", ok: true },
+  onetime_success: { t: "Plată unică încasată. Mulțumim!", ok: true },
   cancel: { t: "Plata a fost anulată. Poți încerca din nou.", ok: false },
   missing_price: { t: "Acest plan nu e configurat încă (lipsește price ID în Stripe).", ok: false },
   no_customer: { t: "Nu ai încă un client Stripe — alege un plan întâi.", ok: false },
@@ -250,6 +251,48 @@ export default async function BillingPage({
                 </button>
               </form>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* One-time payments (mode: payment) — setup independent sau plată unică */}
+      <section
+        className="rounded-2xl p-6"
+        style={{ background: "var(--bg-2)", border: "1px solid var(--border)" }}
+      >
+        <h2 className="text-[16px] font-medium mb-1">Plată unică (fără abonament)</h2>
+        <p className="text-[13px] text-[var(--ink-3)] mb-5">
+          Cumperi doar setup-ul (one-time), fără să te abonezi. Util pentru
+          consultanță, configurare independentă sau plată single-shot.
+        </p>
+        <div className="grid md:grid-cols-3 gap-3">
+          {BUNDLES.map((b) => (
+            <form
+              key={b.key}
+              action={startOneTimePayment}
+              className="rounded-xl p-4"
+              style={{
+                background: "var(--bg)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              <input type="hidden" name="planKey" value={b.key.toLowerCase()} />
+              <input type="hidden" name="kind" value="setup" />
+              <div className="text-[13px] font-medium">Setup {b.name}</div>
+              <div className="text-[20px] font-semibold mt-1">€{b.setup}</div>
+              <div className="text-[11px] text-[var(--ink-3)] mb-3">o singură plată</div>
+              <button
+                type="submit"
+                className="w-full h-9 rounded-lg text-[12.5px] font-medium"
+                style={{
+                  background: "var(--bg-3)",
+                  border: "1px solid var(--border-strong)",
+                  color: "var(--ink)",
+                }}
+              >
+                Plătește o singură dată →
+              </button>
+            </form>
           ))}
         </div>
       </section>

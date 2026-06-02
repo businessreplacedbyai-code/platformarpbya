@@ -44,7 +44,7 @@ export function ContactForm() {
         </div>
         <h3 className="h-display-sm text-2xl">Cererea ta a fost trimisă.</h3>
         <p className="text-[var(--ink-3)]">
-          Te contactăm în maximum 4 ore în zilele lucrătoare.
+          Te contactăm în cel mai scurt timp posibil în zilele lucrătoare.
         </p>
       </div>
     );

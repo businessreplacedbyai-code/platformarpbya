@@ -41,9 +41,22 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+
+  // Security headers
+  res.headers.set("X-Frame-Options", "SAMEORIGIN");
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.headers.set("X-XSS-Protection", "1; mode=block");
+
+  return res;
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/portal/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/portal/:path*",
+    "/((?!_next/static|_next/image|favicon|icon|apple-icon|manifest|robots|sitemap|public).*)",
+  ],
 };

@@ -19,12 +19,13 @@ export async function generateMetadata({
   return {
     title: `${a.name} — ${a.role} | Agent AI ReplacedByAI`,
     description: `${a.description} Preț estimativ: de la €${a.setupFrom} setup + €${a.monthlyFrom}/lună. Cere o analiză gratuită.`,
-    alternates: { canonical: `https://replacedbyai.ro/agenti/${a.slug}` },
+    alternates: { canonical: `https://www.replacedbyai.ro/agenti/${a.slug}` },
     openGraph: {
       title: `${a.name} — ${a.role}`,
       description: a.description,
-      url: `https://replacedbyai.ro/agenti/${a.slug}`,
-      type: "article",
+      url: `https://www.replacedbyai.ro/agenti/${a.slug}`,
+      type: "article" as const,
+      images: [{ url: "https://www.replacedbyai.ro/opengraph-image", width: 1200, height: 630 }],
     },
   };
 }
@@ -48,7 +49,7 @@ export default async function AgentPage({
     provider: {
       "@type": "Organization",
       name: "ReplacedByAI",
-      url: "https://replacedbyai.ro",
+      url: "https://www.replacedbyai.ro",
     },
     areaServed: { "@type": "Country", name: "Romania" },
     offers: {
@@ -62,8 +63,18 @@ export default async function AgentPage({
         unitCode: "MON",
         referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "MON" },
       },
-      url: `https://replacedbyai.ro/agenti/${a.slug}`,
+      url: `https://www.replacedbyai.ro/agenti/${a.slug}`,
     },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Acasă", item: "https://www.replacedbyai.ro" },
+      { "@type": "ListItem", position: 2, name: "Agenți AI", item: "https://www.replacedbyai.ro/agenti" },
+      { "@type": "ListItem", position: 3, name: a.name, item: `https://www.replacedbyai.ro/agenti/${a.slug}` },
+    ],
   };
 
   return (
@@ -71,6 +82,10 @@ export default async function AgentPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <section className="pt-40 pb-20 px-6 max-w-5xl mx-auto">
         <div className="w-16 h-16 rounded-2xl bg-[var(--ink)] text-[var(--bg-2)] flex items-center justify-center mb-8">
@@ -149,12 +164,6 @@ export default async function AgentPage({
           <Button href="/contact" variant="primary" arrow size="lg">
             Cere ofertă personalizată
           </Button>
-          <a
-            href="tel:+40700000000"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[var(--border)] text-[var(--ink)] hover:bg-[var(--bg-3)] transition-all text-[15px]"
-          >
-            <Phone size={16} /> Sună acum
-          </a>
         </div>
       </section>
 

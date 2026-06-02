@@ -57,6 +57,9 @@ model Lead {
   utmCampaign   String?
   referrer      String?
 
+  // Follow-up programat
+  followUpAt    DateTime?
+
   // Anti-spam
   ipHash        String?
   userAgent     String?
@@ -114,6 +117,10 @@ model Client {
   // Intake token (link unic pentru completare formular)
   intakeToken     String   @unique
   intakeSubmittedAt DateTime?
+
+  // Email sequences onboarding
+  intakeReminderSentAt  DateTime?
+  goLiveFeedbackSentAt  DateTime?
 
   // Stripe subscription
   stripeCustomerId     String?
@@ -294,6 +301,65 @@ model Payment {
 }
 
 
+// ─── INBOX (emailuri primite + trimise) ───────────────
+model EmailThread {
+  id          String   @id @default(cuid())
+  subject     String
+  fromEmail   String
+  fromName    String?
+  status      String   @default("open") // open | replied | archived
+  // Linkuri opționale
+  leadId      String?
+  clientSlug  String?
+  lastAt      DateTime @default(now())
+  messages    EmailMessage[]
+  createdAt   DateTime @default(now())
+
+  @@index([status, lastAt])
+}
+
+model EmailMessage {
+  id          String   @id @default(cuid())
+  threadId    String
+  thread      EmailThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  direction   String   // "in" | "out"
+  fromEmail   String
+  fromName    String?
+  toEmail     String
+  subject     String
+  bodyText    String?
+  bodyHtml    String?
+  resendId    String?
+  createdAt   DateTime @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+// ─── CALENDAR (evenimente interne admin) ──────────────
+model CalendarEvent {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startAt     DateTime
+  endAt       DateTime?
+  allDay      Boolean  @default(false)
+  type        String   @default("task") // task | meeting | deadline | go-live | follow-up | call
+  color       String   @default("blue") // blue | green | amber | red | violet | slate
+
+  // Linkuri opționale la entități existente
+  clientSlug  String?
+  leadId      String?
+
+  // Notificări
+  notifyEmail Boolean  @default(true)
+  notifiedAt  DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([startAt])
+}
+
 // --- CLIENT API KEYS (pentru integrare n8n / Zapier / custom) -------------
 model ClientApiKey {
   id         String   @id @default(cuid())
@@ -323,4 +389,37 @@ model ClientWebhook {
   createdAt       DateTime @default(now())
 
   @@index([clientId])
+}
+
+// ─── OUTREACH LEADS (prospecte găsite automat via Google Places) ───────────
+model OutreachLead {
+  id            String    @id @default(cuid())
+  placeId       String    @unique
+
+  businessName  String
+  category      String
+  address       String?
+  city          String
+  phone         String?
+  website       String?
+  rating        Float?
+  reviewCount   Int?
+
+  email         String?
+  emailSource   String?
+
+  messageSubject String?
+  messageBody   String?
+
+  status        String    @default("new")
+  sentAt        DateTime?
+  repliedAt     DateTime?
+  ignoredAt     DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([city, status])
+  @@index([status, createdAt])
+  @@index([category, city])
 }

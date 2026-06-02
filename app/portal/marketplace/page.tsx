@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { agents as catalogAgents } from "@/lib/agents";
 import { requestAgent } from "../actions";
-import { CheckCircle2, Clock, ShoppingBag } from "lucide-react";
+import { CheckCircle2, Clock, ShoppingBag, AlertTriangle } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function Marketplace() {
 
   const owned = new Set(client.agents.map((a) => a.agentSlug));
   const pending = new Set(client.purchaseRequests.map((r) => r.agentSlug));
+  const intakeDone = !!client.intakeSubmittedAt;
 
   return (
     <>
@@ -31,6 +33,20 @@ export default async function Marketplace() {
           Alege un agent și trimite o cerere. Echipa noastră îți confirmă în maxim 24h.
         </p>
       </header>
+
+      {!intakeDone && (
+        <div className="mb-6 rounded-xl px-4 py-3 flex items-start gap-3"
+          style={{ background: "var(--bg-2)", border: "1px solid #D97706" }}>
+          <AlertTriangle size={16} className="text-amber-600 mt-0.5 shrink-0" />
+          <p className="text-[13.5px]" style={{ color: "var(--ink-1)" }}>
+            Trebuie să completezi{" "}
+            <Link href="/portal/implementation" className="underline font-medium">
+              formularul de onboarding
+            </Link>{" "}
+            înainte să poți solicita un agent.
+          </p>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {catalogAgents.map((a) => {
@@ -73,7 +89,7 @@ export default async function Marketplace() {
                 </div>
               </div>
 
-              {!isOwned && !isPending && (
+              {!isOwned && !isPending && intakeDone && (
                 <form
                   action={async (fd) => {
                     "use server";
@@ -93,6 +109,15 @@ export default async function Marketplace() {
                     <ShoppingBag size={14} /> Solicită agentul
                   </button>
                 </form>
+              )}
+              {!isOwned && !isPending && !intakeDone && (
+                <button
+                  disabled
+                  title="Completează formularul de onboarding mai întâi"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] text-[var(--ink-3)] text-[13px] cursor-not-allowed"
+                >
+                  Onboarding necesar
+                </button>
               )}
               {isPending && (
                 <button

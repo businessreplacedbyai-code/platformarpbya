@@ -4,10 +4,17 @@ import { ArrowUpRight } from "lucide-react";
 import { CTAFinal } from "@/components/home/CTAFinal";
 
 export const metadata = {
-  title: "Servicii AI — agenți vocăli, programari, vânzări, suport",
+  title: "Servicii AI — agenți vocali, programări, vânzări, suport | ReplacedByAI",
   description:
-    "Servicii ReplacedByAI: agenți vocăli AI, programari automate, vânzări și califica lead-uri, suport clienți 24/7, social media, contabilitate. Implementare în 48 de ore.",
-  alternates: { canonical: "https://replacedbyai.ro/servicii" },
+    "Servicii ReplacedByAI: agenți vocali AI care preiau apeluri, programări automate, calificare lead-uri, suport clienți 24/7, social media și contabilitate automatizată.",
+  alternates: { canonical: "https://www.replacedbyai.ro/servicii" },
+  openGraph: {
+    title: "Servicii AI | ReplacedByAI",
+    description: "Agenți vocali, programări automate, vânzări, suport 24/7 — implementați pentru afacerea ta.",
+    url: "https://www.replacedbyai.ro/servicii",
+    type: "website" as const,
+    images: [{ url: "https://www.replacedbyai.ro/opengraph-image", width: 1200, height: 630 }],
+  },
 };
 
 export default function ServiciiPage() {

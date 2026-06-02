@@ -5,11 +5,11 @@ export const metadata: Metadata = {
   title: "Manifest — De ce munca repetitivă nu mai are loc în 2026",
   description:
     "Un manifest pentru antreprenorii din România care simt că trebuie să clonezi oameni ca să crești. Despre munca pe care AI-ul ar fi trebuit să o ia deja.",
-  alternates: { canonical: "https://replacedbyai.ro/manifest" },
+  alternates: { canonical: "https://www.replacedbyai.ro/manifest" },
   openGraph: {
     title: "Manifest ReplacedByAI",
     description: "Munca pe care AI-ul ar fi trebuit să o ia deja.",
-    url: "https://replacedbyai.ro/manifest",
+    url: "https://www.replacedbyai.ro/manifest",
   },
 };
 
@@ -90,7 +90,7 @@ export default function ManifestPage() {
           <p>
             Pentru că tehnologia s-a maturizat. Vocile AI sunt indistinct de oameni reali. Modelele
             de limbaj înțeleg română nuanțată. Costurile au scăzut de 50× față de acum 2 ani.
-            Setup-ul care în 2023 dura 6 luni, azi durează 48 de ore.
+            Setup-ul care în 2023 dura 6 luni, azi durează mult mai puțin.
           </p>
 
           <p>
@@ -107,7 +107,7 @@ export default function ManifestPage() {
             La ReplacedByAI nu vindem ceva ce „va exista cândva". Construim agenți AI pe care îi
             plătești{" "}
             <strong className="text-[var(--ink)]">doar dacă funcționează în afacerea ta</strong>.
-            Garantăm 30 de zile. Setup în 48 de ore. Fără contracte lungi. Fără jargon.
+            Garantăm 30 de zile. Fără contracte lungi. Fără jargon.
           </p>
 
           <p>
