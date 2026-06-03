@@ -31,7 +31,7 @@ export const BUNDLES: Bundle[] = [
       "Dashboard + raport lunar",
       "Suport prioritar",
       "Garanție 30 zile",
-      "14 zile gratuit la start",
+      "Pilot 30 zile la €99",
     ],
     competitor: "€400 – 700 / lună",
   },
@@ -137,11 +137,32 @@ export const AGENT_PRICES: AgentPrice[] = [
   { slug: "hrbot",        name: "HRBot",         role: "Recrutor AI",            monthly: 119, setup: 79, bestFor: "Companii cu angajări frecvente" },
 ];
 
+// ─── PILOT (ofertă de intrare — înlocuiește trial-ul gratuit) ─────────────
+//   €99 / 30 zile · 1 agent · 1 canal. Aduce cash + califică + convertește la Growth.
+export const PILOT_OFFER = {
+  price: 99,          // EUR one-time
+  durationDays: 30,
+  name: "Pilot 30 zile",
+  tagline: "Un agent AI, configurat și live. Vezi rezultate înainte să te abonezi.",
+  includes: [
+    "1 agent AI la alegere",
+    "1 canal (WhatsApp / web / telefon)",
+    "Setup complet în 48h",
+    "Suport pe toată durata pilotului",
+    "Se deduce din primul abonament dacă continui",
+  ],
+};
+
 // ─── DISCOUNT-URI ─────────────────────────────────────────────────────────
 export const DISCOUNTS = {
   annualMonthly: 20,   // -€20/lună dacă plătești anual (12 luni avans)
   noCancelPct: 10,     // -10% dacă renunți la opțiunea de anulare
+  annualMonthsFree: 2, // plată anuală = 2 luni gratuite (plătești 10, primești 12)
 };
+
+// Preț anual (10 luni în loc de 12) pentru un preț lunar dat.
+export const annualPrice = (monthly: number) =>
+  monthly * (12 - DISCOUNTS.annualMonthsFree);
 
 // ─── GARANȚII / RISK-REVERSAL ─────────────────────────────────────────────
 export const GUARANTEES = [
@@ -151,16 +172,22 @@ export const GUARANTEES = [
   { title: "Date păstrate în UE", body: "GDPR-compliant, fără surprize." },
 ];
 
-// ─── PROIECȚIE VENIT (folosit pentru tine, internal) ──────────────────────
-//   22 clienți activi → €10.380 / lună
+// ─── PROIECȚIE VENIT — drumul spre 40k (vezi marketing-engine/00-MODEL-VENIT.md) ──
+//   Scară cu 3 trepte: M1 €8k (luna 3-4) → M2 €20k (luna 6-7) → M3 €40k (luna 10-12)
 export const REVENUE_PROJECTION = {
   rows: [
-    { label: "10 × Growth (€249)",                  total: 2490 },
-    { label: "10 × Scale (€499)",                   total: 4990 },
-    { label: "2 × Enterprise (€1.200)",             total: 2400 },
-    { label: "Setup fees (~4 clienți noi/lună)",   total: 500 },
+    { label: "35 × Growth (€249)",                 total: 8715 },
+    { label: "30 × Scale (€499)",                  total: 14970 },
+    { label: "8 × Enterprise (€1.200)",            total: 9600 },
+    { label: "25 × industrie (€179)",              total: 4475 },
+    { label: "20 × agent individual (~€110)",      total: 2200 },
   ],
-  total: 10380,
-  totalClients: 22,
-  note: "22 clienți activi în loc de 65. Asta e diferența față de prețurile mici. Targetezi clinici private, firme B2B, agenții — nu micro-afaceri. Un client Enterprise îți aduce cât 5 clienți Growth.",
+  total: 39960,
+  totalClients: 118,
+  note: "Țintă M3: €40.000/lună MRR (~200.000 RON) la 118 clienți activi, luna 10-12. Milestone garantat M1: €8.000 MRR (~40.000 RON) la 29 clienți, luna 3-4. Motorul: ~1.500 touch-uri outreach/lună × rate de conversie = ~10 clienți noi/lună. Plan complet în marketing-engine/.",
+  milestones: [
+    { key: "M1", mrr: 8000, ron: 40000, clients: 29, month: "3-4" },
+    { key: "M2", mrr: 20000, ron: 100000, clients: 60, month: "6-7" },
+    { key: "M3", mrr: 40000, ron: 200000, clients: 118, month: "10-12" },
+  ],
 };

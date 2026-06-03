@@ -34,6 +34,8 @@ const PRICE_IDS: Record<string, string | undefined> = {
 // Setup one-time price IDs — adăugat automat la primul checkout subscription.
 // Toate sunt prețuri non-recurring pe același produs.
 const SETUP_IDS: Record<string, string | undefined> = {
+  // Pilot €99 / 30 zile — ofertă de intrare (one-time, prin startOneTimePayment).
+  pilot: process.env.STRIPE_PRICE_PILOT,
   growth: process.env.STRIPE_PRICE_GROWTH_SETUP,
   scale: process.env.STRIPE_PRICE_SCALE_SETUP,
   enterprise: process.env.STRIPE_PRICE_ENTERPRISE_SETUP,

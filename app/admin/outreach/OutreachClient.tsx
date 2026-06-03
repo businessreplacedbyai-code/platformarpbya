@@ -93,6 +93,7 @@ type Lead = {
   address: string | null;
   phone: string | null;
   website: string | null;
+  socialUrl: string | null;
   rating: number | null;
   reviewCount: number | null;
   email: string | null;
@@ -272,7 +273,7 @@ export function OutreachClient({
 
   // ─── Per-lead enrich ────────────────────────────────────────────────────
 
-  async function enrichLead(leadId: string, useClaude = false) {
+  async function enrichLead(leadId: string, useClaude = false, mode = "auto") {
     setEnrichingIds((s) => new Set(s).add(leadId));
     setErrors((e) => { const n = { ...e }; delete n[leadId]; return n; });
 
@@ -280,7 +281,7 @@ export function OutreachClient({
       const res = await fetch("/api/admin/outreach/enrich", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ leadId, useClaude }),
+        body: JSON.stringify({ leadId, useClaude, mode }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -857,15 +858,23 @@ export function OutreachClient({
                             </span>
                           )}
                         </div>
-                        <span
-                          className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded font-medium"
-                          style={lead.website
-                            ? { background: "#EFF6FF", color: "#1D4ED8" }
-                            : { background: "#F5F3FF", color: "#6D28D9" }
-                          }
-                        >
-                          {lead.website ? "Agent AI" : "Site + AI"}
-                        </span>
+                        {lead.website ? (
+                          <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded font-medium"
+                            style={{ background: "#EFF6FF", color: "#1D4ED8" }}>
+                            Agent AI
+                          </span>
+                        ) : lead.socialUrl ? (
+                          <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded font-medium"
+                            style={{ background: "#FFF7ED", color: "#C2410C" }}
+                            title={`Are Facebook/social: ${lead.socialUrl}`}>
+                            FB only → Site + AI
+                          </span>
+                        ) : (
+                          <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded font-medium"
+                            style={{ background: "#F5F3FF", color: "#6D28D9" }}>
+                            Site + AI
+                          </span>
+                        )}
                       </td>
 
                       {/* Contact */}
@@ -971,14 +980,14 @@ export function OutreachClient({
                             </button>
                           )}
 
-                          {lead.status === "new" && (
+                          {(lead.status === "new" || lead.status === "ready") && (
                             isEnriching ? (
                               <Loader2 size={13} className="animate-spin text-[var(--ink-3)]" />
                             ) : (
                               <>
                                 <button
-                                  onClick={() => enrichLead(lead.id, false)}
-                                  title="Generează mesaj (template rapid, fără API)"
+                                  onClick={() => enrichLead(lead.id, false, "auto")}
+                                  title="Mesaj automat: site pitch sau AI pitch în funcție de situație"
                                   className="px-2 py-1.5 rounded-lg text-[11px] font-medium transition-colors hover:bg-[var(--bg-3)]"
                                   style={{ color: "var(--ink-2)", border: "1px solid var(--border)" }}
                                 >
@@ -986,8 +995,16 @@ export function OutreachClient({
                                   Rapid
                                 </button>
                                 <button
-                                  onClick={() => enrichLead(lead.id, true)}
-                                  title="Generează mesaj cu Claude AI (mai personalizat)"
+                                  onClick={() => enrichLead(lead.id, false, "combo")}
+                                  title="Pitchează ambele servicii: Site WEB + Agent AI"
+                                  className="px-2 py-1.5 rounded-lg text-[11px] font-medium transition-colors"
+                                  style={{ background: "#FFF7ED", color: "#C2410C", border: "1px solid #FED7AA" }}
+                                >
+                                  Site+AI
+                                </button>
+                                <button
+                                  onClick={() => enrichLead(lead.id, true, "auto")}
+                                  title="Mesaj generat de Claude AI (mai personalizat)"
                                   className="px-2 py-1.5 rounded-lg text-[11px] font-medium transition-colors"
                                   style={{ background: "#F5F3FF", color: "#6D28D9", border: "1px solid #DDD6FE" }}
                                 >

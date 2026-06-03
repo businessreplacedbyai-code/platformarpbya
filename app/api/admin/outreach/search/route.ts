@@ -59,6 +59,28 @@ type SearchResult = {
   perCombo: { category: string; city: string; added: number; skipped: number }[];
 };
 
+// Domenii care NU contează ca site real — Facebook, Instagram, etc.
+const SOCIAL_DOMAINS = [
+  "facebook.com", "fb.com",
+  "instagram.com",
+  "tiktok.com",
+  "twitter.com", "x.com",
+  "youtube.com",
+  "linkedin.com",
+  "pinterest.com",
+  "snapchat.com",
+];
+
+function isRealWebsite(url: string): boolean {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+    return !SOCIAL_DOMAINS.some((d) => host === d || host.endsWith("." + d));
+  } catch {
+    return false;
+  }
+}
+
 async function searchOne(
   category: string,
   city: string,
@@ -83,7 +105,9 @@ async function searchOne(
     const name = (p.displayName as { text?: string })?.text ?? String(p.displayName ?? "");
     const address = String(p.formattedAddress ?? "");
     const phone = String(p.nationalPhoneNumber ?? "");
-    const website = String(p.websiteUri ?? "");
+    const rawWebsite = String(p.websiteUri ?? "");
+    // Facebook/Instagram/TikTok nu contează ca site real
+    const website = isRealWebsite(rawWebsite) ? rawWebsite : "";
     const rating = p.rating ? Number(p.rating) : null;
     const reviewCount = p.userRatingCount ? Number(p.userRatingCount) : null;
 
@@ -112,6 +136,8 @@ async function searchOne(
           city,
           phone: phone || null,
           website: website || null,
+          // Dacă URL-ul original era social media, îl salvăm separat
+          socialUrl: !isRealWebsite(rawWebsite) && rawWebsite ? rawWebsite : null,
           rating,
           reviewCount,
           status: "new",

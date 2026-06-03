@@ -571,6 +571,142 @@ function generateTemplateMessage(
   return fillTemplate(tpl, businessName, city, rating, reviewCount);
 }
 
+// ─── COMBO TEMPLATES — ambele servicii: site web + agent AI ─────────────────
+
+const TEMPLATES_COMBO: Record<string, IndustryTemplates> = {
+  restaurant: [
+    {
+      subject: "Site + rezervări automate pentru {name}",
+      body: `Bună ziua,
+
+Lucrez cu restaurante din {city} pe două probleme concrete:
+
+→ Clienții nu vă găsesc online (fără site sau site slab) — pierdeți rezervări înainte să știți că existau
+→ Telefonul sună în gol seara sau în weekend — pierdeți mese
+
+Rezolvăm amândouă: construim site cu rezervări online + instalăm agent vocal AI care preia apelurile 24/7, livrat în 5-7 zile.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+  clinica: [
+    {
+      subject: "Prezență online + programări automate pentru {name}",
+      body: `Bună ziua,
+
+Două lucruri pe care le facem pentru clinici din {city}:
+
+→ Site profesional cu servicii, medici, prețuri și programări online — pacienți noi din Google fără să sunați după ei
+→ Agent vocal AI care preia apeluri, face programări și trimite reminder-uri — fără să ocupe recepția
+
+Livrat complet în 5-7 zile.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+  stomatolog: [
+    {
+      subject: "Site + programări automate pentru {name}",
+      body: `Bună ziua,
+
+Pentru cabinete stomatologice din {city} facem două lucruri:
+
+→ Site cu servicii, prețuri și programări online — pacienți noi care vă găsesc singuri pe Google
+→ Sistem automat de reminder pe WhatsApp — pacienții revin pentru control fără să-i sunați
+
+Livrat în 5-7 zile.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+  salon: [
+    {
+      subject: "Site + programări automate pentru {name}",
+      body: `Bună ziua,
+
+Două lucruri pe care le facem pentru saloane din {city}:
+
+→ Site cu portofoliu și programări online — clienți noi din Google, fără reclame plătite
+→ Bot WhatsApp care confirmă programările automat și trimite reminder — zero no-show-uri
+
+Livrat în 5-7 zile.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+  hotel: [
+    {
+      subject: "Rezervări directe + agent vocal pentru {name}",
+      body: `Bună ziua,
+
+Două lucruri concrete pentru {name}:
+
+→ Site cu rezervări directe — clienții nu mai trec prin Booking (15-20% comision economisit per rezervare)
+→ Agent vocal AI care preia apeluri și face rezervări 24/7, inclusiv noaptea
+
+Livrat în 5-7 zile. Se recuperează din prima lună.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+  auto: [
+    {
+      subject: "Site + programări online pentru {name}",
+      body: `Bună ziua,
+
+Două lucruri pentru service-uri auto din {city}:
+
+→ Site cu servicii, prețuri și programări online — clienții știu când aveți locuri libere fără să sune
+→ Confirmare automată pe WhatsApp — zero apeluri inutile, zero no-show-uri
+
+Livrat în 5-7 zile.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+  default: [
+    {
+      subject: "Două soluții pentru {name}",
+      body: `Bună ziua,
+
+Facem două lucruri pentru afaceri din {city}:
+
+→ Site web modern cu toate informațiile și programări/rezervări online — clienți noi din Google
+→ Agent AI care răspunde la apeluri și mesaje automat, non-stop — fără angajat suplimentar
+
+Livrat în 5-7 zile, funcționând din prima zi.
+
+Scrieți-mi dacă vă interesează.
+
+ReplacedByAI | replacedbyai.ro`,
+    },
+  ],
+};
+
+function generateComboMessage(
+  businessName: string,
+  category: string,
+  city: string,
+  rating: number | null,
+  reviewCount: number | null
+): MessageTemplate {
+  const variants = TEMPLATES_COMBO[category] ?? TEMPLATES_COMBO.default;
+  const tpl = pickVariant(businessName, variants, 0);
+  return fillTemplate(tpl, businessName, city, rating, reviewCount);
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // CLAUDE AI GENERATION — more sophisticated, multi-variant, editorial tone
 // ═══════════════════════════════════════════════════════════════════════════
@@ -710,7 +846,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { leadId, useClaude = false, variants = false } = await req.json();
+  const { leadId, useClaude = false, variants = false, mode = "auto" } = await req.json();
+  // mode: "auto" = decide based on website, "site" = force site pitch, "ai" = force AI pitch, "combo" = both services
 
   const lead = await prisma.outreachLead.findUnique({ where: { id: leadId } });
   if (!lead) return NextResponse.json({ error: "Lead negăsit" }, { status: 404 });
@@ -755,16 +892,24 @@ export async function POST(req: NextRequest) {
       allVariants = [tmpl];
     }
   } else {
-    // Template mode — generate up to 3 variants
-    const v1 = generateTemplateMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount, !!lead.website, 0);
-    if (variants) {
-      const v2 = generateTemplateMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount, !!lead.website, 1);
-      const v3 = generateTemplateMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount, !!lead.website, 2);
-      allVariants = [v1, v2, v3];
+    // Template mode
+    if (mode === "combo") {
+      // Pitch ambele servicii: site + agent AI
+      const v = generateComboMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount);
+      chosen = v;
+      allVariants = [v];
     } else {
-      allVariants = [v1];
+      const hasWebsite = mode === "ai" ? true : mode === "site" ? false : !!lead.website;
+      const v1 = generateTemplateMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount, hasWebsite, 0);
+      if (variants) {
+        const v2 = generateTemplateMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount, hasWebsite, 1);
+        const v3 = generateTemplateMessage(lead.businessName, lead.category, lead.city, lead.rating, lead.reviewCount, hasWebsite, 2);
+        allVariants = [v1, v2, v3];
+      } else {
+        allVariants = [v1];
+      }
+      chosen = v1;
     }
-    chosen = v1;
   }
 
   await prisma.outreachLead.update({
