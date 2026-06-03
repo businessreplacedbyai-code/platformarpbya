@@ -2,8 +2,57 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
+import { createInvoice, fromStripeAmount, smartBillEnabled } from "@/lib/smartbill";
 
 export const runtime = "nodejs"; // need raw body for signature verification
+
+// Emite factură SmartBill pentru un client (după plată). Nu blochează webhook-ul.
+async function issueInvoice(opts: {
+  clientId?: string | null;
+  customerEmail?: string | null;
+  customerName?: string | null;
+  amount: number;        // cenți Stripe
+  currency: string;
+  description: string;
+}) {
+  if (!smartBillEnabled() || opts.amount <= 0) return;
+  try {
+    let name = opts.customerName ?? null;
+    let email = opts.customerEmail ?? null;
+    let vatCode: string | null = null;
+    let address: string | null = null;
+    let city: string | null = null;
+
+    if (opts.clientId) {
+      const c = await prisma.client.findUnique({ where: { id: opts.clientId } });
+      if (c) {
+        name = c.businessName || name;
+        email = c.email || email;
+        vatCode = (c as { cui?: string | null }).cui ?? null;
+        city = (c as { city?: string | null }).city ?? null;
+      }
+    }
+    if (!name) name = email || "Client";
+
+    const res = await createInvoice({
+      client: { name, email, vatCode, address, city, isTaxPayer: !!vatCode },
+      items: [{
+        name: opts.description,
+        price: fromStripeAmount(opts.amount),
+        currency: opts.currency.toUpperCase(),
+        measuringUnit: "serviciu",
+        isTaxIncluded: true,
+        taxPercentage: 19,
+      }],
+      currency: opts.currency.toUpperCase(),
+      sendEmail: true,
+    });
+    if (!res.ok) console.error("SmartBill invoice failed:", res.error);
+    else console.log("SmartBill invoice issued:", res.series, res.number);
+  } catch (e) {
+    console.error("SmartBill issueInvoice error:", e);
+  }
+}
 
 export async function POST(req: Request) {
   const stripe = getStripe();
@@ -70,6 +119,16 @@ export async function POST(req: Request) {
               metadata: JSON.stringify(s.metadata ?? {}),
             },
           });
+
+          // Factură SmartBill pentru plata one-time (ex: Pilot €99, setup)
+          await issueInvoice({
+            clientId,
+            customerEmail: s.customer_details?.email ?? null,
+            customerName: s.customer_details?.name ?? null,
+            amount: s.amount_total ?? 0,
+            currency: s.currency ?? "eur",
+            description: `${s.metadata?.planKey ?? "Serviciu"} — ${s.metadata?.kind ?? "plată unică"}`,
+          });
         }
         break;
       }
@@ -123,6 +182,42 @@ export async function POST(req: Request) {
             data: { subscriptionStatus: "canceled" },
           });
         }
+        break;
+      }
+      // ─── Factură de abonament plătită (lunar) → factură SmartBill ─────
+      case "invoice.payment_succeeded": {
+        const inv = event.data.object as {
+          customer?: string;
+          customer_email?: string | null;
+          customer_name?: string | null;
+          amount_paid?: number;
+          currency?: string;
+          billing_reason?: string;
+          lines?: { data?: Array<{ description?: string | null }> };
+          subscription?: string;
+        };
+        // Sărim peste prima factură dacă a fost deja gestionată ca checkout one-time;
+        // facturăm abonamentele recurente (și prima lunară).
+        const customerId = inv.customer;
+        let clientId: string | null = null;
+        if (customerId) {
+          const c = await prisma.client.findFirst({
+            where: { stripeCustomerId: customerId },
+            select: { id: true },
+          });
+          clientId = c?.id ?? null;
+        }
+        const desc =
+          inv.lines?.data?.[0]?.description ||
+          "Abonament ReplacedByAI";
+        await issueInvoice({
+          clientId,
+          customerEmail: inv.customer_email ?? null,
+          customerName: inv.customer_name ?? null,
+          amount: inv.amount_paid ?? 0,
+          currency: inv.currency ?? "eur",
+          description: desc,
+        });
         break;
       }
       default:
