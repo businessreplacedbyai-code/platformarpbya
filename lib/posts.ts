@@ -11,6 +11,327 @@ export type Post = {
 
 export const posts: Post[] = [
   {
+    slug: "cat-costa-agent-ai-firma",
+    title: "Cât costă un agent AI pentru o firmă din România în 2026",
+    excerpt:
+      "Prețuri reale, fără surprize: setup, abonament lunar și cum se compară cu un angajat. Ghid complet.",
+    date: "Iunie 2026",
+    dateIso: "2026-06-02",
+    readingTime: "6 min",
+    category: "Ghid",
+    content: `
+<p>Cea mai frecventă întrebare pe care o primim de la antreprenori este simplă: <strong>cât costă un agent AI?</strong> Răspunsul scurt: mult mai puțin decât crezi și mult mai puțin decât un angajat. Iată cifrele reale pentru piața din România în 2026.</p>
+
+<h2>Structura prețului: setup + abonament lunar</h2>
+<p>Un agent AI are două componente de cost:</p>
+<ul>
+  <li><strong>Setup one-time</strong> — configurarea agentului pe specificul afacerii tale (de la 39€ la 499€, în funcție de complexitate).</li>
+  <li><strong>Abonament lunar</strong> — pentru funcționarea continuă, suport și actualizări (de la 69€ la 1.200€/lună).</li>
+</ul>
+
+<h2>Prețuri pe tip de agent</h2>
+<p>Pentru un singur agent, prețurile pornesc de la <strong>69€/lună</strong> (ex: un asistent de contabilitate) și ajung la <strong>179€/lună</strong> pentru un agent vocal care preia apeluri non-stop. Pachetele complete (3-6 agenți) pornesc de la <strong>249€/lună</strong>, cu economii semnificative față de cumpărarea individuală.</p>
+
+<h2>Pilot de 30 de zile la 99€</h2>
+<p>Dacă vrei să testezi fără risc, există un <strong>Pilot de 30 de zile la 99€</strong>: un agent configurat și live în 48 de ore. Dacă te convinge, suma se deduce din primul abonament. Dacă nu, primești banii înapoi.</p>
+
+<h2>Comparația care contează: AI vs angajat</h2>
+<p>Un angajat de front-office (recepție, telefon, programări) costă în România 3.000-4.500 lei net/lună, plus taxe, concedii, training și fluctuație. Costul real total depășește 6.000 lei/lună.</p>
+<p>Un agent AI care face aceeași muncă repetitivă costă echivalentul a <strong>o zecime</strong> din suma asta — și lucrează 24/7, fără pauze, fără greșeli.</p>
+
+<h2>Ce e inclus în preț</h2>
+<ul>
+  <li>Configurare completă pe afacerea ta (produse, prețuri, proceduri, ton)</li>
+  <li>Integrare cu sistemele existente (calendar, WhatsApp, telefon)</li>
+  <li>Suport și optimizare continuă</li>
+  <li>Garanție 30 de zile — bani înapoi</li>
+  <li>Fără contract pe termen lung — anulezi oricând</li>
+</ul>
+
+<p>Vezi <a href="/preturi">toate prețurile detaliate</a> sau <a href="/contact">programează o discuție gratuită</a> ca să afli exact ce ai nevoie pentru afacerea ta.</p>
+    `,
+  },
+  {
+    slug: "cum-functioneaza-agent-vocal-ai",
+    title: "Cum funcționează un agent vocal AI care vorbește românește",
+    excerpt:
+      "De la apel la rezervare confirmată, pas cu pas. Cum sună, ce înțelege și de ce clienții nu-și dau seama.",
+    date: "Iunie 2026",
+    dateIso: "2026-06-01",
+    readingTime: "5 min",
+    category: "Ghid",
+    content: `
+<p>Un <strong>agent vocal AI</strong> este un sistem care răspunde la telefon în locul tău — vorbește românește natural, înțelege ce vrea clientul și acționează: face rezervarea, programează, răspunde la întrebări sau preia comanda. Iată cum funcționează, pas cu pas.</p>
+
+<h2>Pasul 1: clientul sună la numărul tău obișnuit</h2>
+<p>Nu ai nevoie de un număr nou. Apelurile se redirecționează inteligent către agentul AI — fie mereu, fie doar când e ocupat sau în afara programului. Clientul sună exact ca până acum.</p>
+
+<h2>Pasul 2: agentul răspunde în 1-2 secunde</h2>
+<p>Spre deosebire de un om care poate fi ocupat, agentul răspunde instant, la oricâte apeluri simultane. Vocea e realistă, cu intonație naturală și diacritice corecte — nu robotică.</p>
+
+<h2>Pasul 3: înțelege contextul, nu doar cuvinte-cheie</h2>
+<p>Agentul nu citește dintr-un meniu de tip "apăsați 1 pentru rezervări". Înțelege fraze naturale: <em>"aș vrea o masă pentru 4 persoane vineri seara, pe la 8"</em> și răspunde corespunzător, punând întrebări de clarificare dacă e nevoie.</p>
+
+<h2>Pasul 4: acționează</h2>
+<p>Aici e diferența față de un simplu robot. Agentul:</p>
+<ul>
+  <li>Verifică disponibilitatea în calendarul tău real</li>
+  <li>Face rezervarea sau programarea</li>
+  <li>Trimite confirmare pe WhatsApp sau SMS</li>
+  <li>Escaladează la un om real în situații speciale (reclamații, cazuri complexe)</li>
+</ul>
+
+<h2>De ce clienții nu-și dau seama că e AI</h2>
+<p>Pentru că nu contează. Clientul vrea ca cineva să răspundă imediat, să-l înțeleagă și să rezolve. Când agentul face exact asta — politicos, rapid, corect — întrebarea "e om sau AI?" devine irelevantă. Peste 80% dintre apelanți nu o pun niciodată.</p>
+
+<h2>Pentru ce afaceri merge cel mai bine</h2>
+<p>Restaurante (rezervări, comenzi), clinici și cabinete (programări), saloane, service-uri auto, hoteluri — orice afacere cu volum mare de apeluri repetitive. Vezi <a href="/agenti/voicebot">detalii despre agentul vocal</a> sau <a href="/contact">cere un exemplu audio</a>.</p>
+    `,
+  },
+  {
+    slug: "chatbot-whatsapp-afaceri-ghid",
+    title: "Chatbot WhatsApp pentru afaceri: ghidul complet 2026",
+    excerpt:
+      "De ce WhatsApp e canalul #1 în România și cum un agent AI răspunde automat, 24/7, fără să pari robot.",
+    date: "Mai 2026",
+    dateIso: "2026-05-28",
+    readingTime: "6 min",
+    category: "Ghid",
+    content: `
+<p>În România, WhatsApp este canalul preferat de comunicare. Mai mulți oameni îți scriu pe WhatsApp decât te sună sau îți trimit email. Întrebarea e: cine răspunde, și cât de repede? Un <strong>chatbot WhatsApp cu AI</strong> răspunde instant, 24/7, la fiecare mesaj.</p>
+
+<h2>De ce WhatsApp bate email-ul și telefonul</h2>
+<ul>
+  <li><strong>Rată de citire 98%</strong> — față de ~20% la email</li>
+  <li>Clienții se simt confortabil să scrie un mesaj scurt, oricând</li>
+  <li>Răspunsul rămâne în istoric — clientul îl poate reciti</li>
+</ul>
+<p>Problema? Volumul. Dacă primești 50 de mesaje pe zi, nu poți răspunde tuturor instant. Și un mesaj care așteaptă 3 ore e un client pe jumătate pierdut.</p>
+
+<h2>Ce face un chatbot WhatsApp cu AI</h2>
+<p>Nu e un robot care dă răspunsuri fixe. E un agent care:</p>
+<ul>
+  <li>Răspunde la întrebări despre program, prețuri, disponibilitate</li>
+  <li>Face programări și trimite confirmări automate</li>
+  <li>Califică lead-urile — întreabă ce are nevoie clientul și filtrează</li>
+  <li>Trimite reminder-uri (ex: cu o zi înainte de programare)</li>
+  <li>Predă conversația unui om când e nevoie</li>
+</ul>
+
+<h2>Exemplu real: un salon de beauty</h2>
+<p>Un salon primea 40-60 de mesaje pe zi cu "ce program aveți?", "cât costă X?", "mai aveți loc sâmbătă?". Recepționera răspundea când avea timp — adesea cu întârziere. După implementarea unui agent WhatsApp, fiecare mesaj primește răspuns în câteva secunde, programările se fac automat, iar no-show-ul a scăzut cu peste 60% prin reminder-e automate.</p>
+
+<h2>Cum nu pare robot</h2>
+<p>Secretul e tonul. Un agent bine configurat folosește un limbaj cald, natural, adaptat brandului tău — nu fraze corporate reci. Clientul simte că vorbește cu cineva care chiar îl ajută.</p>
+
+<h2>Cum începi</h2>
+<p>Implementarea durează 48 de ore. Configurăm agentul pe specificul afacerii tale și îl conectăm la WhatsApp Business. <a href="/contact">Programează o discuție</a> sau vezi <a href="/agenti/schedulerbot">agentul de programări</a>.</p>
+    `,
+  },
+  {
+    slug: "automatizare-programari-clinica-salon",
+    title: "Cum automatizezi programările într-o clinică sau salon (și reduci no-show-ul)",
+    excerpt:
+      "Sistemul complet: programare automată + reminder + reumplere sloturi. Cu cifre reale.",
+    date: "Mai 2026",
+    dateIso: "2026-05-20",
+    readingTime: "6 min",
+    category: "Ghid",
+    content: `
+<p>Pentru o clinică, un cabinet stomatologic sau un salon, programările sunt inima afacerii — și cea mai mare sursă de pierderi. Recepția pierde ore pe telefon, iar <strong>no-show-urile</strong> (pacienții care nu se prezintă) evaporă venit real. Iată cum automatizezi tot procesul.</p>
+
+<h2>Cele 3 probleme ale programărilor manuale</h2>
+<ol>
+  <li><strong>Apeluri pierdute</strong> — când recepția e ocupată, clientul pleacă la concurență.</li>
+  <li><strong>No-show</strong> — un slot liber neanunțat = bani pierduți instant.</li>
+  <li><strong>Timp irosit</strong> — recepția petrece ore cu reminder-e și reprogramări manuale.</li>
+</ol>
+
+<h2>Soluția: un agent AI de programări cu 3 componente</h2>
+
+<h3>1. Programare automată 24/7</h3>
+<p>Clientul programează singur, oricând, pe WhatsApp sau la telefon. Agentul verifică disponibilitatea reală în calendar și confirmă pe loc — chiar și la 23:00.</p>
+
+<h3>2. Reminder automat înainte</h3>
+<p>Cu 24-48 de ore înainte, pacientul primește un mesaj WhatsApp care cere confirmare. Dacă nu confirmă, agentul propune automat alte sloturi. Acest singur pas reduce no-show-ul cu 60-70%.</p>
+
+<h3>3. Reumplere automată a sloturilor</h3>
+<p>Când cineva anulează, agentul contactează automat lista de așteptare și oferă slotul. Primul care confirmă îl primește — zero efort din partea recepției.</p>
+
+<h2>Cifre reale dintr-o clinică stomatologică</h2>
+<ul>
+  <li>No-show: <strong>de la 28% la 8%</strong></li>
+  <li>Programări recuperate: <strong>~14 pe săptămână</strong></li>
+  <li>Venit suplimentar: <strong>~11.000 lei/lună</strong></li>
+  <li>Recepția eliberată de ~3 ore/zi</li>
+</ul>
+
+<h2>De ce contează tonul</h2>
+<p>Un mesaj cald, cu prenumele medicului, are rată de răspuns de peste 80% — față de 54% pentru un mesaj formal. Oamenii răspund când simt că cineva s-a gândit la ei.</p>
+
+<p>Vezi <a href="/agenti/schedulerbot">agentul de programări</a> sau citește <a href="/blog/no-show-clinica">studiul de caz complet</a>.</p>
+    `,
+  },
+  {
+    slug: "agent-ai-vs-angajat-cost",
+    title: "Agent AI vs angajat: comparație reală de costuri în România",
+    excerpt:
+      "Salariul e doar începutul. Calculul complet: taxe, concedii, training, fluctuație vs un agent AI.",
+    date: "Mai 2026",
+    dateIso: "2026-05-12",
+    readingTime: "5 min",
+    category: "Analiză",
+    content: `
+<p>Când compari un agent AI cu un angajat, majoritatea se uită doar la salariu. Dar costul real al unui angajat e mult mai mare. Iată comparația completă, cu cifre din România 2026.</p>
+
+<h2>Costul real al unui angajat de front-office</h2>
+<p>Pentru un post de recepție/telefon/programări:</p>
+<ul>
+  <li>Salariu net: <strong>3.000-4.500 lei/lună</strong></li>
+  <li>Taxe și contribuții: <strong>+~60%</strong> peste net</li>
+  <li>Concedii (21+ zile/an), concedii medicale</li>
+  <li>Training inițial + perioada de neproductivitate</li>
+  <li>Fluctuație — recrutare nouă la fiecare plecare</li>
+  <li>Erori umane, zile proaste, pauze</li>
+</ul>
+<p>Costul total real: <strong>peste 6.000 lei/lună</strong> pentru un singur post, acoperind doar 8 ore/zi.</p>
+
+<h2>Costul unui agent AI</h2>
+<ul>
+  <li>Abonament: <strong>de la 69€ la 179€/lună</strong> (~350-900 lei)</li>
+  <li>Setup one-time: 39€-99€</li>
+  <li>Zero taxe, zero concedii, zero fluctuație</li>
+  <li>Lucrează <strong>24/7</strong>, nu 8 ore</li>
+  <li>Răspunde la apeluri/mesaje simultane nelimitate</li>
+</ul>
+
+<h2>Calculul direct</h2>
+<p>Un agent AI costă echivalentul a <strong>10-15% din costul total</strong> al unui angajat — și acoperă de 3 ori mai multe ore. Per oră de acoperire, diferența e de aproximativ 30:1.</p>
+
+<h2>"Dar AI-ul nu poate face tot ce face un om"</h2>
+<p>Corect — și nici nu trebuie. AI-ul preia munca <strong>repetitivă</strong>: apeluri, programări, întrebări frecvente, follow-up. Oamenii rămân pentru ce contează cu adevărat: relația cu clientul, situații complexe, vânzare consultativă. Nu înlocuiești oamenii — îi eliberezi de munca pe care o urăsc.</p>
+
+<h2>Concluzie</h2>
+<p>Nu e o întrebare de "AI sau oameni". E o întrebare de "cum aloci resursele inteligent". Pune AI-ul pe munca repetitivă, oamenii pe munca valoroasă. <a href="/preturi">Vezi prețurile</a> sau <a href="/contact">calculează economia ta</a>.</p>
+    `,
+  },
+  {
+    slug: "agent-ai-imobiliare-calificare-leaduri",
+    title: "Cum califică un agent AI lead-urile pentru o agenție imobiliară",
+    excerpt:
+      "100 de mesaje, 10 clienți reali. Cum separi automat cumpărătorii serioși de cei care doar se uită.",
+    date: "Aprilie 2026",
+    dateIso: "2026-04-25",
+    readingTime: "5 min",
+    category: "Ghid",
+    content: `
+<p>Orice agent imobiliar cunoaște problema: primești zeci de mesaje pe zi, dar doar o mică parte sunt clienți cu adevărat pregătiți să cumpere sau să închirieze. Restul îți consumă timpul. Un <strong>agent AI de calificare</strong> rezolvă exact asta.</p>
+
+<h2>Problema: timpul tău e cea mai scumpă resursă</h2>
+<p>Dacă petreci 2-3 ore pe zi răspunzând la întrebări de la oameni care "doar se informează", pierzi exact timpul în care ar trebui să închizi tranzacții cu clienții serioși.</p>
+
+<h2>Ce face agentul AI</h2>
+<p>Agentul răspunde instant fiecărui contact și pune întrebările de calificare potrivite:</p>
+<ul>
+  <li><strong>Buget</strong> — în ce interval caută?</li>
+  <li><strong>Urgență</strong> — vor să cumpere în 1 lună sau "într-un an, două"?</li>
+  <li><strong>Tip proprietate</strong> — ce caută exact (zonă, suprafață, etaj)?</li>
+  <li><strong>Finanțare</strong> — cash sau credit aprobat?</li>
+</ul>
+<p>Pe baza răspunsurilor, agentul scorează automat lead-ul și îți trimite la agent <strong>doar pe cei serioși</strong>, cu tot contextul deja colectat.</p>
+
+<h2>Ce se întâmplă cu restul</h2>
+<p>Lead-urile care nu sunt încă pregătite nu se pierd — intră într-un follow-up automat. Peste 3-6 luni, agentul revine cu un mesaj relevant. Mulți dintre cei care "doar se uitau" devin clienți când vine momentul.</p>
+
+<h2>Rezultatul</h2>
+<ul>
+  <li>Mai puțin timp pierdut pe conversații fără valoare</li>
+  <li>Răspuns instant la fiecare lead (viteza câștigă tranzacții)</li>
+  <li>Context complet înainte de a vorbi cu clientul</li>
+  <li>Follow-up automat pe lead-urile "reci"</li>
+</ul>
+
+<p>Vezi <a href="/agenti/salesbot">agentul de vânzări & lead-uri</a> sau <a href="/contact">programează un demo</a>.</p>
+    `,
+  },
+  {
+    slug: "nu-mai-pierde-apeluri-restaurant",
+    title: "Cum nu mai pierzi niciun apel în restaurantul tău",
+    excerpt:
+      "Fiecare apel ratat e o masă goală. Cum preiei 100% din apeluri, inclusiv noaptea, fără angajat în plus.",
+    date: "Aprilie 2026",
+    dateIso: "2026-04-15",
+    readingTime: "5 min",
+    category: "Ghid",
+    content: `
+<p>Într-un restaurant, telefonul care sună în gol nu e doar o neplăcere — e venit care pleacă la concurență. Statistic, un restaurant mediu ratează <strong>1 din 4 apeluri</strong> în orele de vârf și aproape toate apelurile din afara programului. Iată cum rezolvi asta complet.</p>
+
+<h2>De ce pierzi apeluri (chiar dacă ai om la telefon)</h2>
+<ul>
+  <li>În vârf de seară, linia e ocupată — clientul nu așteaptă, sună în altă parte</li>
+  <li>După închidere, nimeni nu răspunde — pierzi rezervări pentru zilele următoare</li>
+  <li>Personalul e ocupat cu clienții din local, nu cu telefonul</li>
+</ul>
+
+<h2>Soluția: un agent vocal AI care preia TOT</h2>
+<p>Agentul răspunde la fiecare apel, indiferent câte sună simultan, la orice oră. Știe meniul, programul, locația, și poate:</p>
+<ul>
+  <li>Lua rezervări complete (nume, persoane, oră) și a le confirma pe WhatsApp</li>
+  <li>Prelua comenzi takeaway</li>
+  <li>Răspunde la întrebări (program, alergeni, parcare)</li>
+  <li>Escalada la un om pentru situații speciale</li>
+</ul>
+
+<h2>Rezultate reale</h2>
+<p>Un restaurant din Cluj a trecut de la 34% apeluri ratate la <strong>0%</strong>, a prins comenzi la 23:30 pentru a doua zi, și a redus costul de telefonie cu 86% — de la ~9.000 lei/lună (doi angajați) la 249€/lună. Recenziile Google au urcat de la 4,1 la 4,6 în două luni.</p>
+
+<h2>Ce NU se schimbă</h2>
+<p>Numărul tău rămâne același. Personalul nu e concediat — e mutat pe servit și interacțiunea față în față, unde prezența umană chiar contează. Nimeni nu mai stă 8 ore cu telefonul la ureche.</p>
+
+<p>Citește <a href="/blog/agent-vocal-restaurant">studiul de caz complet</a> sau <a href="/contact">cere un exemplu audio de 30 de secunde</a>.</p>
+    `,
+  },
+  {
+    slug: "cum-incepi-cu-ai-afacere-2026",
+    title: "Cum începi cu AI în afacerea ta: primii 3 pași (2026)",
+    excerpt:
+      "Fără jargon tehnic. Cei 3 pași simpli prin care orice afacere mică poate avea un agent AI live în 48h.",
+    date: "Aprilie 2026",
+    dateIso: "2026-04-05",
+    readingTime: "4 min",
+    category: "Ghid",
+    content: `
+<p>"AI pentru afacerea mea" sună complicat și scump. Nu e niciuna. Iată exact cei 3 pași prin care orice afacere mică din România poate avea un agent AI care lucrează pentru ea, live în 48 de ore.</p>
+
+<h2>Pasul 1: identifică procesul care îți fură cel mai mult timp</h2>
+<p>Nu automatiza tot deodată. Întreabă-te: <em>ce sarcină repetitivă consumă cele mai multe ore?</em></p>
+<ul>
+  <li>Răspunzi mereu la aceleași întrebări pe telefon/WhatsApp? → agent de suport</li>
+  <li>Pierzi timp cu programări și reminder-e? → agent de programări</li>
+  <li>Ratezi apeluri în vârf? → agent vocal</li>
+  <li>Lead-uri necalificate îți fură timpul? → agent de vânzări</li>
+</ul>
+<p>Începe cu UNUL. Cel care doare cel mai tare.</p>
+
+<h2>Pasul 2: testează cu un pilot, fără risc</h2>
+<p>Nu te angaja pe termen lung din prima. Un <strong>Pilot de 30 de zile la 99€</strong> îți dă un agent configurat și live, pe care îl testezi pe afacerea ta reală. Dacă te convinge, continui. Dacă nu, primești banii înapoi.</p>
+
+<h2>Pasul 3: lasă-l să lucreze, apoi extinde</h2>
+<p>După ce primul agent își dovedește valoarea (de obicei în primele 2-3 săptămâni), adaugi următorul. Mulți clienți încep cu un agent de programări și, după ce văd rezultatele, adaugă agentul vocal și pe cel de social media.</p>
+
+<h2>Ce NU îți trebuie</h2>
+<ul>
+  <li>Cunoștințe tehnice — noi facem tot setup-ul</li>
+  <li>Să schimbi numărul de telefon sau sistemele existente</li>
+  <li>Să concediezi pe cineva — AI-ul preia munca repetitivă, nu oamenii</li>
+  <li>Un contract pe termen lung — anulezi oricând</li>
+</ul>
+
+<h2>Concluzie</h2>
+<p>Cei care încep primii câștigă disproporționat. Peste 18 luni, agenții AI vor fi standard. Fereastra de avantaj e acum. <a href="/contact">Programează o discuție gratuită de 20 de minute</a> și îți spunem exact de unde să începi.</p>
+    `,
+  },
+  {
     slug: "agent-vocal-restaurant",
     title: "Cum am tăiat 40% din costul de call-center al unui restaurant",
     excerpt:
