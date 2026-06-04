@@ -8,8 +8,31 @@ import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
 import { sendEmail, newPurchaseRequestAdminEmail, agentRequestConfirmationEmail } from "@/lib/mail";
 import { hashApiKey } from "@/lib/client-api";
+import { provisionAgent, getEntitlement, VALID_AGENTS } from "@/lib/provisioning";
 
 const ADMIN_NOTIFY = process.env.ADMIN_NOTIFY_EMAIL || "contact@replacedbyai.ro";
+
+/**
+ * Clientul își alege un agent din sloturile plătite (Growth/Scale/Enterprise).
+ * Verifică entitlement-ul, apoi provisionează (creează ClientAgent + activează n8n).
+ */
+export async function chooseAgent(formData: FormData) {
+  const client = await requireClient();
+  const agentSlug = String(formData.get("agentSlug") || "");
+  if (!VALID_AGENTS.includes(agentSlug)) {
+    redirect("/portal/agents?err=invalid_agent");
+  }
+  const ent = await getEntitlement(client.id);
+  const existing = await prisma.clientAgent.findUnique({
+    where: { clientId_agentSlug: { clientId: client.id, agentSlug } },
+  });
+  if (!existing && ent.remaining <= 0) {
+    redirect("/portal/agents?err=no_slots");
+  }
+  const r = await provisionAgent(client.id, agentSlug);
+  revalidatePath("/portal/agents");
+  redirect(r.ok ? "/portal/agents?ok=added" : "/portal/agents?err=provision");
+}
 
 async function requireClient() {
   const session = await getClientSession();

@@ -218,10 +218,16 @@ model ClientAgent {
   client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   agentSlug     String   // voicebot, schedulerbot, salesbot etc.
-  status        String   @default("planned") // planned | configuring | testing | live | paused
+  status        String   @default("planned") // planned | configuring | testing | live | paused | canceled
   configNotes   String?
   promptOverride String?
   goLiveAt      DateTime?
+
+  // Provisioning automat (n8n)
+  n8nActivated  Boolean  @default(false)
+  provisionedAt DateTime?
+  channel       String?  // whatsapp | voice | web | email
+  lastError     String?
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { getStripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
 import { createInvoice, fromStripeAmount, smartBillEnabled } from "@/lib/smartbill";
+import { provisionForPlan, provisionAgent } from "@/lib/provisioning";
 
 export const runtime = "nodejs"; // need raw body for signature verification
 
@@ -91,13 +92,9 @@ export async function POST(req: Request) {
           });
         }
 
-        // Auto-provision agent ca planned dacă plata e legată de un agent
+        // Auto-provision agent (creează ClientAgent + activează n8n + webhook)
         if (clientId && agentSlug) {
-          await prisma.clientAgent.upsert({
-            where: { clientId_agentSlug: { clientId, agentSlug } },
-            update: { status: "planned" },
-            create: { clientId, agentSlug, status: "planned" },
-          });
+          await provisionAgent(clientId, agentSlug, { skipSlotCheck: true });
         }
 
         // ─── One-time payment (mode: "payment") — log Payment ───
@@ -155,6 +152,7 @@ export async function POST(req: Request) {
           metadata?: { clientId?: string; planKey?: string };
         };
         const clientId = sub.metadata?.clientId;
+        const planKey = sub.metadata?.planKey;
         if (clientId) {
           await prisma.client.update({
             where: { id: clientId },
@@ -162,12 +160,18 @@ export async function POST(req: Request) {
               stripeSubscriptionId: sub.id,
               stripeCustomerId: sub.customer,
               subscriptionStatus: sub.status,
-              planKey: sub.metadata?.planKey ?? undefined,
+              planKey: planKey ?? undefined,
               currentPeriodEnd: sub.current_period_end
                 ? new Date(sub.current_period_end * 1000)
                 : null,
             },
           });
+
+          // La PRIMA creare a abonamentului → provisioning automat:
+          // bundle industrie = agenți ficși; pachet generic = sloturi de ales.
+          if (event.type === "customer.subscription.created" && planKey) {
+            await provisionForPlan(clientId, planKey);
+          }
         }
         break;
       }

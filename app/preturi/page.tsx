@@ -5,6 +5,7 @@ import {
   AGENT_PRICES,
   GUARANTEES,
   DISCOUNTS,
+  PILOT_OFFER,
 } from "@/lib/pricing";
 
 export const metadata = {
@@ -57,6 +58,53 @@ export default function PreturiPage() {
               ✓ {g.title}
             </span>
           ))}
+        </div>
+      </section>
+
+      {/* PILOT BAND — start fără risc */}
+      <section className="px-6 pb-14 max-w-5xl mx-auto">
+        <div
+          className="rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-8"
+          style={{
+            background: "var(--ink)",
+            color: "var(--bg)",
+            backgroundImage:
+              "radial-gradient(60% 80% at 100% 0%, rgba(230,201,163,0.16) 0%, transparent 60%)",
+          }}
+        >
+          <div className="flex-1">
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-60 mb-3 block">
+              Începe fără risc
+            </span>
+            <h2 className="text-[26px] md:text-[32px] font-medium tracking-tight mb-2">
+              {PILOT_OFFER.name} — un agent AI, live în 48h
+            </h2>
+            <p className="text-[14px] opacity-70 max-w-lg leading-relaxed mb-4">
+              {PILOT_OFFER.tagline}
+            </p>
+            <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+              {PILOT_OFFER.includes.map((i) => (
+                <li key={i} className="text-[12.5px] opacity-80 flex items-center gap-1.5">
+                  <span style={{ color: "#E6C9A3" }}>→</span> {i}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="shrink-0 text-center">
+            <div className="flex items-baseline justify-center gap-1 mb-1">
+              <span className="text-[56px] font-semibold tracking-tight">€{PILOT_OFFER.price}</span>
+            </div>
+            <div className="text-[12px] opacity-55 mb-4">
+              o singură plată · {PILOT_OFFER.durationDays} zile
+            </div>
+            <Link
+              href="/contact?pilot=1"
+              className="inline-block h-12 px-8 rounded-xl grid place-items-center text-[14px] font-medium leading-[3rem]"
+              style={{ background: "var(--bg)", color: "var(--ink)" }}
+            >
+              Pornește pilotul →
+            </Link>
+          </div>
         </div>
       </section>
 
