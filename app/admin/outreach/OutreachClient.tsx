@@ -172,6 +172,49 @@ export function OutreachClient({
   // Bulk operation progress
   const [bulkProgress, setBulkProgress] = useState<{ kind: string; done: number; total: number; failed: number } | null>(null);
 
+  // ─── FORCE FIND EMAILS — scrape agresiv + AI fallback, în chunks ───
+  async function forceFindEmails(scope: "all" | "selected") {
+    const candidatesAll = leads.filter((l) => !l.email && !!l.website && l.status !== "ignored");
+    const candidates = scope === "selected"
+      ? candidatesAll.filter((l) => selectedIds.has(l.id))
+      : candidatesAll;
+    if (candidates.length === 0) {
+      setSearchMsg("Nicio firmă fără email + cu site pentru a căuta.");
+      return;
+    }
+    const total = candidates.length;
+    setBulkProgress({ kind: "find-emails", done: 0, total, failed: 0 });
+
+    const CHUNK = 10;
+    let totalFound = 0;
+    let totalFail = 0;
+    for (let i = 0; i < total; i += CHUNK) {
+      const batch = candidates.slice(i, i + CHUNK);
+      try {
+        const res = await fetch("/api/admin/outreach/find-emails", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ leadIds: batch.map((b) => b.id), limit: CHUNK }),
+        });
+        const data = await res.json();
+        if (!res.ok) { totalFail += batch.length; continue; }
+        totalFound += data.found ?? 0;
+        // Update local state cu emailurile găsite
+        if (Array.isArray(data.results)) {
+          const map = new Map<string, { email: string | null; source: string }>();
+          for (const r of data.results) map.set(r.leadId, { email: r.email, source: r.source });
+          setLeads((prev) => prev.map((l) => {
+            const r = map.get(l.id);
+            return r?.email ? { ...l, email: r.email } : l;
+          }));
+        }
+      } catch { totalFail += batch.length; }
+      setBulkProgress({ kind: "find-emails", done: Math.min(i + CHUNK, total), total, failed: totalFail });
+    }
+    setSearchMsg(`✓ Căutare AI terminată: ${totalFound} emailuri găsite din ${total} firme.`);
+    setTimeout(() => setBulkProgress(null), 4000);
+  }
+
   // ─── Derived: filtered leads ────────────────────────────────────────────
 
   const visibleLeads = useMemo(() => {
@@ -598,6 +641,17 @@ export function OutreachClient({
           {isSearching ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
           {isSearching ? "Caută..." : `Caută în ${selectedCategories.length * selectedCities.length} combinații`}
         </button>
+
+        {/* FORCE FIND EMAILS — AI agresiv pentru toate firmele fără email */}
+        <button
+          onClick={() => forceFindEmails("all")}
+          disabled={!!bulkProgress}
+          title="Caută emailurile tuturor firmelor fără email — scrape + AI fallback (Claude). Durează ~2-3s/firmă."
+          className="ml-3 px-4 py-2.5 rounded-xl text-[13px] font-medium flex items-center gap-2 transition-colors disabled:opacity-40"
+          style={{ background: "#7C3AED", color: "#fff" }}
+        >
+          ✦ Găsește emailuri cu AI ({leads.filter(l => !l.email && !!l.website && l.status !== "ignored").length})
+        </button>
       </div>
 
       {searchMsg && (
@@ -738,6 +792,16 @@ export function OutreachClient({
             style={{ background: "#7C3AED", color: "#fff" }}
           >
             ✦ Generează cu AI
+          </button>
+
+          <button
+            onClick={() => forceFindEmails("selected")}
+            disabled={!!bulkProgress}
+            title="Caută emailul pentru firmele selectate cu AI"
+            className="px-3 py-1.5 rounded-lg text-[12px] font-medium flex items-center gap-1.5 transition-colors disabled:opacity-40"
+            style={{ background: "#0EA5E9", color: "#fff" }}
+          >
+            ✦ Caută emailuri (selectate)
           </button>
 
           <button
