@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { agents, services } from "@/lib/agents";
 import { posts } from "@/lib/posts";
+import { CITIES } from "@/lib/cities";
 
 const SITE_URL = "https://www.replacedbyai.ro";
 
@@ -41,5 +42,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...agentRoutes, ...serviceRoutes, ...blogRoutes];
+  // Pagini SEO locale (agenți AI pe orașe) — armă principală pentru rank local
+  const cityHub: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/agenti-ai`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+  ];
+  const cityRoutes: MetadataRoute.Sitemap = CITIES.map((c) => ({
+    url: `${SITE_URL}/agenti-ai/${c.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.85,
+  }));
+
+  return [...staticRoutes, ...cityHub, ...cityRoutes, ...agentRoutes, ...serviceRoutes, ...blogRoutes];
 }

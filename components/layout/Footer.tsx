@@ -60,8 +60,9 @@ export function Footer() {
             <ul className="space-y-2.5 text-[14px] text-[var(--ink-3)]">
               <li><Link href="/servicii" className="hover:text-[var(--ink)] transition-colors">Servicii</Link></li>
               <li><Link href="/agenti" className="hover:text-[var(--ink)] transition-colors">Agenți AI</Link></li>
+              <li><Link href="/agenti-ai" className="hover:text-[var(--ink)] transition-colors">Agenți AI pe orașe</Link></li>
+              <li><Link href="/preturi" className="hover:text-[var(--ink)] transition-colors">Prețuri</Link></li>
               <li><Link href="/rezultate" className="hover:text-[var(--ink)] transition-colors">Rezultate</Link></li>
-              <li><Link href="/contact" className="hover:text-[var(--ink)] transition-colors">Preț</Link></li>
             </ul>
           </div>
 
