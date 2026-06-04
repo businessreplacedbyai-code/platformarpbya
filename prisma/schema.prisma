@@ -287,6 +287,31 @@ model PasswordReset {
   @@index([userId, userType])
 }
 
+// --- INVOICES (facturi custom emise prin SmartBill) ---
+model Invoice {
+  id            String   @id @default(cuid())
+  series        String?
+  number        String?
+  clientName    String
+  clientCui     String?
+  clientEmail   String?
+  clientAddress String?
+  clientCity    String?
+  amount        Int      // total în cenți (în moneda facturii)
+  currency      String   @default("RON")
+  vatPercent    Int      @default(19)
+  description   String?  // rezumat linii
+  itemsJson     String?  // liniile complete (JSON)
+  status        String   @default("issued") // issued | sent | error
+  smartbillError String?
+  emailedAt     DateTime?
+  clientId      String?  // legătură opțională la un Client existent
+  createdBy     String?  // email admin
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 // --- PAYMENTS (Stripe) --------------------------------
 model Payment {
   id              String   @id @default(cuid())

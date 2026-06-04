@@ -149,3 +149,45 @@ export async function createInvoice(opts: {
 
 /** Helper: convertește cenți Stripe → unități monedă. */
 export const fromStripeAmount = (amount: number) => Math.round(amount) / 100;
+
+/** Descarcă PDF-ul unei facturi din SmartBill (Buffer). */
+export async function getInvoicePdf(series: string, number: string): Promise<{ ok: boolean; pdf?: Buffer; error?: string }> {
+  if (!smartBillEnabled()) return { ok: false, error: "smartbill_disabled" };
+  const cif = process.env.SMARTBILL_CIF!;
+  try {
+    const res = await fetch(`${BASE}/invoice/pdf?cif=${encodeURIComponent(cif)}&seriesname=${encodeURIComponent(series)}&number=${encodeURIComponent(number)}`, {
+      headers: { Authorization: authHeader(), Accept: "application/octet-stream" },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
+    const buf = Buffer.from(await res.arrayBuffer());
+    return { ok: true, pdf: buf };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+/** Retrimite factura pe email prin SmartBill. */
+export async function sendInvoiceEmail(series: string, number: string, to?: string): Promise<{ ok: boolean; error?: string }> {
+  if (!smartBillEnabled()) return { ok: false, error: "smartbill_disabled" };
+  const cif = process.env.SMARTBILL_CIF!;
+  try {
+    const res = await fetch(`${BASE}/document/send`, {
+      method: "POST",
+      headers: { Authorization: authHeader(), "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        companyVatCode: cif,
+        seriesName: series,
+        number,
+        type: "factura",
+        ...(to ? { to } : {}),
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+    const data = (await res.json().catch(() => ({}))) as { errorText?: string };
+    if (!res.ok || data.errorText) return { ok: false, error: data.errorText || `HTTP ${res.status}` };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
