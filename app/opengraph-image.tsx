@@ -1,10 +1,29 @@
 import { ImageResponse } from "next/og";
+import { readFileSync } from "fs";
+import { join } from "path";
 
-export const alt = "ReplacedByAI — 15 agenți AI pentru afaceri din România";
+export const alt = "ReplacedByAI — Agenți AI pentru afaceri din România";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Logo real (fallback la wordmark dacă citirea eșuează la runtime).
+function getLogo(): string | null {
+  try {
+    const buf = readFileSync(join(process.cwd(), "public/logo-mark.png"));
+    return `data:image/png;base64,${buf.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
+const BG = "#0A0807";
+const CREAM = "#F4EFE6";
+const AMBER = "#E6C9A3";
+const MUTED = "#8A8780";
+
 export default function OGImage() {
+  const logo = getLogo();
+
   return new ImageResponse(
     (
       <div
@@ -13,91 +32,131 @@ export default function OGImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: "#0A0A0A",
+          justifyContent: "space-between",
+          background: BG,
           backgroundImage:
-            "radial-gradient(circle at 18% 22%, rgba(167,139,250,0.35), transparent 45%), radial-gradient(circle at 82% 78%, rgba(244,114,182,0.28), transparent 50%), radial-gradient(circle at 50% 50%, rgba(103,232,249,0.18), transparent 60%)",
+            "radial-gradient(circle at 82% 10%, rgba(230,201,163,0.22), transparent 46%), radial-gradient(circle at 10% 92%, rgba(58,74,90,0.34), transparent 52%)",
           fontFamily: "sans-serif",
-          color: "#F5F5F0",
-          padding: "72px 80px",
+          color: CREAM,
+          padding: "68px 80px",
           position: "relative",
         }}
       >
+        {/* cadru subtil */}
+        <div
+          style={{
+            position: "absolute",
+            top: 36,
+            left: 36,
+            right: 36,
+            bottom: 36,
+            border: "1px solid rgba(244,239,230,0.10)",
+            borderRadius: 18,
+            display: "flex",
+          }}
+        />
+
+        {/* TOP — logo + brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          {logo ? (
+            <img
+              src={logo}
+              width={56}
+              height={56}
+              style={{ borderRadius: 14 }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 14,
+                background: CREAM,
+                color: BG,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 30,
+                fontWeight: 700,
+              }}
+            >
+              R
+            </div>
+          )}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-0.01em" }}>
+              ReplacedByAI
+            </span>
+            <span
+              style={{
+                fontSize: 15,
+                color: MUTED,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+              }}
+            >
+              Agenți AI · România
+            </span>
+          </div>
+        </div>
+
+        {/* MIJLOC — eyebrow + headline */}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span
+            style={{
+              fontSize: 19,
+              color: AMBER,
+              letterSpacing: "0.26em",
+              textTransform: "uppercase",
+              marginBottom: 26,
+            }}
+          >
+            2026 · era agenților AI
+          </span>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              fontSize: 86,
+              fontWeight: 600,
+              lineHeight: 1.04,
+              letterSpacing: "-0.035em",
+            }}
+          >
+            <span style={{ display: "flex" }}>Afacerea ta nu mai</span>
+            <span style={{ display: "flex" }}>
+              <span>are nevoie de&nbsp;</span>
+              <span style={{ color: AMBER }}>angajați.</span>
+            </span>
+          </div>
+        </div>
+
+        {/* JOS — features + url */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 12,
-            fontSize: 22,
-            color: "#D4AF37",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            fontWeight: 600,
+            justifyContent: "space-between",
           }}
         >
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: 999,
-              background: "#D4AF37",
-              boxShadow: "0 0 24px #D4AF37",
+              display: "flex",
+              alignItems: "center",
+              gap: 18,
+              fontSize: 24,
+              color: MUTED,
             }}
-          />
-          ReplacedByAI · România
-        </div>
-
-        <div
-          style={{
-            marginTop: "auto",
-            fontSize: 96,
-            lineHeight: 1.04,
-            fontWeight: 700,
-            letterSpacing: "-0.03em",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <span>Afacerea ta nu mai are</span>
-          <span>
-            {"nevoie de "}
-            <span
-              style={{
-                background: "linear-gradient(90deg, #D4AF37, #f472b6, #a78bfa)",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              angajați.
-            </span>
+          >
+            <span>15 agenți AI</span>
+            <span style={{ color: "#3A3933" }}>·</span>
+            <span>24/7, fără greșeli</span>
+            <span style={{ color: "#3A3933" }}>·</span>
+            <span>de la €89/lună</span>
+          </div>
+          <span style={{ fontSize: 25, color: AMBER, fontWeight: 500 }}>
+            replacedbyai.ro →
           </span>
-        </div>
-
-        <div
-          style={{
-            marginTop: 28,
-            fontSize: 28,
-            color: "#A8A29E",
-            display: "flex",
-            gap: 24,
-            alignItems: "center",
-          }}
-        >
-          <span>15 agenți AI</span>
-          <span style={{ color: "#44403C" }}>·</span>
-          <span>24/7, fără greșeli</span>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: 72,
-            right: 80,
-            fontSize: 22,
-            color: "#78716C",
-            letterSpacing: "0.08em",
-          }}
-        >
-          replacedbyai.ro
         </div>
       </div>
     ),
