@@ -13,19 +13,19 @@ type Line = {
   taxIncluded: boolean;
 };
 
-const emptyLine = (): Line => ({
-  description: "",
-  quantity: 1,
-  unitPrice: 0,
-  vat: 19,
-  unit: "buc",
-  taxIncluded: true,
-});
-
 const UNITS = ["buc", "serviciu", "luna", "ora", "abonament"];
 const VATS = [19, 9, 5, 0];
 
-export function InvoiceForm() {
+export function InvoiceForm({ vatPayer = false }: { vatPayer?: boolean }) {
+  const emptyLine = (): Line => ({
+    description: "",
+    quantity: 1,
+    unitPrice: 0,
+    vat: vatPayer ? 19 : 0,
+    unit: "buc",
+    taxIncluded: !vatPayer ? false : true,
+  });
+
   const [lines, setLines] = useState<Line[]>([emptyLine()]);
   const [currency, setCurrency] = useState("RON");
   const [submitting, setSubmitting] = useState(false);
@@ -110,14 +110,18 @@ export function InvoiceForm() {
                 className="px-2 py-2 text-[13px] rounded-lg border border-[var(--border)] bg-[var(--bg)] text-right"
                 title="Preț unitar"
               />
-              <select
-                value={l.vat}
-                onChange={(e) => update(i, { vat: Number(e.target.value) })}
-                className="px-1 py-2 text-[12px] rounded-lg border border-[var(--border)] bg-[var(--bg)]"
-                title="TVA %"
-              >
-                {VATS.map((v) => <option key={v} value={v}>TVA {v}%</option>)}
-              </select>
+              {vatPayer ? (
+                <select
+                  value={l.vat}
+                  onChange={(e) => update(i, { vat: Number(e.target.value) })}
+                  className="px-1 py-2 text-[12px] rounded-lg border border-[var(--border)] bg-[var(--bg)]"
+                  title="TVA %"
+                >
+                  {VATS.map((v) => <option key={v} value={v}>TVA {v}%</option>)}
+                </select>
+              ) : (
+                <div className="px-1 py-2 text-[11px] text-[var(--ink-3)] text-center" title="Firmă neplătitoare de TVA">fără TVA</div>
+              )}
               <select
                 value={l.unit}
                 onChange={(e) => update(i, { unit: e.target.value })}
@@ -144,7 +148,11 @@ export function InvoiceForm() {
         </button>
 
         <div className="mt-3 text-[11px] text-[var(--ink-3)]">
-          Prețurile sunt considerate <strong>cu TVA inclus</strong>. SmartBill calculează automat defalcarea.
+          {vatPayer ? (
+            <>Prețurile sunt <strong>cu TVA inclus</strong>. SmartBill calculează automat defalcarea.</>
+          ) : (
+            <>Firmă <strong>neplătitoare de TVA</strong> — facturile se emit fără TVA. Prețul introdus = total de plată.</>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { prisma } from "@/lib/db";
-import { smartBillEnabled } from "@/lib/smartbill";
+import { smartBillEnabled, isVatPayer } from "@/lib/smartbill";
 import { InvoiceForm } from "./InvoiceForm";
 import { resendInvoice } from "./actions";
 import { FileText, Download, Mail, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -62,7 +62,7 @@ export default async function FacturiPage({
           </div>
         )}
 
-        <InvoiceForm />
+        <InvoiceForm vatPayer={isVatPayer()} />
 
         {/* ISTORIC */}
         <section>

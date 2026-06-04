@@ -22,6 +22,12 @@ export function smartBillEnabled(): boolean {
   );
 }
 
+// Firma e plătitoare de TVA? Default: NU (neplătitor) → facturi fără TVA.
+// Setează SMARTBILL_VAT_PAYER=true dacă/ când devii plătitor de TVA.
+export function isVatPayer(): boolean {
+  return process.env.SMARTBILL_VAT_PAYER === "true";
+}
+
 function authHeader(): string {
   const user = process.env.SMARTBILL_USERNAME ?? "";
   const token = process.env.SMARTBILL_TOKEN ?? "";
@@ -104,19 +110,25 @@ export async function createInvoice(opts: {
     dueDate: todayISO(due),
     sendEmail: opts.sendEmail ?? true,
     mentions: opts.mentions ?? "",
-    products: opts.items.map((it) => ({
-      name: it.name,
-      isDiscount: false,
-      measuringUnitName: it.measuringUnit ?? "buc",
-      currency: it.currency ?? currency,
-      quantity: it.quantity ?? 1,
-      price: it.price,
-      isTaxIncluded: it.isTaxIncluded ?? true,
-      taxName: "Normala",
-      taxPercentage: it.taxPercentage ?? 19,
-      saveToDb: false,
-      isService: true,
-    })),
+    products: opts.items.map((it) => {
+      const vatPayer = isVatPayer();
+      // Neplătitor de TVA → forțăm 0% și preț = total (fără TVA inclus).
+      const taxPercentage = vatPayer ? (it.taxPercentage ?? 19) : 0;
+      const isTaxIncluded = vatPayer ? (it.isTaxIncluded ?? true) : false;
+      return {
+        name: it.name,
+        isDiscount: false,
+        measuringUnitName: it.measuringUnit ?? "buc",
+        currency: it.currency ?? currency,
+        quantity: it.quantity ?? 1,
+        price: it.price,
+        isTaxIncluded,
+        taxName: "Normala",
+        taxPercentage,
+        saveToDb: false,
+        isService: true,
+      };
+    }),
   };
 
   try {
