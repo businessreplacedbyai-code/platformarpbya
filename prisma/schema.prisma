@@ -287,6 +287,30 @@ model PasswordReset {
   @@index([userId, userType])
 }
 
+// --- PAYMENT LINKS (linkuri Stripe custom pentru deal-uri) ---
+model PaymentLink {
+  id              String    @id @default(cuid())
+  stripeLinkId    String    @unique
+  url             String
+  description     String
+  amount          Int       // cenți
+  currency        String    @default("eur")
+  mode            String    @default("payment") // payment | subscription
+  status          String    @default("active")  // active | paid | expired | disabled
+  clientId        String?
+  agentSlug       String?
+  customerEmail   String?
+  customerName    String?
+  internalNote    String?
+  paidAt          DateTime?
+  stripeSessionId String?
+  createdBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status, createdAt])
+}
+
 // --- INVOICES (facturi custom emise prin SmartBill) ---
 model Invoice {
   id            String   @id @default(cuid())

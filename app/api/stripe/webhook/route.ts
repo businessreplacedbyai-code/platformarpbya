@@ -80,6 +80,41 @@ export async function POST(req: Request) {
         const paymentId = s.metadata?.paymentId;
         const agentSlug = s.metadata?.agentSlug;
         const clientId = s.metadata?.clientId;
+        const paymentLinkDbId = s.metadata?.paymentLinkDbId;
+
+        // ─── Stripe Payment Link custom (deal pe teren) ─────────────────
+        if (paymentLinkDbId) {
+          try {
+            await prisma.paymentLink.update({
+              where: { id: paymentLinkDbId },
+              data: {
+                status: "paid",
+                paidAt: new Date(),
+                stripeSessionId: s.id,
+                customerEmail: s.customer_details?.email ?? undefined,
+                customerName: s.customer_details?.name ?? undefined,
+              },
+            });
+            // Emite factură Oblio
+            const pl = await prisma.paymentLink.findUnique({ where: { id: paymentLinkDbId } });
+            if (pl) {
+              await issueInvoice({
+                clientId: pl.clientId,
+                customerEmail: s.customer_details?.email ?? pl.customerEmail,
+                customerName: s.customer_details?.name ?? pl.customerName,
+                amount: s.amount_total ?? pl.amount,
+                currency: s.currency ?? pl.currency,
+                description: pl.description,
+              });
+              // Provisionează agentul legat (dacă există)
+              if (pl.clientId && pl.agentSlug) {
+                await provisionAgent(pl.clientId, pl.agentSlug, { skipSlotCheck: true });
+              }
+            }
+          } catch (e) {
+            console.error("PaymentLink handler error:", e);
+          }
+        }
 
         if (paymentId) {
           await prisma.payment.update({

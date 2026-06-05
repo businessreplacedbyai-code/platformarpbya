@@ -16,6 +16,7 @@ import {
   Mail,
   Crosshair,
   Receipt,
+  Link2,
 } from "lucide-react";
 import { GlobalSearch } from "./GlobalSearch";
 
@@ -35,6 +36,7 @@ export function AdminNav({
     { href: "/admin/leads", icon: Inbox, label: "Leads" },
     { href: "/admin/clients", icon: Users, label: "Clienți" },
     { href: "/admin/facturi", icon: Receipt, label: "Facturare" },
+    { href: "/admin/payment-links", icon: Link2, label: "Linkuri plată" },
     { href: "/admin/inbox", icon: Mail, label: "Inbox email" },
     { href: "/admin/calendar", icon: CalendarDays, label: "Calendar" },
     { href: "/admin/agents", icon: Sparkles, label: "Catalog agenți" },
