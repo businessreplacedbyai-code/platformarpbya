@@ -11,7 +11,7 @@
 
 const BASE = "https://www.oblio.eu/api";
 
-export function smartBillEnabled(): boolean {
+export function oblioEnabled(): boolean {
   return !!(
     process.env.OBLIO_EMAIL &&
     process.env.OBLIO_SECRET &&
@@ -96,7 +96,7 @@ export async function createInvoice(opts: {
   sendEmail?: boolean;
   mentions?: string;
 }): Promise<CreateInvoiceResult> {
-  if (!smartBillEnabled()) return { ok: false, error: "oblio_disabled" };
+  if (!oblioEnabled()) return { ok: false, error: "oblio_disabled" };
 
   const cif = process.env.OBLIO_CIF!;
   const series = process.env.OBLIO_SERIES!;
@@ -184,7 +184,7 @@ export async function getInvoicePdf(
   series: string,
   number: string
 ): Promise<{ ok: boolean; pdf?: Buffer; error?: string }> {
-  if (!smartBillEnabled()) return { ok: false, error: "oblio_disabled" };
+  if (!oblioEnabled()) return { ok: false, error: "oblio_disabled" };
   const cif = process.env.OBLIO_CIF!;
   try {
     const token = await getAccessToken();
@@ -214,7 +214,7 @@ export async function sendInvoiceEmail(
   number: string,
   to?: string
 ): Promise<{ ok: boolean; error?: string }> {
-  if (!smartBillEnabled()) return { ok: false, error: "oblio_disabled" };
+  if (!oblioEnabled()) return { ok: false, error: "oblio_disabled" };
   const cif = process.env.OBLIO_CIF!;
   try {
     const token = await getAccessToken();

@@ -149,7 +149,7 @@ export function InvoiceForm({ vatPayer = false }: { vatPayer?: boolean }) {
 
         <div className="mt-3 text-[11px] text-[var(--ink-3)]">
           {vatPayer ? (
-            <>Prețurile sunt <strong>cu TVA inclus</strong>. SmartBill calculează automat defalcarea.</>
+            <>Prețurile sunt <strong>cu TVA inclus</strong>. Oblio calculează automat defalcarea.</>
           ) : (
             <>Firmă <strong>neplătitoare de TVA</strong> — facturile se emit fără TVA. Prețul introdus = total de plată.</>
           )}
@@ -184,7 +184,7 @@ export function InvoiceForm({ vatPayer = false }: { vatPayer?: boolean }) {
           style={{ background: "var(--ink)", color: "var(--bg)" }}
         >
           {submitting ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
-          Emite factura legală (SmartBill → ANAF)
+          Emite factura legală (Oblio → ANAF)
         </button>
       </div>
     </form>

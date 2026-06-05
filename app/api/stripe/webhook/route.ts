@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
-import { createInvoice, fromStripeAmount, smartBillEnabled } from "@/lib/smartbill";
+import { createInvoice, fromStripeAmount, oblioEnabled } from "@/lib/oblio";
 import { provisionForPlan, provisionAgent } from "@/lib/provisioning";
 
 export const runtime = "nodejs"; // need raw body for signature verification
 
-// Emite factură SmartBill pentru un client (după plată). Nu blochează webhook-ul.
+// Emite factură Oblio pentru un client (după plată). Nu blochează webhook-ul.
 async function issueInvoice(opts: {
   clientId?: string | null;
   customerEmail?: string | null;
@@ -16,7 +16,7 @@ async function issueInvoice(opts: {
   currency: string;
   description: string;
 }) {
-  if (!smartBillEnabled() || opts.amount <= 0) return;
+  if (!oblioEnabled() || opts.amount <= 0) return;
   try {
     let name = opts.customerName ?? null;
     let email = opts.customerEmail ?? null;
@@ -48,10 +48,10 @@ async function issueInvoice(opts: {
       currency: opts.currency.toUpperCase(),
       sendEmail: true,
     });
-    if (!res.ok) console.error("SmartBill invoice failed:", res.error);
-    else console.log("SmartBill invoice issued:", res.series, res.number);
+    if (!res.ok) console.error("Oblio invoice failed:", res.error);
+    else console.log("Oblio invoice issued:", res.series, res.number);
   } catch (e) {
-    console.error("SmartBill issueInvoice error:", e);
+    console.error("Oblio issueInvoice error:", e);
   }
 }
 
@@ -152,7 +152,7 @@ export async function POST(req: Request) {
             },
           });
 
-          // Factură SmartBill pentru plata one-time (ex: Pilot €99, setup)
+          // Factură Oblio pentru plata one-time (ex: Pilot €99, setup)
           await issueInvoice({
             clientId,
             customerEmail: s.customer_details?.email ?? null,
@@ -223,7 +223,7 @@ export async function POST(req: Request) {
         }
         break;
       }
-      // ─── Factură de abonament plătită (lunar) → factură SmartBill ─────
+      // ─── Factură de abonament plătită (lunar) → factură Oblio ─────
       case "invoice.payment_succeeded": {
         const inv = event.data.object as {
           customer?: string;

@@ -1,8 +1,8 @@
-// Descarcă PDF-ul unei facturi emise (din SmartBill).
+// Descarcă PDF-ul unei facturi emise (din Oblio).
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getInvoicePdf } from "@/lib/smartbill";
+import { getInvoicePdf } from "@/lib/oblio";
 
 export const runtime = "nodejs";
 

@@ -2,7 +2,7 @@
 
 import { getAdminSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { createInvoice, sendInvoiceEmail, type InvoiceItem } from "@/lib/smartbill";
+import { createInvoice, sendInvoiceEmail, type InvoiceItem } from "@/lib/oblio";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -21,7 +21,7 @@ type LineInput = {
   taxIncluded: boolean;
 };
 
-/** Creează o factură custom prin SmartBill + o salvează în DB. */
+/** Creează o factură custom prin Oblio + o salvează în DB. */
 export async function createCustomInvoice(formData: FormData) {
   const session = await requireAdmin();
 
@@ -106,7 +106,7 @@ export async function createCustomInvoice(formData: FormData) {
   });
 
   revalidatePath("/admin/facturi");
-  redirect(res.ok ? `/admin/facturi?ok=${encodeURIComponent(`${res.series}-${res.number}`)}` : `/admin/facturi?err=smartbill`);
+  redirect(res.ok ? `/admin/facturi?ok=${encodeURIComponent(`${res.series}-${res.number}`)}` : `/admin/facturi?err=oblio`);
 }
 
 /** Retrimite o factură pe email. */

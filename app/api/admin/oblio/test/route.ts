@@ -1,9 +1,9 @@
-// Test SmartBill — verifică conexiunea + listează seriile + (opțional) emite o factură test.
+// Test Oblio — verifică conexiunea + listează seriile + (opțional) emite o factură test.
 // GET  /api/admin/smartbill/test  → status + serii
 // POST /api/admin/smartbill/test  → emite o factură de test de €1 către propria firmă
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
-import { createInvoice, smartBillEnabled } from "@/lib/smartbill";
+import { createInvoice, oblioEnabled } from "@/lib/oblio";
 
 export const runtime = "nodejs";
 
@@ -21,7 +21,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const enabled = smartBillEnabled();
+  const enabled = oblioEnabled();
   const cif = process.env.SMARTBILL_CIF;
   const series = process.env.SMARTBILL_SERIES;
 
@@ -52,7 +52,7 @@ export async function GET() {
     seriesFromApi: seriesList,
     seriesError,
     hint: !enabled
-      ? "Adaugă în SmartBill o serie de facturare (Configurări → Serii documente), apoi pune numele ei în SMARTBILL_SERIES."
+      ? "Adaugă în Oblio o serie de facturare (Configurări → Serii documente), apoi pune numele ei în SMARTBILL_SERIES."
       : "OK. Trimite POST pe acest endpoint ca să emiți o factură test de €1.",
   });
 }
@@ -63,9 +63,9 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!smartBillEnabled()) {
+  if (!oblioEnabled()) {
     return NextResponse.json(
-      { ok: false, error: "SmartBill nu e configurat complet (lipsește SMARTBILL_SERIES sau alt env)." },
+      { ok: false, error: "Oblio nu e configurat complet (lipsește SMARTBILL_SERIES sau alt env)." },
       { status: 400 }
     );
   }
@@ -90,7 +90,7 @@ export async function POST() {
     }],
     currency: "EUR",
     sendEmail: false,
-    mentions: "Test conexiune SmartBill — se poate șterge.",
+    mentions: "Test conexiune Oblio — se poate șterge.",
   });
 
   return NextResponse.json(res, { status: res.ok ? 200 : 500 });

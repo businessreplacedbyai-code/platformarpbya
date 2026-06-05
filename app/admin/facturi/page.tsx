@@ -1,6 +1,6 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { prisma } from "@/lib/db";
-import { smartBillEnabled, isVatPayer } from "@/lib/smartbill";
+import { oblioEnabled, isVatPayer } from "@/lib/oblio";
 import { InvoiceForm } from "./InvoiceForm";
 import { resendInvoice } from "./actions";
 import { FileText, Download, Mail, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -15,7 +15,7 @@ export default async function FacturiPage({
 }) {
   const sp = await searchParams;
   const invoices = await prisma.invoice.findMany({ orderBy: { createdAt: "desc" }, take: 50 });
-  const enabled = smartBillEnabled();
+  const enabled = oblioEnabled();
 
   const total30 = invoices
     .filter((i) => i.status !== "error" && i.createdAt > new Date(Date.now() - 30 * 86400000))
@@ -26,8 +26,8 @@ export default async function FacturiPage({
       ? { t: `Factură emisă: ${sp.ok}`, ok: true }
       : sp.ok === "resent"
       ? { t: "Factura a fost retrimisă pe email.", ok: true }
-      : sp.err === "smartbill"
-      ? { t: "SmartBill a respins factura. Verifică datele (CUI, serie, TVA).", ok: false }
+      : sp.err === "oblio"
+      ? { t: "Oblio a respins factura. Verifică datele (CUI, serie, TVA).", ok: false }
       : sp.err === "no_items"
       ? { t: "Adaugă cel puțin o linie cu preț.", ok: false }
       : sp.err
@@ -41,7 +41,7 @@ export default async function FacturiPage({
           <p className="eyebrow mb-1">Facturare</p>
           <h1 className="h-display text-3xl mb-1">Facturi custom</h1>
           <p className="text-[14px] text-[var(--ink-2)]">
-            Emite facturi legale pentru deal-urile tale — direct prin SmartBill, trimise automat la ANAF.
+            Emite facturi legale pentru deal-urile tale — direct prin Oblio, trimise automat la ANAF.
           </p>
         </header>
 
@@ -49,7 +49,7 @@ export default async function FacturiPage({
           <div className="rounded-xl px-4 py-3 flex items-start gap-3" style={{ background: "#FFF7ED", border: "1px solid #F59E0B" }}>
             <AlertTriangle size={15} className="text-amber-600 mt-0.5 shrink-0" />
             <p className="text-[13px] text-amber-800">
-              SmartBill nu e configurat complet (lipsesc env vars sau seria). Verifică <code className="bg-amber-100 px-1 rounded">SMARTBILL_*</code>.
+              Oblio nu e configurat complet (lipsesc env vars sau seria). Verifică <code className="bg-amber-100 px-1 rounded">OBLIO_*</code>.
             </p>
           </div>
         )}
