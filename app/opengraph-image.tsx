@@ -1,16 +1,16 @@
 import { ImageResponse } from "next/og";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 export const alt = "ReplacedByAI — Agenți AI pentru afaceri din România";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Logo real (fallback la wordmark dacă citirea eșuează la runtime).
-function getLogo(): string | null {
+// Logo real încărcat prin fetch din URL public (fiabil pe Vercel — fs eșuează acolo).
+async function getLogo(): Promise<string | null> {
   try {
-    const buf = readFileSync(join(process.cwd(), "public/logo-mark.png"));
-    return `data:image/png;base64,${buf.toString("base64")}`;
+    const res = await fetch("https://www.replacedbyai.ro/logo-mark.png");
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    return `data:image/png;base64,${Buffer.from(buf).toString("base64")}`;
   } catch {
     return null;
   }
@@ -21,8 +21,8 @@ const CREAM = "#F4EFE6";
 const AMBER = "#E6C9A3";
 const MUTED = "#8A8780";
 
-export default function OGImage() {
-  const logo = getLogo();
+export default async function OGImage() {
+  const logo = await getLogo();
 
   return new ImageResponse(
     (
@@ -58,30 +58,8 @@ export default function OGImage() {
 
         {/* TOP — logo + brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          {logo ? (
-            <img
-              src={logo}
-              width={56}
-              height={56}
-              style={{ borderRadius: 14 }}
-            />
-          ) : (
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
-                background: CREAM,
-                color: BG,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 30,
-                fontWeight: 700,
-              }}
-            >
-              R
-            </div>
+          {logo && (
+            <img src={logo} width={56} height={56} style={{ borderRadius: 14 }} />
           )}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-0.01em" }}>

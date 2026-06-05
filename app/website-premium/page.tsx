@@ -64,6 +64,26 @@ const PACKAGES = [
     ],
     notIncluded: [],
   },
+  {
+    key: "PLATFORM",
+    badge: "Magazine & Platforme",
+    name: "Platform",
+    tagline: "Magazin online sau platformă digitală custom",
+    price: 1500,
+    monthly: 99,
+    highlight: false,
+    features: [
+      "Magazin online complet (e-commerce)",
+      "Coș, checkout, plăți cu cardul (Stripe)",
+      "Catalog produse + gestiune stoc",
+      "Conturi clienți + comenzi + facturare automată",
+      "Panou de administrare ușor de folosit",
+      "Integrare curieri, e-Factura, marketing",
+      "Platforme custom (booking, SaaS, dashboard-uri)",
+      "Scalabil — crește odată cu afacerea ta",
+    ],
+    notIncluded: [],
+  },
 ];
 
 const FEATURES = [
@@ -96,6 +116,11 @@ const FEATURES = [
     icon: Code2,
     title: "Next.js / React",
     desc: "Tehnologie de top — aceeași platformă folosită de Vercel, Linear, Loom. Scalabilă oricând.",
+  },
+  {
+    icon: Box,
+    title: "Magazine & Platforme digitale",
+    desc: "Nu doar site-uri de prezentare — construim magazine online complete și platforme custom (e-commerce, booking, SaaS) cu plăți, conturi și administrare ușoară.",
   },
 ];
 

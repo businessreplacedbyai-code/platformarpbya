@@ -57,6 +57,42 @@ export async function activateWorkflow(id: string): Promise<{ ok: boolean; error
   }
 }
 
+/** Dezactivează un workflow n8n după ID. */
+export async function deactivateWorkflow(id: string): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await api(`/workflows/${id}/deactivate`, { method: "POST" });
+    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+/** Rulează manual un workflow (run once). */
+export async function runWorkflow(id: string): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await api(`/workflows/${id}/run`, { method: "POST" });
+    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+/** Listă curată de workflow-uri pentru UI admin. */
+export async function getWorkflowsList(): Promise<
+  { id: string; name: string; active: boolean; updatedAt?: string }[]
+> {
+  try {
+    const res = await api(`/workflows?limit=200`);
+    if (!res.ok) return [];
+    const data = (await res.json()) as { data?: Array<{ id: string; name: string; active: boolean; updatedAt?: string }> };
+    return (data.data ?? []).map((w) => ({ id: w.id, name: w.name, active: w.active, updatedAt: w.updatedAt }));
+  } catch {
+    return [];
+  }
+}
+
 /** Activează toate workflow-urile pentru un agent. */
 export async function activateAgentWorkflows(agentSlug: string): Promise<{
   activated: string[];

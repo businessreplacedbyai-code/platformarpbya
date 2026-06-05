@@ -244,10 +244,10 @@ export default function PreturiPage() {
               Serviciu nou
             </span>
             <h3 className="text-[22px] md:text-[26px] font-medium tracking-tight mb-2">
-              Site-uri premium cu animații 3D
+              Site-uri, magazine online & platforme digitale
             </h3>
             <p className="text-[14px] opacity-65 max-w-lg leading-relaxed">
-              Design unic, WebGL, Three.js — site-uri care transformă vizitatorii în clienți. De la €299 one-time.
+              Nu doar agenți AI — construim și site-uri premium (WebGL, 3D), magazine online complete și platforme custom (e-commerce, booking, SaaS). De la €299.
             </p>
           </div>
           <Link

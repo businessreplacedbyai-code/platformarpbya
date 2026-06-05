@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s | ReplacedByAI",
   },
   description:
-    "ReplacedByAI este prima agenție din România care implementează agenți AI ce înlocuiesc munca angajaților: preiau apeluri, vând, programează, răspund clienților și facturează — 24/7, fără greșeli.",
+    "ReplacedByAI implementează agenți AI care preiau apeluri, vând, programează și răspund clienților 24/7. Plus site-uri premium, magazine online și platforme digitale custom pentru afaceri din România.",
   applicationName: "ReplacedByAI",
   authors: [{ name: "ReplacedByAI", url: SITE_URL }],
   creator: "ReplacedByAI",
