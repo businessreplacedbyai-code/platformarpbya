@@ -1,6 +1,8 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { getWorkflowsList, n8nEnabled } from "@/lib/n8n";
+import { RECIPES } from "@/lib/n8n-recipes";
 import { AutomationsClient } from "./AutomationsClient";
+import { Recipes } from "./Recipes";
 import { AlertTriangle } from "lucide-react";
 
 export const metadata = { title: "Automatizări · Admin" };
@@ -31,7 +33,13 @@ export default async function AutomationsPage() {
             </p>
           </div>
         ) : (
-          <AutomationsClient initial={workflows} n8nUrl={n8nUrl} />
+          <div className="space-y-8">
+            <Recipes recipes={RECIPES} existingNames={workflows.map((w) => w.name)} />
+            <div>
+              <h2 className="h-display text-xl mb-3">Toate automatizările active</h2>
+              <AutomationsClient initial={workflows} n8nUrl={n8nUrl} />
+            </div>
+          </div>
         )}
       </div>
     </AdminShell>

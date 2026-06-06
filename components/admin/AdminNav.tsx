@@ -34,6 +34,7 @@ export function AdminNav({
     { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
     { href: "/admin/outreach", icon: Crosshair, label: "Outreach" },
+    { href: "/admin/outreach/istoric", icon: Mail, label: "Istoric outreach" },
     { href: "/admin/leads", icon: Inbox, label: "Leads" },
     { href: "/admin/clients", icon: Users, label: "Clienți" },
     { href: "/admin/facturi", icon: Receipt, label: "Facturare" },
