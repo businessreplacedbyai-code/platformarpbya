@@ -133,6 +133,66 @@ export function replyToLeadEmail(name: string, subject: string, message: string)
 }
 
 // 1. Confirmare imediată pentru persoana care a completat formularul de contact
+export function paymentLinkEmail(args: {
+  customerName?: string | null;
+  description: string;
+  amount: number; // cents
+  currency: string;
+  url: string;
+  mode: "payment" | "subscription";
+}): { subject: string; html: string; text: string } {
+  const amount = (args.amount / 100).toLocaleString("ro-RO", { minimumFractionDigits: 2 });
+  const ccy = args.currency.toUpperCase();
+  const subject = `Link de plată — ${args.description}`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;">
+  <div style="max-width:520px;margin:0 auto;padding:40px 24px;">
+    <h2 style="margin:0 0 12px;font-weight:500">Bună ziua${args.customerName ? `, ${args.customerName}` : ""},</h2>
+    <p style="margin:0 0 18px;line-height:1.6;font-size:15px;color:#333">Vă trimit linkul de plată pentru:</p>
+    <div style="background:#F4EFE6;padding:18px 22px;border-radius:12px;margin:18px 0">
+      <div style="font-size:15px;font-weight:500;margin-bottom:6px">${args.description}</div>
+      <div style="font-size:28px;font-weight:600;color:#0A0807">${amount} ${ccy}${args.mode === "subscription" ? " <span style='font-size:14px;font-weight:400;opacity:0.6'>/lună</span>" : ""}</div>
+    </div>
+    <p style="margin:20px 0">
+      <a href="${args.url}" style="display:inline-block;background:#0A0807;color:#F4EFE6;text-decoration:none;padding:14px 28px;border-radius:12px;font-weight:500;font-size:15px">Plătește în siguranță →</a>
+    </p>
+    <p style="font-size:13px;color:#666;line-height:1.6;margin-top:20px">După plată primiți automat factura legală pe email. Plata se face prin Stripe — datele cardului nu trec prin platformă.</p>
+    <hr style="margin:30px 0 16px;border:none;border-top:1px solid #e5e5e5"/>
+    <p style="font-size:11px;color:#999;margin:0">ReplacedByAI · Iași, România</p>
+  </div></body></html>`;
+  const text = `Link de plată pentru ${args.description}\nTotal: ${amount} ${ccy}\n${args.url}\n\nReplacedByAI`;
+  return { subject, html, text };
+}
+
+export function invoiceEmail(args: {
+  customerName?: string | null;
+  series: string;
+  number: string;
+  amount: number; // cents
+  currency: string;
+  pdfUrl?: string | null;
+  description?: string | null;
+}): { subject: string; html: string; text: string } {
+  const amount = (args.amount / 100).toLocaleString("ro-RO", { minimumFractionDigits: 2 });
+  const ccy = args.currency.toUpperCase();
+  const subject = `Factură ${args.series}-${args.number} — ReplacedByAI`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;">
+  <div style="max-width:520px;margin:0 auto;padding:40px 24px;">
+    <h2 style="margin:0 0 12px;font-weight:500">Bună ziua${args.customerName ? `, ${args.customerName}` : ""},</h2>
+    <p style="margin:0 0 18px;line-height:1.6;font-size:15px;color:#333">Vă transmitem factura emisă pentru plata efectuată${args.description ? ` (<strong>${args.description}</strong>)` : ""}:</p>
+    <div style="background:#F4EFE6;padding:18px 22px;border-radius:12px;margin:18px 0">
+      <div style="font-size:13px;color:#666;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Factură</div>
+      <div style="font-size:24px;font-weight:500;color:#0A0807">${args.series}-${args.number}</div>
+      <div style="font-size:18px;color:#666;margin-top:6px">Total: <strong style="color:#0A0807">${amount} ${ccy}</strong></div>
+    </div>
+    ${args.pdfUrl ? `<p style="margin:20px 0"><a href="${args.pdfUrl}" style="display:inline-block;background:#0A0807;color:#F4EFE6;text-decoration:none;padding:14px 28px;border-radius:12px;font-weight:500;font-size:15px">Descarcă factura (PDF) →</a></p>` : ""}
+    <p style="font-size:13px;color:#666;line-height:1.6;margin-top:20px">Factura a fost trimisă automat și către sistemul ANAF (e-Factura).</p>
+    <hr style="margin:30px 0 16px;border:none;border-top:1px solid #e5e5e5"/>
+    <p style="font-size:11px;color:#999;margin:0">ReplacedByAI · CIF 54666360 · Iași, România</p>
+  </div></body></html>`;
+  const text = `Factură ${args.series}-${args.number}\nTotal: ${amount} ${ccy}\n${args.pdfUrl ?? ""}`;
+  return { subject, html, text };
+}
+
 export function leadConfirmationEmail(name: string, business: string) {
   const firstName = name.split(" ")[0];
   return wrap(

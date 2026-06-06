@@ -47,6 +47,15 @@ model Lead {
   city          String?
   website       String?
 
+  // Tipul interesului (agenti AI sau site/platforma)
+  interestType    String?  // ai-agents | website | both | unsure
+  projectType     String?  // presentation | shop | platform | landing | redesign
+  websiteFeatures String?  // JSON array (booking, payment, multilang, blog, etc.)
+  currentWebsite  String?  // URL site existent (pt redesign)
+  designStyle     String?  // minimal | premium-3d | bold | classic
+  deadline        String?  // urgent | 1luna | 2-3luni | flexibil
+  referenceUrls   String?  // site-uri de inspirație (linii separate)
+
   // Lead scoring (0-100)
   score         Int       @default(0)
   scoreReason   String?   // breakdown text

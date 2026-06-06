@@ -105,6 +105,11 @@ export function LinkForm({ clients }: { clients: ClientOpt[] }) {
         <input name="internalNote" placeholder="Ex: deal Ionescu — 15% discount + 2 luni gratis" className="w-full px-3 py-2.5 text-[14px] rounded-lg border border-[var(--border)] bg-[var(--bg)]" />
       </div>
 
+      <label className="flex items-center gap-2 text-[13px] text-[var(--ink-2)] pt-1">
+        <input type="checkbox" name="sendEmail" defaultChecked className="rounded" />
+        Trimite automat linkul pe email clientului (dacă a fost completat)
+      </label>
+
       <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
         <div className="text-[13px]">
           <span className="text-[var(--ink-3)]">Total: </span>

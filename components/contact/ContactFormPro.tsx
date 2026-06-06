@@ -42,9 +42,57 @@ type FormState = {
   painPoints: string[];
   agentsWanted: string[];
   message: string;
+  // Interest type (agenți vs site)
+  interestType: "ai-agents" | "website" | "both" | "unsure" | "";
+  projectType: "presentation" | "shop" | "platform" | "landing" | "redesign" | "";
+  websiteFeatures: string[];
+  currentWebsite: string;
+  designStyle: "minimal" | "premium-3d" | "bold" | "classic" | "";
+  deadline: "urgent" | "1luna" | "2-3luni" | "flexibil" | "";
+  referenceUrls: string;
   // Honeypot
   website_url: string;
 };
+
+const INTEREST_TYPES = [
+  { value: "ai-agents" as const, label: "Agenți AI", desc: "Voicebot, programări, vânzări, etc.", emoji: "🤖" },
+  { value: "website" as const, label: "Site / Magazin / Platformă", desc: "Site nou, magazin online, platformă custom", emoji: "🌐" },
+  { value: "both" as const, label: "Ambele", desc: "Site + agenți integrați împreună", emoji: "🚀" },
+  { value: "unsure" as const, label: "Nu sunt sigur", desc: "Vreau să discutăm și să mă consiliați", emoji: "💭" },
+];
+const PROJECT_TYPES = [
+  { value: "presentation" as const, label: "Site prezentare" },
+  { value: "shop" as const, label: "Magazin online" },
+  { value: "platform" as const, label: "Platformă custom (SaaS, booking)" },
+  { value: "landing" as const, label: "Landing page (campanie)" },
+  { value: "redesign" as const, label: "Refacere site existent" },
+];
+const WEBSITE_FEATURES = [
+  "Plăți online (Stripe)",
+  "Programări / rezervări",
+  "Catalog produse + coș",
+  "Multilingv (RO + EN)",
+  "Animații 3D / WebGL",
+  "Blog / articole",
+  "Conturi clienți",
+  "Integrare CRM / newsletter",
+  "Hartă + locații",
+  "Chatbot AI integrat",
+  "Facturare automată",
+  "Panou admin custom",
+];
+const DESIGN_STYLES = [
+  { value: "minimal" as const, label: "Minimalist & editorial", emoji: "◯" },
+  { value: "premium-3d" as const, label: "Premium cu animații 3D", emoji: "✨" },
+  { value: "bold" as const, label: "Îndrăzneț & colorat", emoji: "🎨" },
+  { value: "classic" as const, label: "Clasic & corporate", emoji: "🏛️" },
+];
+const DEADLINES = [
+  { value: "urgent" as const, label: "Urgent (sub 2 săpt)" },
+  { value: "1luna" as const, label: "În ~1 lună" },
+  { value: "2-3luni" as const, label: "În 2–3 luni" },
+  { value: "flexibil" as const, label: "Flexibil" },
+];
 
 const SECTORS: { value: Sector; label: string; emoji: string }[] = [
   { value: "horeca", label: "HoReCa", emoji: "🍽️" },
@@ -98,6 +146,13 @@ const initial: FormState = {
   phone: "",
   email: "",
   cui: "",
+  interestType: "",
+  projectType: "",
+  websiteFeatures: [],
+  currentWebsite: "",
+  designStyle: "",
+  deadline: "",
+  referenceUrls: "",
   sector: "",
   employees: "",
   city: "",
@@ -258,6 +313,13 @@ export function ContactFormPro() {
         {step === 3 && (
           <Step3 form={form} setField={setField} toggle={toggle} />
         )}
+        {/* Site-specific (apare doar dacă a ales website / both) */}
+        {step === 3 && (form.interestType === "website" || form.interestType === "both") && (
+          <WebsiteFields form={form} setField={setField} toggleFeature={(v) => {
+            const cur = form.websiteFeatures;
+            setField("websiteFeatures", cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]);
+          }} />
+        )}
 
         {serverError && (
           <div className="flex items-center gap-2 text-red-600 text-[13px] px-3 py-2 rounded-lg bg-red-50 border border-red-200">
@@ -321,6 +383,32 @@ function Step1({
         title="Hai să facem cunoștință"
         sub="Cum te contactăm? Răspundem în cel mai scurt timp posibil."
       />
+
+      {/* Ce te interesează — direcționează tot formularul */}
+      <div className="mb-6">
+        <Label>Ce te interesează?</Label>
+        <div className="grid sm:grid-cols-2 gap-2 mt-2">
+          {INTEREST_TYPES.map((it) => (
+            <button
+              key={it.value}
+              type="button"
+              onClick={() => setField("interestType", it.value)}
+              className="px-4 py-3 text-left rounded-xl border transition-all"
+              style={{
+                background: form.interestType === it.value ? "var(--ink)" : "var(--bg)",
+                color: form.interestType === it.value ? "var(--bg)" : "var(--ink-1)",
+                borderColor: form.interestType === it.value ? "var(--ink)" : "var(--border)",
+              }}
+            >
+              <div className="flex items-center gap-2 text-[14px] font-medium">
+                <span>{it.emoji}</span> {it.label}
+              </div>
+              <div className="text-[11.5px] mt-0.5 opacity-70">{it.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-4">
         <Input
           icon={User}
@@ -730,6 +818,141 @@ function SuccessCard({ score }: { score: number | null }) {
         >
           Înapoi acasă <ArrowRight size={12} />
         </a>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────── WEBSITE FIELDS ────────────────────────────────
+
+function WebsiteFields({
+  form,
+  setField,
+  toggleFeature,
+}: {
+  form: FormState;
+  setField: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
+  toggleFeature: (v: string) => void;
+}) {
+  return (
+    <div className="mt-8 pt-6 border-t border-[var(--border)] space-y-6">
+      <Header title="Detalii proiect site/platformă" sub="Cu cât știm mai multe, cu atât oferta e mai potrivită." />
+
+      {/* Tip proiect */}
+      <div>
+        <Label>Tip proiect</Label>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
+          {PROJECT_TYPES.map((p) => (
+            <button
+              key={p.value}
+              type="button"
+              onClick={() => setField("projectType", p.value)}
+              className="px-3 py-2.5 text-[13px] rounded-lg text-left border transition-all"
+              style={{
+                background: form.projectType === p.value ? "var(--ink)" : "var(--bg)",
+                color: form.projectType === p.value ? "var(--bg)" : "var(--ink-1)",
+                borderColor: form.projectType === p.value ? "var(--ink)" : "var(--border)",
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Features */}
+      <div>
+        <Label>Funcționalități dorite (poți bifa mai multe)</Label>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {WEBSITE_FEATURES.map((f) => {
+            const on = form.websiteFeatures.includes(f);
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => toggleFeature(f)}
+                className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border transition-all"
+                style={{
+                  background: on ? "var(--ink)" : "var(--bg)",
+                  color: on ? "var(--bg)" : "var(--ink-2)",
+                  borderColor: on ? "var(--ink)" : "var(--border)",
+                }}
+              >
+                {on ? "✓ " : ""}{f}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* Stil design */}
+        <div>
+          <Label>Stil de design preferat</Label>
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {DESIGN_STYLES.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                onClick={() => setField("designStyle", s.value)}
+                className="px-3 py-2.5 text-[12.5px] rounded-lg text-left border transition-all"
+                style={{
+                  background: form.designStyle === s.value ? "var(--ink)" : "var(--bg)",
+                  color: form.designStyle === s.value ? "var(--bg)" : "var(--ink-1)",
+                  borderColor: form.designStyle === s.value ? "var(--ink)" : "var(--border)",
+                }}
+              >
+                <span className="mr-1">{s.emoji}</span> {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Deadline */}
+        <div>
+          <Label>Termen dorit</Label>
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {DEADLINES.map((d) => (
+              <button
+                key={d.value}
+                type="button"
+                onClick={() => setField("deadline", d.value)}
+                className="px-3 py-2.5 text-[12.5px] rounded-lg text-left border transition-all"
+                style={{
+                  background: form.deadline === d.value ? "var(--ink)" : "var(--bg)",
+                  color: form.deadline === d.value ? "var(--bg)" : "var(--ink-1)",
+                  borderColor: form.deadline === d.value ? "var(--ink)" : "var(--border)",
+                }}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Site existent */}
+      <div>
+        <Label>Ai deja un site? Lipește link-ul (opțional)</Label>
+        <input
+          type="url"
+          value={form.currentWebsite}
+          onChange={(e) => setField("currentWebsite", e.target.value)}
+          placeholder="https://siteul-meu-actual.ro"
+          className="mt-1 w-full px-3 py-2.5 text-[14px] rounded-lg border border-[var(--border)] bg-[var(--bg)]"
+        />
+      </div>
+
+      {/* Site-uri de inspirație */}
+      <div>
+        <Label>Site-uri care îți plac (1-3 link-uri, opțional)</Label>
+        <textarea
+          value={form.referenceUrls}
+          onChange={(e) => setField("referenceUrls", e.target.value)}
+          placeholder="https://exemplu1.com&#10;https://exemplu2.com"
+          rows={3}
+          className="mt-1 w-full px-3 py-2.5 text-[14px] rounded-lg border border-[var(--border)] bg-[var(--bg)] resize-none"
+        />
       </div>
     </div>
   );

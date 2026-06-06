@@ -5,6 +5,25 @@ import { Check, ArrowRight, Globe, Zap, Box, Sparkles, Code2, Layers } from "luc
 
 const PACKAGES = [
   {
+    key: "PROMO",
+    badge: "🔥 Promoție",
+    name: "Promo 999 RON",
+    tagline: "Site profesional la preț unic — ofertă limitată",
+    price: 199, // EUR (~999 RON)
+    monthly: 19,
+    highlight: false,
+    features: [
+      "Site one-page profesional",
+      "Design custom în stilul brandului tău",
+      "Mobil 100% optimizat",
+      "Formular de contact + WhatsApp",
+      "SEO de bază + Google indexat",
+      "Domeniu + hosting 1 an inclus",
+      "Livrare în 5-7 zile",
+    ],
+    notIncluded: ["Animații 3D", "Magazin online"],
+  },
+  {
     key: "PRESENCE",
     badge: "Esențial",
     name: "Presence",
@@ -136,6 +155,18 @@ const EXAMPLES = [
 export default function WebsitePremiumPage() {
   return (
     <main style={{ background: "var(--bg)", color: "var(--ink)" }}>
+      {/* PROMO BAND 999 RON */}
+      <div style={{ background: "linear-gradient(90deg, #0A0807, #1c1a16)", color: "#F4EFE6" }}>
+        <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[13px] md:text-[14px]">
+          <span style={{ color: "#E6C9A3" }}>🔥 Promoție limitată</span>
+          <span>Site profesional la</span>
+          <strong style={{ color: "#E6C9A3", fontSize: "18px" }}>999 RON</strong>
+          <span className="opacity-70">(de la 1.499 RON)</span>
+          <Link href="/contact?oferta=999ron" style={{ color: "#E6C9A3", textDecoration: "underline" }}>
+            profită acum →
+          </Link>
+        </div>
+      </div>
 
       {/* HERO */}
       <section className="relative pt-40 pb-24 px-6 text-center overflow-hidden">

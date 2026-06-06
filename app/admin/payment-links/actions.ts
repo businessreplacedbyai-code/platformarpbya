@@ -3,6 +3,7 @@
 import { getAdminSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createPaymentLink, deactivatePaymentLink } from "@/lib/payment-links";
+import { sendEmail, paymentLinkEmail } from "@/lib/mail";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -82,8 +83,44 @@ export async function createCustomPaymentLink(formData: FormData) {
     data: { stripeLinkId: res.id, url: res.url },
   });
 
+  // 4. trimite email automat clientului (dacă a fost setat)
+  const sendToClient = formData.get("sendEmail") === "on";
+  if (sendToClient && customerEmail) {
+    const tpl = paymentLinkEmail({
+      customerName,
+      description,
+      amount,
+      currency,
+      url: res.url,
+      mode,
+    });
+    sendEmail({ to: customerEmail, subject: tpl.subject, html: tpl.html, text: tpl.text })
+      .catch((e) => console.error("payment link email failed", e));
+  }
+
   revalidatePath("/admin/payment-links");
   redirect(`/admin/payment-links?ok=${draft.id}`);
+}
+
+/** Retrimite linkul de plată pe email clientului. */
+export async function resendPaymentLink(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") || "");
+  const link = await prisma.paymentLink.findUnique({ where: { id } });
+  if (!link?.customerEmail || link.status !== "active") {
+    redirect("/admin/payment-links?err=cannotresend");
+  }
+  const tpl = paymentLinkEmail({
+    customerName: link!.customerName,
+    description: link!.description,
+    amount: link!.amount,
+    currency: link!.currency,
+    url: link!.url,
+    mode: (link!.mode as "payment" | "subscription") ?? "payment",
+  });
+  const r = await sendEmail({ to: link!.customerEmail!, subject: tpl.subject, html: tpl.html, text: tpl.text });
+  revalidatePath("/admin/payment-links");
+  redirect(r.ok ? "/admin/payment-links?ok=resent" : "/admin/payment-links?err=resend");
 }
 
 export async function disablePaymentLink(formData: FormData) {

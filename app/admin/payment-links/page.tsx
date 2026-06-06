@@ -1,9 +1,9 @@
 import { AdminShell } from "@/components/admin/AdminShell";
 import { prisma } from "@/lib/db";
 import { LinkForm } from "./LinkForm";
-import { disablePaymentLink } from "./actions";
+import { disablePaymentLink, resendPaymentLink } from "./actions";
 import { CopyLink } from "./CopyLink";
-import { Link2, CheckCircle2, XCircle, Power } from "lucide-react";
+import { Link2, CheckCircle2, XCircle, Power, Mail } from "lucide-react";
 
 export const metadata = { title: "Payment Links · Admin" };
 export const dynamic = "force-dynamic";
@@ -118,6 +118,14 @@ export default async function PaymentLinksPage({
                             {l.status === "active" && (
                               <>
                                 <CopyLink url={l.url} description={l.description} />
+                                {l.customerEmail && (
+                                  <form action={resendPaymentLink}>
+                                    <input type="hidden" name="id" value={l.id} />
+                                    <button type="submit" title="Trimite pe email" className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600">
+                                      <Mail size={13} />
+                                    </button>
+                                  </form>
+                                )}
                                 <form action={disablePaymentLink}>
                                   <input type="hidden" name="id" value={l.id} />
                                   <button type="submit" title="Dezactivează"

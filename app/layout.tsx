@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ChromeGate } from "@/components/layout/ChromeGate";
+import { PromoStrip } from "@/components/layout/PromoStrip";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -143,6 +144,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
+        <ChromeGate><PromoStrip /></ChromeGate>
         <Navbar />
         <main className="flex-1">{children}</main>
         <ChromeGate><Footer /></ChromeGate>
