@@ -37,7 +37,7 @@ export function Navbar() {
   return (
     <motion.header
       className={`sticky top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "py-3 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--border)]" : "py-4"
+        scrolled ? "py-3" : "py-4"
       }`}
     >
       <div
