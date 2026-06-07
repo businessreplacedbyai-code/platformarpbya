@@ -8,11 +8,9 @@ const words = ["Afacerea", "ta", "nu", "mai", "are", "nevoie", "de", "angajați.
 
 export function Hero() {
   return (
-    <section className="relative min-h-[100svh] w-full flex flex-col items-center justify-center overflow-hidden pt-32 pb-20 px-6">
-      {/* Mesh gradient background */}
+    <section className="relative min-h-[90svh] w-full flex flex-col items-center justify-center overflow-hidden pt-20 pb-20 px-6">
+      {/* Subtle background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="mesh-bg" />
-        <div className="mesh-orb-3" />
         <div className="absolute inset-0 bg-grid" />
         <div className="noise" />
       </div>
