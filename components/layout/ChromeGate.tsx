@@ -2,8 +2,8 @@
 
 import { usePathname } from "next/navigation";
 
-const HIDDEN_PREFIXES = ["/admin", "/portal", "/intake"];
-const HIDDEN_EXACT = ["/login"];
+const HIDDEN_PREFIXES = ["/admin", "/portal", "/intake", "/builder"];
+const HIDDEN_EXACT = ["/login", "/register"];
 
 export function ChromeGate({ children }: { children: React.ReactNode }) {
   const path = usePathname();

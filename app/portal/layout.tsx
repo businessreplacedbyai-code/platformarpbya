@@ -29,7 +29,7 @@ export default async function PortalLayout({ children }: { children: React.React
       />
       {!subActive && (
         <div style={{ background: "#FEF2F2", borderBottom: "1px solid #FECACA" }}>
-          <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-[13px]" style={{ color: "#991B1B" }}>
               <span>⚠️</span>
               <span>{subscriptionMessage(client.subscriptionStatus)}</span>
@@ -44,7 +44,7 @@ export default async function PortalLayout({ children }: { children: React.React
           </div>
         </div>
       )}
-      <main className="max-w-6xl mx-auto px-6 py-10">{children}</main>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">{children}</main>
     </div>
   );
 }

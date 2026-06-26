@@ -16,6 +16,8 @@ import {
   ChevronRight,
   Circle,
   AlertCircle,
+  Globe,
+  Phone,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +52,6 @@ export default async function PortalDashboard() {
   const tasksTotal = client.tasks.length;
   const tasksPct = tasksTotal > 0 ? Math.round((tasksDone / tasksTotal) * 100) : 0;
   const intakeDone = !!client.intakeSubmittedAt;
-  const pendingRequests = client.purchaseRequests.filter((r) => r.status === "pending");
 
   // Next step logic
   const nextStep = getNextStep({ intakeDone, agents: client.agents, tasksDone, tasksTotal });
@@ -82,7 +83,7 @@ export default async function PortalDashboard() {
         <p className="text-[14px] text-[var(--ink-3)]">
           {liveAgents.length > 0
             ? `${liveAgents.length} agent${liveAgents.length > 1 ? "i" : ""} activ${liveAgents.length > 1 ? "i" : ""} · totul merge`
-            : "Implementare în progres · suntem pe fază"}
+            : "Îți configurăm agenții. Te anunțăm când sunt live."}
         </p>
       </header>
 
@@ -124,9 +125,9 @@ export default async function PortalDashboard() {
         />
         <KpiCard
           icon={ShoppingBag}
-          label="Cereri active"
-          value={pendingRequests.length}
-          hint="în review"
+          label="Agenți în lucru"
+          value={inProgressAgents.length}
+          hint="se configurează"
           accent="violet"
         />
         <KpiCard
@@ -143,13 +144,13 @@ export default async function PortalDashboard() {
           {/* Agenții mei */}
           <Panel
             title="Agenții tăi"
-            action={{ label: "Cere agent nou", href: "/portal/marketplace" }}
+            action={{ label: "Cere agent", href: "/portal/extra" }}
           >
             {client.agents.length === 0 ? (
               <EmptyState
                 icon={Sparkles}
                 text="Niciun agent încă."
-                action={{ label: "Explorează agenții disponibili", href: "/portal/marketplace" }}
+                action={{ label: "Cere-ne un agent", href: "/portal/extra" }}
               />
             ) : (
               <div className="space-y-2">
@@ -241,7 +242,7 @@ export default async function PortalDashboard() {
           <Panel title="Acces rapid">
             <div className="space-y-1">
               {[
-                { label: "Marketplace agenți", href: "/portal/marketplace", icon: Sparkles },
+                { label: "Extra & contact", href: "/portal/extra", icon: Sparkles },
                 { label: "Implementare", href: "/portal/implementation", icon: ClipboardCheck },
                 { label: "Integrări", href: "/portal/integrations", icon: Zap },
                 { label: "Facturare", href: "/portal/billing", icon: ShoppingBag },
@@ -294,8 +295,8 @@ function getNextStep({
   if (!intakeDone) {
     return {
       icon: ClipboardCheck,
-      title: "Completează formularul de onboarding",
-      desc: "Avem nevoie de informații despre afacerea ta pentru a configura agenții.",
+      title: "Completează profilul afacerii",
+      desc: "Adaugă detaliile afacerii ca agenții să răspundă corect, pe specificul tău.",
       href: "/portal/agents",
       cls: "border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900",
       iconCls: "bg-amber-100 text-amber-700",
@@ -306,9 +307,9 @@ function getNextStep({
   if (!hasLive && hasInProgress) {
     return {
       icon: Clock,
-      title: "Agenții tăi sunt în configurare",
-      desc: "Echipa noastră lucrează la setarea și testarea agenților tăi.",
-      href: "/portal/implementation",
+      title: "Agenții tăi se configurează",
+      desc: "Setarea și testarea se fac automat — gata în câteva minute.",
+      href: "/portal/agents",
       cls: "border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-900",
       iconCls: "bg-blue-100 text-blue-700",
     };
@@ -326,9 +327,9 @@ function getNextStep({
   if (agents.length === 0) {
     return {
       icon: Sparkles,
-      title: "Cere primul tău agent AI",
-      desc: "Explorează catalogul și alege agentul potrivit pentru afacerea ta.",
-      href: "/portal/marketplace",
+      title: "Îți pregătim primul agent AI",
+      desc: "Echipa noastră îl configurează pe afacerea ta. Te anunțăm când e gata.",
+      href: "/portal/implementation",
       cls: "border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50 text-violet-900",
       iconCls: "bg-violet-100 text-violet-700",
     };

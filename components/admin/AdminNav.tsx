@@ -18,6 +18,11 @@ import {
   Receipt,
   Link2,
   Zap,
+  Globe,
+  Phone,
+  MapPin,
+  Rocket,
+  Handshake,
 } from "lucide-react";
 import { GlobalSearch } from "./GlobalSearch";
 
@@ -31,12 +36,18 @@ export function AdminNav({
   const pathname = usePathname();
 
   const items = [
+    { href: "/admin/studio", icon: Sparkles, label: "Studio" },
     { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+    { href: "/admin/motor", icon: Rocket, label: "Motor de creștere" },
     { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
+    { href: "/admin/builder", icon: Globe, label: "Website Builder" },
+    { href: "/admin/activare", icon: Phone, label: "Activare agenți" },
     { href: "/admin/outreach", icon: Crosshair, label: "Outreach" },
+    { href: "/admin/harta", icon: MapPin, label: "Hartă lead-uri" },
     { href: "/admin/outreach/istoric", icon: Mail, label: "Istoric outreach" },
     { href: "/admin/leads", icon: Inbox, label: "Leads" },
     { href: "/admin/clients", icon: Users, label: "Clienți" },
+    { href: "/admin/dealuri", icon: Handshake, label: "Dealuri" },
     { href: "/admin/facturi", icon: Receipt, label: "Facturare" },
     { href: "/admin/payment-links", icon: Link2, label: "Linkuri plată" },
     { href: "/admin/automatizari", icon: Zap, label: "Automatizări" },
@@ -66,7 +77,7 @@ export function AdminNav({
         <GlobalSearch />
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
         {items.map((it) => {
           const active =
             it.href === "/admin"

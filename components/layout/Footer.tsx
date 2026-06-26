@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { AnpcBadges } from "./AnpcBadges";
 
 function LinkedInIcon({ size = 16 }: { size?: number }) {
   return (
@@ -40,7 +41,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-[15px] text-[var(--ink-2)] max-w-sm leading-relaxed mb-6">
-              Construim agenți AI care fac munca oamenilor din afacerea ta.
+              Instalăm agenți AI și site-uri pentru afaceri din România.
             </p>
             <div className="flex gap-2">
               <a href="#" aria-label="LinkedIn" className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--ink-2)] hover:text-[var(--ink)] hover:border-[var(--ink)] transition-colors">
@@ -86,7 +87,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-[var(--border)] flex flex-wrap justify-between items-center gap-4">
+        {/* Util — badge-uri legale ANPC SAL/SOL + GDPR */}
+        <div className="mt-14 pt-8 border-t border-[var(--border)]">
+          <h4 className="text-[13px] font-medium mb-4 text-[var(--ink)]">Util</h4>
+          <AnpcBadges />
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-[var(--border)] flex flex-wrap justify-between items-center gap-4">
           <p className="text-[13px] text-[var(--ink-3)]">
             © {new Date().getFullYear()} ReplacedByAI · Toate drepturile rezervate
           </p>
@@ -102,13 +109,13 @@ export function Footer() {
       <div className="border-t border-[var(--border)]">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[14px] text-[var(--ink-2)]">
-            Gata să automatizezi? <span className="text-[var(--ink-3)]">Audit gratuit în 30 minute.</span>
+            Gata să începi? <span className="text-[var(--ink-3)]">Audit + demo gratuit, fără obligații.</span>
           </p>
           <Link
             href="/contact"
             className="shrink-0 h-10 px-6 rounded-full text-[13px] font-medium flex items-center gap-2 border border-[var(--border)] hover:border-[var(--ink)] hover:text-[var(--ink)] text-[var(--ink-2)] transition-colors"
           >
-            Programează acum →
+            Cere audit gratuit →
           </Link>
         </div>
       </div>

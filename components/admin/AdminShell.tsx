@@ -8,10 +8,10 @@ export async function AdminShell({ children }: { children: React.ReactNode }) {
   if (!session || session.role !== "admin") redirect("/login?type=admin");
 
   return (
-    <div className="flex min-h-screen bg-[var(--bg)]">
+    <div className="flex h-screen overflow-hidden bg-[var(--bg)]">
       <AdminNav email={session.email} logout={logoutAction} />
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-6xl mx-auto px-8 py-10">{children}</div>
+        <div className="max-w-6xl mx-auto px-8 py-10 pb-28">{children}</div>
       </main>
     </div>
   );

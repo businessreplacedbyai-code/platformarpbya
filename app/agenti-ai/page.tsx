@@ -22,7 +22,7 @@ export default function CitiesHub() {
           Agenți AI în toată România
         </h1>
         <p className="mt-5 text-[16px] md:text-[18px] max-w-2xl mx-auto" style={{ color: "var(--ink-2)" }}>
-          Implementăm agenți AI remote, oriunde în țară. Alege orașul tău și vezi cum
+          Instalăm agenți AI pentru afaceri din toată țara. Alege orașul tău și vezi cum
           afacerile locale automatizează apeluri, programări și vânzări.
         </p>
       </section>

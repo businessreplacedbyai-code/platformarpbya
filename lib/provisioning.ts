@@ -4,6 +4,7 @@
 // clientul și-i alege din dashboard; agenții individuali se provisionează direct.
 import { prisma } from "@/lib/db";
 import { activateAgentWorkflows, triggerProvision, n8nEnabled } from "@/lib/n8n";
+import { SELF_SERVE_PLANS, type SelfServePlanKey } from "@/lib/plan-limits";
 
 // Câte sloturi de agenți oferă fiecare plan (pentru alegere în dashboard).
 export const PLAN_SLOTS: Record<string, number> = {
@@ -42,7 +43,10 @@ export async function getEntitlement(clientId: string): Promise<Entitlement> {
     include: { agents: true },
   });
   const planKey = client?.planKey ?? null;
-  const slots = planKey ? PLAN_SLOTS[planKey] ?? 0 : 0;
+  // Sloturi de agenți: planurile self-serve (voiceAgents) au prioritate;
+  // fallback pe vechile pachete (growth/scale/...) pentru clienți legacy.
+  const ssPlan = planKey ? SELF_SERVE_PLANS[planKey as SelfServePlanKey] : undefined;
+  const slots = ssPlan ? ssPlan.voiceAgents : planKey ? PLAN_SLOTS[planKey] ?? 0 : 0;
   const fixed = !!(planKey && BUNDLE_FIXED_AGENTS[planKey]);
   const used = (client?.agents ?? []).filter((a) => a.status !== "canceled").length;
   return { planKey, slots, used, remaining: Math.max(0, slots - used), fixed };

@@ -27,9 +27,11 @@ export function Navbar() {
   // Ascunde Navbar pe zonele autentificate / formulare dedicate
   if (
     path === "/login" ||
+    path === "/register" ||
     path.startsWith("/admin") ||
     path.startsWith("/portal") ||
-    path.startsWith("/intake")
+    path.startsWith("/intake") ||
+    path.startsWith("/builder")
   ) {
     return null;
   }
@@ -87,7 +89,7 @@ export function Navbar() {
               Login
             </Link>
             <Button href="/contact" variant="primary" size="sm" arrow>
-              Analiza gratuită
+              Audit gratuit
             </Button>
           </div>
 
@@ -122,7 +124,7 @@ export function Navbar() {
               <LogIn size={14} /> Login
             </Link>
             <Button href="/contact" variant="primary" arrow className="w-full justify-center">
-              Analiza gratuită
+              Audit gratuit
             </Button>
           </div>
         </div>

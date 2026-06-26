@@ -1,7 +1,7 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Mail, MessageCircle, MapPin, Clock } from "lucide-react";
+import { Mail, MessageCircle, MapPin, Clock, Sparkles } from "lucide-react";
 
 export function ContactCTA() {
   const ref = useRef(null);
@@ -14,7 +14,7 @@ export function ContactCTA() {
       className="relative py-32 px-6 overflow-hidden"
     >
       <div className="absolute inset-0 pointer-events-none opacity-50">
-        <div className="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-[radial-gradient(circle,rgba(167,139,250,0.10),transparent_70%)] blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-[radial-gradient(circle,rgba(212,175,55,0.12),transparent_70%)] blur-3xl" />
       </div>
 
       <div className="relative max-w-6xl mx-auto">
@@ -24,15 +24,14 @@ export function ContactCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
           >
-            <p className="eyebrow mb-4">Contact direct</p>
+            <p className="eyebrow mb-4">Audit gratuit</p>
             <h2 className="h-display text-4xl md:text-5xl lg:text-6xl mb-6 leading-[1.05]">
-              Scrie-ne și primești{" "}
-              <span className="gradient-text">analiza gratuită.</span>
+              Vezi câți clienți pierzi{" "}
+              <span className="gradient-text">— gratis.</span>
             </h2>
             <p className="text-lg text-[var(--ink-2)] leading-relaxed mb-8 max-w-xl">
-              Completează formularul de contact și îți trimitem în cel mai scurt timp posibil
-              o analiză a proceselor din afacerea ta care pot fi automatizate.
-              Fără obligații, fără jargon.
+              Cere un audit: îți arătăm unde scapi apeluri și programări și îți facem un demo
+              de agent pe afacerea ta. Fără obligații, fără jargon.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -40,20 +39,20 @@ export function ContactCTA() {
                 href="/contact"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[var(--ink)] text-[var(--bg-2)] text-[15px] font-medium hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] transition-all"
               >
-                <MessageCircle size={16} />
-                Trimite cererea
+                <Sparkles size={16} />
+                Cere audit gratuit
               </a>
               <a
-                href="mailto:contact@replacedbyai.ro"
+                href="/preturi"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[var(--border)] text-[var(--ink)] hover:bg-[var(--bg-3)] transition-all text-[15px]"
               >
-                <Mail size={16} />
-                contact@replacedbyai.ro
+                <MessageCircle size={16} />
+                Vezi prețuri
               </a>
             </div>
 
             <p className="mt-5 text-[13px] text-[var(--ink-3)]">
-              Răspuns rapid · Analiză gratuită · Fără obligații
+              Audit + demo gratuit · fără obligații
             </p>
           </motion.div>
 
@@ -75,7 +74,7 @@ export function ContactCTA() {
               label="Formular contact"
               value="replacedbyai.ro/contact"
               href="/contact"
-              hint="Analiză gratuită după trimitere"
+              hint="Audit gratuit după trimitere"
             />
             <ContactCard
               icon={MapPin}

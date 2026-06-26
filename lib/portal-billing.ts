@@ -13,6 +13,10 @@ const APP_URL =
 // Map planKey → Stripe priceId (din env). Creezi produsele în Stripe și
 // pui ID-urile în .env.local: STRIPE_PRICE_GROWTH=price_xxx etc.
 const PRICE_IDS: Record<string, string | undefined> = {
+  // self-serve (USD)
+  starter: process.env.STRIPE_PRICE_STARTER,
+  pro: process.env.STRIPE_PRICE_PRO,
+  business: process.env.STRIPE_PRICE_BUSINESS,
   growth: process.env.STRIPE_PRICE_GROWTH,
   scale: process.env.STRIPE_PRICE_SCALE,
   enterprise: process.env.STRIPE_PRICE_ENTERPRISE,
@@ -34,6 +38,10 @@ const PRICE_IDS: Record<string, string | undefined> = {
 // Setup one-time price IDs — adăugat automat la primul checkout subscription.
 // Toate sunt prețuri non-recurring pe același produs.
 const SETUP_IDS: Record<string, string | undefined> = {
+  // self-serve (USD)
+  starter: process.env.STRIPE_PRICE_STARTER_SETUP,
+  pro: process.env.STRIPE_PRICE_PRO_SETUP,
+  business: process.env.STRIPE_PRICE_BUSINESS_SETUP,
   // Pilot €99 / 30 zile — ofertă de intrare (one-time, prin startOneTimePayment).
   pilot: process.env.STRIPE_PRICE_PILOT,
   growth: process.env.STRIPE_PRICE_GROWTH_SETUP,

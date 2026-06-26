@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getAdminSession, getClientSession } from "@/lib/auth";
 import { loginAction } from "./actions";
+import { GoogleButton, AuthDivider } from "@/components/auth/GoogleButton";
+import { isGoogleEnabled } from "@/lib/google-oauth";
 
 export const metadata: Metadata = {
   title: "Autentificare — ReplacedByAI",
@@ -16,6 +18,17 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string; error?: string }>;
 }) {
   const sp = await searchParams;
+  const googleOn = isGoogleEnabled();
+  const errMsg =
+    sp.error === "oauth"
+      ? "Autentificarea cu Google a eșuat. Încearcă din nou."
+      : sp.error === "oauth_email"
+      ? "Contul Google nu are email verificat. Folosește email + parolă."
+      : sp.error === "no_account"
+      ? "Nu există un cont cu acest email. Contactează-ne ca să-ți creăm unul."
+      : sp.error
+      ? "Email sau parolă incorecte."
+      : null;
 
   // Deja loghat? Redirect către dashboard-ul potrivit.
   const [admin, client] = await Promise.all([
@@ -50,7 +63,7 @@ export default async function LoginPage({
             Conectează-te la contul ReplacedByAI.
           </p>
 
-          {sp.error && (
+          {errMsg && (
             <div
               className="mb-5 text-[13px] rounded-xl px-3 py-2.5"
               style={{
@@ -59,8 +72,15 @@ export default async function LoginPage({
                 border: "1px solid var(--border)",
               }}
             >
-              Email sau parolă incorecte.
+              {errMsg}
             </div>
+          )}
+
+          {googleOn && (
+            <>
+              <GoogleButton next={sp.next} />
+              <AuthDivider label="sau cu email" />
+            </>
           )}
 
           <form action={loginAction} className="space-y-4">
@@ -107,9 +127,9 @@ export default async function LoginPage({
           </form>
 
           <p className="text-[12px] text-center mt-6 text-[var(--ink-3)]">
-            Nu ai cont? Contactează-ne la{" "}
-            <Link href="/contact" className="underline">
-              hello@replacedbyai.ro
+            Nu ai cont?{" "}
+            <Link href="/contact" className="underline text-[var(--ink)] font-medium">
+              Contactează-ne
             </Link>
           </p>
         </div>

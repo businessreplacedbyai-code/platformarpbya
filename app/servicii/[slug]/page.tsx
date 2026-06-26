@@ -59,7 +59,7 @@ export default async function ServiciuPage({
           {s.tagline}
         </p>
         <Button href="/contact" variant="primary" arrow size="lg">
-          Cere o analiză gratuită
+          Cere audit gratuit
         </Button>
       </section>
 
@@ -114,17 +114,23 @@ export default async function ServiciuPage({
           Plan & <span className="gradient-text">preț</span>
         </h2>
         <div className="rounded-3xl border border-[var(--border)] bg-[var(--bg-2)] p-10 md:p-12">
-          <p className="eyebrow mb-4">Setup + abonament</p>
+          <p className="eyebrow mb-4">Instalat de noi</p>
           <div className="h-display text-5xl md:text-6xl mb-3">
-            de la <span className="text-[var(--ink)]">€299</span>
+            de la <span className="text-[var(--ink)]">490 lei</span>
             <span className="text-[var(--ink-3)] text-3xl">/lună</span>
           </div>
           <p className="text-[var(--ink-3)] mb-8 max-w-xl">
-            Setup unic + abonament lunar. Preț final după analiza gratuită.
+            Setup unic + abonament lunar, instalat și optimizat de noi pe afacerea ta.
+            Începe cu un audit și un demo gratuit — vezi rezultatul înainte să plătești.
           </p>
-          <Button href="/contact" variant="primary" arrow size="lg">
-            Cere ofertă personalizată
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button href="/contact" variant="primary" arrow size="lg">
+              Cere audit gratuit
+            </Button>
+            <Button href="/preturi" variant="secondary" size="lg">
+              Vezi prețuri
+            </Button>
+          </div>
         </div>
       </section>
 

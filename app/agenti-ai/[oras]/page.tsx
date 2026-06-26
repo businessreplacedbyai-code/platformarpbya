@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CITIES, getCity } from "@/lib/cities";
 import { agents } from "@/lib/agents";
-import { BUNDLES, PILOT_OFFER, GUARANTEES } from "@/lib/pricing";
 
 const SITE = "https://www.replacedbyai.ro";
 
@@ -20,7 +19,7 @@ export async function generateMetadata({
   const city = getCity(oras);
   if (!city) return {};
   const title = `Agenți AI în ${city.name} — automatizare afaceri | ReplacedByAI`;
-  const description = `Agenți AI pentru afaceri din ${city.name} (${city.county}): preiau apeluri, vând, programează și răspund clienților 24/7. Setup în 48h, garanție 30 zile. Pilot de la €99.`;
+  const description = `Agenți AI pentru afaceri din ${city.name} (${city.county}): preiau apeluri, vând, programează și răspund clienților 24/7. Instalăm agentul pe afacerea ta. Audit și demo gratuit, fără obligații.`;
   const url = `${SITE}/agenti-ai/${city.slug}`;
   return {
     title,
@@ -46,11 +45,11 @@ export default async function CityPage({
     },
     {
       q: `Cât costă un agent AI pentru o firmă din ${city.name}?`,
-      a: `Poți începe cu un Pilot de 30 de zile la ${PILOT_OFFER.price}€ (un agent configurat și live). Pachetele lunare pornesc de la €${BUNDLES[0].price}/lună, cu setup inclus în primul abonament. Fără contract pe termen lung — anulezi oricând.`,
+      a: `Începi cu un audit și un demo gratuit, fără obligații. Pachetele pornesc de la 390 lei/lună + setup, instalat de noi pe afacerea ta. Fără contract — anulezi oricând.`,
     },
     {
-      q: `În cât timp se implementează în ${city.name}?`,
-      a: `Setup-ul complet durează 48 de ore. Totul se face remote — nu trebuie să te deplasezi. Configurăm agentul pe afacerea ta, îl testăm și îl punem live.`,
+      q: `În cât timp pornește în ${city.name}?`,
+      a: `În ~5 zile lucrătoare de la audit. Instalăm și configurăm noi agentul pe afacerea ta — tu nu faci nimic tehnic.`,
     },
     {
       q: `Agentul AI vorbește românește?`,
@@ -58,7 +57,7 @@ export default async function CityPage({
     },
     {
       q: `Ce se întâmplă dacă nu sunt mulțumit?`,
-      a: `Ai garanție de 30 de zile — bani înapoi dacă nu vezi rezultate. Fără contract, fără riscuri.`,
+      a: `Începi cu un audit și un demo gratuit — vezi rezultatul înainte să plătești. Anulezi oricând, fără contract și fără riscuri.`,
     },
   ];
 
@@ -75,14 +74,14 @@ export default async function CityPage({
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
-    serviceType: "Implementare agenți AI pentru afaceri",
+    serviceType: "Implementare agenți AI (done-for-you)",
     provider: { "@type": "Organization", name: "ReplacedByAI", url: SITE },
     areaServed: { "@type": "City", name: city.name },
     description: `Agenți AI pentru afaceri din ${city.name}: voce, programări, vânzări, suport, social media și facturare automată.`,
     offers: {
       "@type": "Offer",
-      priceCurrency: "EUR",
-      price: String(PILOT_OFFER.price),
+      priceCurrency: "RON",
+      price: "390",
       url: `${SITE}/agenti-ai/${city.slug}`,
     },
   };
@@ -121,15 +120,15 @@ export default async function CityPage({
           24/7, fără greșeli. Pentru afaceri din {city.name} care vor să crească fără să angajeze mai mult.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2 mt-7 text-[12.5px]">
-          {GUARANTEES.map((g) => (
-            <span key={g.title} className="px-3 py-1.5 rounded-full" style={{ background: "var(--bg-3)", color: "var(--ink-1)", border: "1px solid var(--border)" }}>
-              ✓ {g.title}
+          {["Instalat de noi", "Live în 5 zile", "Fără contract", "Date în UE"].map((g) => (
+            <span key={g} className="px-3 py-1.5 rounded-full" style={{ background: "var(--bg-3)", color: "var(--ink-1)", border: "1px solid var(--border)" }}>
+              ✓ {g}
             </span>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3 justify-center">
           <Link href="/contact" className="h-12 px-7 rounded-xl grid place-items-center text-[14px] font-medium" style={{ background: "var(--ink)", color: "var(--bg)" }}>
-            Programează demo gratuit →
+            Cere audit gratuit →
           </Link>
           <Link href="/preturi" className="h-12 px-7 rounded-xl grid place-items-center text-[14px] font-medium" style={{ background: "var(--bg-3)", color: "var(--ink)", border: "1px solid var(--border)" }}>
             Vezi prețuri
@@ -145,7 +144,7 @@ export default async function CityPage({
         <p className="text-[15px] leading-relaxed mb-3" style={{ color: "var(--ink-2)" }}>
           Fie că ai o clinică, un restaurant, un salon sau o firmă de servicii în {city.name},
           pierzi clienți de fiecare dată când telefonul sună în gol sau un mesaj rămâne fără răspuns.
-          Un agent AID răspunde la fiecare apel și mesaj, instant, la orice oră — și transformă
+          Un agent AI răspunde la fiecare apel și mesaj, instant, la orice oră — și transformă
           interesul în programări și vânzări reale.
         </p>
         <p className="text-[15px] leading-relaxed" style={{ color: "var(--ink-2)" }}>
@@ -173,7 +172,7 @@ export default async function CityPage({
                 <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "var(--ink-3)" }}>{a.role}</div>
                 <h3 className="text-[15px] font-medium mb-1.5">{a.name}</h3>
                 <p className="text-[12.5px] leading-relaxed" style={{ color: "var(--ink-2)" }}>{a.short}</p>
-                <div className="text-[12px] mt-3" style={{ color: "var(--ink-3)" }}>de la €{a.monthlyFrom}/lună</div>
+                <div className="text-[12px] mt-3" style={{ color: "var(--ink-3)" }}>instalat de noi · de la 490 lei/lună</div>
               </Link>
             ))}
           </div>
@@ -190,14 +189,14 @@ export default async function CityPage({
         <div className="rounded-3xl p-8 md:p-10 text-center" style={{ background: "var(--ink)", color: "var(--bg)" }}>
           <p className="text-[11px] uppercase tracking-[0.22em] opacity-60 mb-3">Începe fără risc în {city.name}</p>
           <h2 className="text-[26px] md:text-[32px] font-medium tracking-tight mb-3">
-            Pilot 30 de zile — €{PILOT_OFFER.price}
+            Audit + demo gratuit
           </h2>
           <p className="text-[14px] opacity-70 max-w-lg mx-auto mb-6">
-            Un agent AI configurat și live în 48h. Vezi rezultate înainte să te abonezi.
-            Dacă nu te convinge, primești banii înapoi.
+            Îți arătăm unde pierzi clienți și îți facem un demo de agent vocal pe afacerea ta.
+            Gratis, fără obligații. Dacă te convinge, ți-l instalăm.
           </p>
-          <Link href="/contact?pilot=1" className="inline-block h-12 px-8 rounded-xl grid place-items-center text-[14px] font-medium leading-[3rem]" style={{ background: "var(--bg)", color: "var(--ink)" }}>
-            Pornește pilotul →
+          <Link href="/contact" className="inline-block h-12 px-8 rounded-xl grid place-items-center text-[14px] font-medium leading-[3rem]" style={{ background: "var(--bg)", color: "var(--ink)" }}>
+            Cere audit gratuit →
           </Link>
         </div>
       </section>
@@ -237,7 +236,7 @@ export default async function CityPage({
           Gata să automatizezi afacerea ta din {city.name}?
         </h2>
         <Link href="/contact" className="inline-block mt-4 px-8 h-14 leading-[3.5rem] rounded-xl text-[15px] font-medium" style={{ background: "var(--ink)", color: "var(--bg)" }}>
-          Programează discuție gratuită →
+          Cere audit gratuit →
         </Link>
       </section>
     </main>

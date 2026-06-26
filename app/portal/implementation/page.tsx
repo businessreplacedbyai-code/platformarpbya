@@ -11,7 +11,7 @@ const PHASES: { key: string; label: string; desc: string }[] = [
   { key: "config", label: "2. Configurare agent", desc: "Antrenare voce, scripturi, scenarii" },
   { key: "integrations", label: "3. Integrări", desc: "Conectare CRM, telefonie, calendar" },
   { key: "testing", label: "4. Testare", desc: "Testare end-to-end, ajustări fine" },
-  { key: "preview", label: "5. Preview & Go-live", desc: "Validare cu tine, lansare" },
+  { key: "preview", label: "5. Pornire live", desc: "Verifici și pornești agentul" },
 ];
 
 export default async function Implementation() {
@@ -36,7 +36,7 @@ export default async function Implementation() {
         <p className="eyebrow mb-2">Implementare</p>
         <h1 className="h-display text-3xl mb-2">Progresul implementării</h1>
         <p className="text-[14.5px] text-[var(--ink-2)]">
-          Așa stăm cu lansarea agenților tăi. Tracking în timp real.
+          Pașii de la cont la agent live. Vezi ce ai bifat și ce mai ai de făcut.
         </p>
       </header>
 
@@ -51,7 +51,7 @@ export default async function Implementation() {
             <div className="text-[12.5px] text-[var(--ink-3)]">
               {intakeDone
                 ? `Completat pe ${new Date(client.intakeSubmittedAt!).toLocaleDateString("ro-RO")}`
-                : "Trebuie completat pentru a porni implementarea"}
+                : "Completează-l ca agenții să răspundă pe specificul afacerii tale"}
             </div>
           </div>
           {!intakeDone && client.intakeToken && (
@@ -91,7 +91,7 @@ export default async function Implementation() {
       {total === 0 ? (
         <div className="text-center py-12 rounded-2xl border border-[var(--border)] bg-[var(--bg-2)]">
           <p className="text-[13.5px] text-[var(--ink-3)]">
-            Echipa noastră încă pregătește planul tău de implementare.
+            Agenții apar aici după ce îi configurăm pe afacerea ta. Te anunțăm.
           </p>
         </div>
       ) : (

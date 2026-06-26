@@ -5,81 +5,59 @@ import { Check, ArrowRight, Globe, Zap, Box, Sparkles, Code2, Layers } from "luc
 
 const PACKAGES = [
   {
-    key: "PROMO",
-    badge: "🔥 Promoție",
-    name: "Promo 999 RON",
-    tagline: "Site profesional la preț unic — ofertă limitată",
-    price: 199, // EUR (~999 RON)
-    monthly: 19,
+    key: "START",
+    badge: "Entry",
+    name: "Start",
+    tagline: "Primul tău site profesional, rapid",
+    price: 750,
+    monthly: 49,
     highlight: false,
     features: [
-      "Site one-page profesional",
-      "Design custom în stilul brandului tău",
+      "Site de prezentare (one-page)",
+      "Design custom în stilul afacerii tale",
       "Mobil 100% optimizat",
-      "Formular de contact + WhatsApp",
-      "SEO de bază + Google indexat",
+      "Formular contact + WhatsApp + Google Maps",
+      "SEO de bază + indexat pe Google",
       "Domeniu + hosting 1 an inclus",
       "Livrare în 5-7 zile",
     ],
-    notIncluded: ["Animații 3D", "Magazin online"],
+    notIncluded: ["Pagini multiple", "Magazin online"],
   },
   {
-    key: "PRESENCE",
-    badge: "Esențial",
-    name: "Presence",
-    tagline: "Primul tău site profesional",
-    price: 299,
-    monthly: 29,
-    highlight: false,
-    features: [
-      "Design custom — zero template",
-      "Animații de scroll fluide",
-      "Mobil 100% optimizat",
-      "SEO tehnic complet",
-      "Formulare de contact + lead capture",
-      "Hosting + domeniu 1 an inclus",
-      "Livrare în 7 zile",
-    ],
-    notIncluded: ["Animații 3D", "Three.js / WebGL"],
-  },
-  {
-    key: "EXPERIENCE",
+    key: "STANDARD",
     badge: "Cel mai ales",
-    name: "Experience",
-    tagline: "Site cu animații 3D profesionale",
-    price: 599,
-    monthly: 49,
+    name: "Standard",
+    tagline: "Site complet, multi-pagină",
+    price: 1490,
+    monthly: 69,
     highlight: true,
     features: [
-      "Tot ce include Presence",
-      "Animații 3D custom (Three.js / WebGL)",
-      "Scroll storytelling — fiecare secție trăiește",
-      "Particule și efecte de lumini 3D",
-      "Loading screen animat cu logo-ul tău",
-      "Integrare Google Analytics 4",
-      "CMS pentru editare ușoară a conținutului",
-      "Livrare în 14 zile",
+      "Tot ce include Start",
+      "Pagini multiple (servicii, despre, galerie, contact)",
+      "Galerie / portofoliu de lucrări",
+      "Animații de scroll fluide",
+      "SEO tehnic complet",
+      "Integrare Google Analytics",
+      "Livrare în 7-10 zile",
     ],
-    notIncluded: [],
+    notIncluded: ["Magazin online"],
   },
   {
-    key: "IDENTITY",
+    key: "PRO",
     badge: "Premium",
-    name: "Identity",
-    tagline: "Identitate digitală completă",
-    price: 999,
-    monthly: 69,
+    name: "Pro",
+    tagline: "Site + funcții (programări, meniu, 3D)",
+    price: 2490,
+    monthly: 99,
     highlight: false,
     features: [
-      "Tot ce include Experience",
-      "Branding complet (logo + culori + fonturi)",
-      "Pagini multiple (până la 10 pagini)",
-      "3D product showcase interactiv",
-      "Animații cursor custom",
+      "Tot ce include Standard",
+      "Programări online / meniu / portofoliu interactiv",
+      "Animații 3D (Three.js / WebGL) opțional",
+      "CMS pentru editare ușoară a conținutului",
       "Conexiune CRM / newsletter",
-      "Raport lunar performanță",
-      "Suport prioritar 12 luni",
-      "Livrare în 21 zile",
+      "Optimizare avansată + raport lunar",
+      "Livrare în 14 zile",
     ],
     notIncluded: [],
   },
@@ -87,9 +65,9 @@ const PACKAGES = [
     key: "PLATFORM",
     badge: "Magazine & Platforme",
     name: "Platform",
-    tagline: "Magazin online sau platformă digitală custom",
-    price: 1500,
-    monthly: 99,
+    tagline: "Magazin online sau platformă custom",
+    price: 4990,
+    monthly: 149,
     highlight: false,
     features: [
       "Magazin online complet (e-commerce)",
@@ -99,7 +77,6 @@ const PACKAGES = [
       "Panou de administrare ușor de folosit",
       "Integrare curieri, e-Factura, marketing",
       "Platforme custom (booking, SaaS, dashboard-uri)",
-      "Scalabil — crește odată cu afacerea ta",
     ],
     notIncluded: [],
   },
@@ -155,15 +132,13 @@ const EXAMPLES = [
 export default function WebsitePremiumPage() {
   return (
     <main style={{ background: "var(--bg)", color: "var(--ink)" }}>
-      {/* PROMO BAND 999 RON */}
+      {/* BAND: cross-link spre self-serve */}
       <div style={{ background: "linear-gradient(90deg, #0A0807, #1c1a16)", color: "#F4EFE6" }}>
         <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[13px] md:text-[14px]">
-          <span style={{ color: "#E6C9A3" }}>🔥 Promoție limitată</span>
-          <span>Site profesional la</span>
-          <strong style={{ color: "#E6C9A3", fontSize: "18px" }}>999 RON</strong>
-          <span className="opacity-70">(de la 1.499 RON)</span>
-          <Link href="/contact?oferta=999ron" style={{ color: "#E6C9A3", textDecoration: "underline" }}>
-            profită acum →
+          <span style={{ color: "#E6C9A3" }}>✦ Site premium, făcut de noi</span>
+          <span className="opacity-80">Design unic, livrat la cheie.</span>
+          <Link href="/contact" style={{ color: "#E6C9A3", textDecoration: "underline" }}>
+            Cere o ofertă →
           </Link>
         </div>
       </div>
@@ -300,13 +275,13 @@ export default function WebsitePremiumPage() {
                   {p.tagline}
                 </div>
                 <div className="mb-1">
-                  <span className="text-[44px] font-semibold tracking-tight">€{p.price.toLocaleString("ro-RO")}</span>
+                  <span className="text-[44px] font-semibold tracking-tight">{p.price.toLocaleString("ro-RO")} lei</span>
                   <span className="text-[15px] ml-1" style={{ color: p.highlight ? "rgba(255,255,255,0.55)" : "var(--ink-3)" }}>
                     one-time
                   </span>
                 </div>
                 <div className="text-[12px] mb-7" style={{ color: p.highlight ? "rgba(255,255,255,0.45)" : "var(--ink-3)" }}>
-                  + €{p.monthly}/lună mentenanță opțională
+                  + {p.monthly} lei/lună mentenanță opțională
                 </div>
                 <ul className="space-y-2.5 mb-8 flex-1">
                   {p.features.map((f) => (

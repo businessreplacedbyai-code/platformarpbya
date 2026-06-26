@@ -77,10 +77,68 @@ export async function GET(req: NextRequest) {
     html,
   });
 
+  // 🎯 Strategia zilei (generată cu Claude) — email separat
+  let strategySent = false;
+  try {
+    const { generateDailyStrategy } = await import("@/lib/ai-generate");
+    const ctx = `Leads noi 24h: ${leads24h}. Total leads: ${totalLeads}. Clienți: ${totalClients}.`;
+    const strategy = await generateDailyStrategy(ctx);
+    if (strategy) {
+      const body = escape(strategy)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
+      await sendEmail({
+        to: adminEmail,
+        subject: `🎯 Strategia zilei — găsește clienți (${new Date().toLocaleDateString("ro-RO")})`,
+        html: `<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1a1a1a">
+          <h1 style="font-size:20px;margin:0 0 4px">🎯 Strategia zilei</h1>
+          <p style="color:#666;font-size:13px;margin:0 0 20px">${new Date().toLocaleDateString("ro-RO", { weekday: "long", day: "numeric", month: "long" })}</p>
+          <div style="font-size:14px;line-height:1.7">${body}</div>
+          <hr style="border:none;border-top:1px solid #e5e5e0;margin:24px 0" />
+          <p style="font-size:12px;color:#999"><a href="${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.replacedbyai.ro"}/admin/motor">Deschide Motorul de creștere →</a></p>
+        </div>`,
+      });
+      strategySent = true;
+    }
+  } catch (e) {
+    console.error("[daily-strategy] failed", e);
+  }
+
+  // 📞 Lista zilnică pentru caller — 50 firme fără site, neabordate
+  try {
+    const caller = await prisma.adminUser.findFirst({ where: { role: "CALLER" }, select: { notifyEmail: true, email: true } });
+    const callerEmail = caller?.notifyEmail || process.env.CALLER_EMAIL || caller?.email || "caller@replacedbyai.ro";
+    const callLeads = await prisma.outreachLead.findMany({
+      where: { website: null, status: "new", phone: { not: null } },
+      orderBy: [{ reviewCount: "desc" }],
+      take: 50,
+      select: { businessName: true, category: true, city: true, phone: true, ownerName: true },
+    });
+    if (callLeads.length > 0) {
+      const rows = callLeads
+        .map(
+          (l, i) =>
+            `<tr><td style="padding:6px 8px;border-bottom:1px solid #eee">${i + 1}</td><td style="padding:6px 8px;border-bottom:1px solid #eee"><strong>${escape(l.businessName)}</strong>${l.ownerName ? ` · ${escape(l.ownerName)}` : ""}</td><td style="padding:6px 8px;border-bottom:1px solid #eee">${escape(l.category)} · ${escape(l.city)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee"><a href="tel:${escape(l.phone || "")}">${escape(l.phone || "")}</a></td></tr>`
+        )
+        .join("");
+      await sendEmail({
+        to: callerEmail,
+        subject: `📞 ${callLeads.length} firme de sunat azi (${new Date().toLocaleDateString("ro-RO")})`,
+        html: `<div style="font-family:system-ui,sans-serif;max-width:640px;margin:0 auto;padding:20px;color:#1a1a1a">
+          <h1 style="font-size:19px;margin:0 0 4px">📞 Lista ta de azi — ${callLeads.length} firme fără site</h1>
+          <p style="color:#666;font-size:13px;margin:0 0 16px">Sună-le și oferă demo gratuit. Le ai și în aplicație, cu buton de apel + „✓ Deal": <a href="${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.replacedbyai.ro"}/caller">deschide workspace-ul →</a></p>
+          <table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr style="text-align:left;color:#888"><th style="padding:6px 8px">#</th><th style="padding:6px 8px">Firmă</th><th style="padding:6px 8px">Categorie · Oraș</th><th style="padding:6px 8px">Telefon</th></tr></thead><tbody>${rows}</tbody></table>
+        </div>`,
+      });
+    }
+  } catch (e) {
+    console.error("[caller-list] failed", e);
+  }
+
   // Email sequences onboarding
   const seqResults = await runOnboardingSequences();
 
-  return NextResponse.json({ ok: true, leads24h, hot: hotLeads.length, newClients24h, sequences: seqResults });
+  return NextResponse.json({ ok: true, leads24h, hot: hotLeads.length, newClients24h, strategySent, sequences: seqResults });
 }
 
 async function runOnboardingSequences() {

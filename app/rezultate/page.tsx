@@ -30,7 +30,7 @@ export default function RezultatePage() {
             Primele studii de caz <span className="gradient-text">vin în scurt timp.</span>
           </h2>
           <p className="text-[var(--ink-2)] max-w-xl mx-auto mb-8 leading-relaxed">
-            Lucrăm cu primii clienți la implementări concrete. Imediat ce avem
+            Primii clienți își pornesc agenții și site-urile din platformă. Imediat ce avem
             rezultate verificate, le publicăm aici — fără mockup-uri, fără cifre
             inventate.
           </p>

@@ -836,6 +836,20 @@ Răspunde DOAR cu JSON valid (fără markdown, fără text înainte/după):
   return [{ subject: parsed.subject, body: parsed.body }];
 }
 
+// Salut în funcție de ora României — evită „Bună ziua" generat/trimis seara.
+function greetingRo(): string {
+  const h = Number(
+    new Intl.DateTimeFormat("ro-RO", { hour: "numeric", hour12: false, timeZone: "Europe/Bucharest" }).format(new Date())
+  );
+  if (h < 11) return "Bună dimineața";
+  if (h >= 18) return "Bună seara";
+  return "Bună ziua";
+}
+
+function applyGreeting(t: MessageTemplate): MessageTemplate {
+  return { subject: t.subject, body: t.body.replace(/^Bună (ziua|dimineața|seara)/, greetingRo()) };
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // ROUTE HANDLER
 // ═══════════════════════════════════════════════════════════════════════════
@@ -911,6 +925,10 @@ export async function POST(req: NextRequest) {
       chosen = v1;
     }
   }
+
+  // Salut corect în funcție de oră (Bună dimineața / ziua / seara)
+  chosen = applyGreeting(chosen);
+  allVariants = allVariants.map(applyGreeting);
 
   await prisma.outreachLead.update({
     where: { id: leadId },

@@ -4,7 +4,7 @@ import { Mail, MapPin, Clock, LifeBuoy, MessageCircle, FileText } from "lucide-r
 export const metadata = {
   title: "Contact — vorbește cu echipa ReplacedByAI",
   description:
-    "Scrie-ne sau completează formularul. Răspundem în cel mai scurt timp posibil în zilele lucrătoare. Analiză gratuită pentru afacerea ta.",
+    "Scrie-ne pentru un audit gratuit sau o ofertă. Îți arătăm câți clienți pierzi și îți facem un demo de agent pe afacerea ta, fără obligații.",
   alternates: { canonical: "https://www.replacedbyai.ro/contact" },
 };
 
@@ -20,8 +20,8 @@ export default function ContactPage() {
               Scrie-ne — <span className="gradient-text">răspundem cât mai repede.</span>
             </h1>
             <p className="text-lg text-[var(--ink-2)] mb-10 leading-relaxed">
-              Completează formularul și îți trimitem o analiză gratuită a proceselor
-              care pot fi automatizate în afacerea ta. Fără obligații.
+              Vrei un audit gratuit, o ofertă sau ai o întrebare? Completează formularul —
+              îți răspundem rapid și, dacă vrei, îți facem un demo de agent pe afacerea ta.
             </p>
 
             <div className="space-y-3">

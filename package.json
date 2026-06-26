@@ -4,17 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma migrate deploy && prisma generate && next build",
+    "build": "node scripts/migrate-deploy.js && prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "@studio-freight/lenis": "^1.0.42",
+    "@types/leaflet": "^1.9.21",
     "@types/three": "^0.184.1",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
     "jose": "^6.2.3",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.14.0",
     "nanoid": "^5.1.11",
     "next": "16.2.6",

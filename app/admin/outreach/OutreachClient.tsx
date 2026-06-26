@@ -1,11 +1,15 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, lazy, Suspense } from "react";
 import {
   Search, Zap, Send, Eye, EyeOff, Check, X,
   MapPin, Phone, Globe, Star, Mail, AlertTriangle, Loader2,
-  MessageCircle, Pencil, Download, ChevronDown,
+  MessageCircle, Pencil, Download, Map as MapIcon, List,
 } from "lucide-react";
+
+const OutreachMap = lazy(() =>
+  import("@/components/admin/OutreachMap").then((m) => ({ default: m.OutreachMap }))
+);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // WhatsApp templates — editorial, curiosity-driven. NO "Da sau nu" robotic.
@@ -65,13 +69,18 @@ const WA_WITHOUT_SITE: Record<string, string> = {
 
 const WA_SIG = "\n\nReplacedByAI · replacedbyai.ro";
 
+// Salut în funcție de oră — evită „Bună ziua" trimis seara.
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 11) return "Bună dimineața";
+  if (h >= 18) return "Bună seara";
+  return "Bună ziua";
+}
+
+// Mesaj universal „construim orice" — site + agenți AI + automatizări.
 function buildWAMessage(lead: Lead): string {
-  const hasWebsite = !!lead.website;
-  const map = hasWebsite ? WA_WITH_SITE : WA_WITHOUT_SITE;
-  const tpl = map[lead.category] ?? map.default ?? WA_WITH_SITE.default;
-  return tpl
-    .replace(/{name}/g, lead.businessName)
-    .replace(/{city}/g, lead.city) + WA_SIG;
+  void WA_WITH_SITE; void WA_WITHOUT_SITE;
+  return `${greeting()}! Sunt de la ReplacedByAI — construim aproape orice are nevoie o afacere ca să prindă mai mulți clienți: site-uri premium, agenți AI care răspund 24/7, automatizări, magazine online. Cred că am putea ajuta și ${lead.businessName}. Dacă vă interesează, vă trimit o propunere concretă pentru voi.${WA_SIG}`;
 }
 
 function openWhatsApp(lead: Lead) {
@@ -101,6 +110,8 @@ type Lead = {
   messageBody: string | null;
   status: string;
   sentAt: Date | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 const CATEGORIES = [
@@ -145,6 +156,7 @@ export function OutreachClient({
   hasApiKey: boolean;
 }) {
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
+  const [view, setView] = useState<"list" | "map">("list");
 
   // Search controls — multi-select supported
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["restaurant"]);
@@ -155,7 +167,7 @@ export function OutreachClient({
   // Filters
   const [siteFilter, setSiteFilter] = useState<"all" | "with" | "without">("all");
   const [minRating, setMinRating] = useState<number>(0);
-  const [statusFilter, setStatusFilter] = useState<"active" | "all" | "ready" | "sent">("active");
+  const [statusFilter, setStatusFilter] = useState<"active" | "all" | "ready" | "sent" | "tomorrow">("active");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   // Bulk selection
@@ -223,6 +235,7 @@ export function OutreachClient({
         if (statusFilter === "active") return l.status !== "ignored" && l.status !== "sent";
         if (statusFilter === "ready") return l.status === "ready";
         if (statusFilter === "sent") return l.status === "sent";
+        if (statusFilter === "tomorrow") return l.status === "new" && !l.website;
         return l.status !== "ignored";
       })
       .filter((l) => {
@@ -243,8 +256,14 @@ export function OutreachClient({
     replied: leads.filter((l) => l.status === "replied").length,
   }), [leads]);
 
+  // „Mâine": maxim 50 firme noi, fără site (de contactat a doua zi)
+  const displayLeads = useMemo(
+    () => (statusFilter === "tomorrow" ? visibleLeads.slice(0, 50) : visibleLeads),
+    [visibleLeads, statusFilter]
+  );
+
   // Visible selectable IDs (only ones in current filter)
-  const visibleIds = useMemo(() => visibleLeads.map((l) => l.id), [visibleLeads]);
+  const visibleIds = useMemo(() => displayLeads.map((l) => l.id), [displayLeads]);
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
 
   function toggleSelect(leadId: string) {
@@ -392,7 +411,7 @@ export function OutreachClient({
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       try {
-        await enrichLead(id, useClaude);
+        await enrichLead(id, useClaude, "combo");
         setBulkProgress((p) => p && { ...p, done: p.done + 1 });
       } catch {
         setBulkProgress((p) => p && { ...p, done: p.done + 1, failed: p.failed + 1 });
@@ -532,6 +551,25 @@ export function OutreachClient({
     setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, status: "ignored" } : l)));
   }
 
+  // Marchează manual (Am trimis pe WhatsApp/IG) sau resetează în listă.
+  async function setStatus(leadId: string, status: string) {
+    await fetch("/api/admin/outreach/set-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ leadId, status }),
+    });
+    setLeads((prev) =>
+      prev.map((l) =>
+        l.id === leadId
+          ? { ...l, status, sentAt: status === "sent" ? new Date() : status === "new" ? null : l.sentAt }
+          : l
+      )
+    );
+    if (status === "sent") {
+      setSelectedIds((prev) => { const n = new Set(prev); n.delete(leadId); return n; });
+    }
+  }
+
   // ─── Toggle helpers for multi-select ────────────────────────────────────
 
   function toggleCategory(c: string) {
@@ -549,12 +587,36 @@ export function OutreachClient({
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div>
-        <p className="text-[11px] uppercase tracking-wider text-[var(--ink-3)] mb-1">Outreach automat</p>
-        <h1 className="h-display text-3xl mb-1">Generează & trimite — bulk</h1>
-        <p className="text-[14px] text-[var(--ink-2)]">
-          Selectează firme · generează mesaje în masă · trimite emailuri cu rate-limit
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <p className="text-[11px] uppercase tracking-wider text-[var(--ink-3)] mb-1">Outreach automat</p>
+          <h1 className="h-display text-3xl mb-1">Generează & trimite — bulk</h1>
+          <p className="text-[14px] text-[var(--ink-2)]">
+            Selectează firme · generează mesaje în masă · trimite emailuri cu rate-limit
+          </p>
+        </div>
+        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "var(--bg-2)", border: "1px solid var(--border)" }}>
+          <button
+            onClick={() => setView("list")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all"
+            style={{
+              background: view === "list" ? "var(--ink)" : "transparent",
+              color: view === "list" ? "var(--bg)" : "var(--ink-3)",
+            }}
+          >
+            <List size={14} /> Listă
+          </button>
+          <button
+            onClick={() => setView("map")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all"
+            style={{
+              background: view === "map" ? "var(--ink)" : "transparent",
+              color: view === "map" ? "var(--bg)" : "var(--ink-3)",
+            }}
+          >
+            <MapIcon size={14} /> Hartă
+          </button>
+        </div>
       </div>
 
       {/* API key warning */}
@@ -685,6 +747,7 @@ export function OutreachClient({
         <div className="flex gap-1">
           {[
             { k: "active" as const, label: "Active", count: leads.filter(l => l.status !== "ignored" && l.status !== "sent").length },
+            { k: "tomorrow" as const, label: "📋 Mâine · fără site", count: leads.filter(l => l.status === "new" && !l.website).length },
             { k: "ready" as const, label: "Gata", count: stats.ready },
             { k: "sent" as const, label: "Trimise", count: stats.sent },
             { k: "all" as const, label: "Toate", count: leads.filter(l => l.status !== "ignored").length },
@@ -853,13 +916,51 @@ export function OutreachClient({
         </div>
       )}
 
+      {/* MAP VIEW */}
+      {view === "map" && (
+        <div className="rounded-2xl overflow-hidden" style={{ height: 560, border: "1px solid var(--border)" }}>
+          {displayLeads.filter((l) => l.lat && l.lng).length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center gap-3 text-center p-8" style={{ background: "var(--bg-2)" }}>
+              <MapIcon size={36} className="text-[var(--ink-3)]" />
+              <p className="text-[14px] text-[var(--ink-2)] font-medium">Niciun lead cu coordonate</p>
+              <p className="text-[13px] text-[var(--ink-3)]">Coordonatele se salvează automat la căutările noi. Leadurile existente nu au lat/lng.</p>
+            </div>
+          ) : (
+            <Suspense fallback={<div className="h-full flex items-center justify-center text-[var(--ink-3)]"><Loader2 className="animate-spin" /></div>}>
+              <OutreachMap
+                leads={displayLeads
+                  .filter((l): l is Lead & { lat: number; lng: number } => !!l.lat && !!l.lng)
+                  .map((l) => ({
+                    id: l.id,
+                    businessName: l.businessName,
+                    city: l.city,
+                    category: l.category,
+                    phone: l.phone,
+                    website: l.website,
+                    rating: l.rating,
+                    status: l.status,
+                    lat: l.lat,
+                    lng: l.lng,
+                  }))}
+                onSelectLead={(id) => {
+                  setView("list");
+                  setTimeout(() => {
+                    document.getElementById(`lead-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }, 100);
+                }}
+              />
+            </Suspense>
+          )}
+        </div>
+      )}
+
       {/* TABLE */}
-      {visibleLeads.length === 0 ? (
+      {view === "list" && displayLeads.length === 0 ? (
         <div className="rounded-2xl p-12 text-center" style={{ background: "var(--bg-2)", border: "1px solid var(--border)" }}>
           <Search size={32} className="mx-auto mb-3 text-[var(--ink-3)]" />
           <p className="text-[14px] text-[var(--ink-2)]">Niciun lead. Selectează industrii și orașe, apoi caută.</p>
         </div>
-      ) : (
+      ) : view === "list" ? (
         <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
           <table className="w-full text-[13px]">
             <thead>
@@ -880,7 +981,7 @@ export function OutreachClient({
               </tr>
             </thead>
             <tbody>
-              {visibleLeads.map((lead, idx) => {
+              {displayLeads.map((lead, idx) => {
                 const cfg = STATUS_CONFIG[lead.status] ?? STATUS_CONFIG.new;
                 const isEnriching = enrichingIds.has(lead.id);
                 const isSending = sendingIds.has(lead.id);
@@ -892,6 +993,7 @@ export function OutreachClient({
                   <>
                     <tr
                       key={lead.id}
+                      id={`lead-${lead.id}`}
                       style={{
                         background: isSelected
                           ? "#FEF3C7"
@@ -1031,6 +1133,40 @@ export function OutreachClient({
                             </button>
                           )}
 
+                          {lead.status !== "replied" && (
+                            <button
+                              onClick={async () => {
+                                const ig = lead.socialUrl && lead.socialUrl.includes("instagram")
+                                  ? lead.socialUrl
+                                  : `https://www.google.com/search?q=${encodeURIComponent(`${lead.businessName} ${lead.city} instagram`)}`;
+                                try {
+                                  await navigator.clipboard.writeText(buildWAMessage(lead));
+                                  setSearchMsg("✓ Mesaj copiat în clipboard — dă paste (Ctrl+V) în DM-ul de Instagram.");
+                                } catch {
+                                  setSearchMsg("Deschid Instagram — copiază mesajul din previzualizare și dă paste în DM.");
+                                }
+                                window.open(ig, "_blank");
+                              }}
+                              title="Copiază mesajul + deschide Instagram pentru DM"
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[12px] font-semibold transition-all hover:scale-105"
+                              style={{ background: "#E1306C", color: "#fff" }}
+                            >
+                              <Send size={13} />
+                              IG
+                            </button>
+                          )}
+
+                          {!["sent", "ignored", "replied"].includes(lead.status) && (
+                            <button
+                              onClick={() => setStatus(lead.id, "sent")}
+                              title="Am contactat manual — marchează ca trimis ca să dispară din listă"
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[12px] font-semibold transition-colors"
+                              style={{ background: "#ECFDF5", color: "#059669", border: "1px solid #A7F3D0" }}
+                            >
+                              <Check size={13} /> Am trimis
+                            </button>
+                          )}
+
                           {lead.status === "ready" && lead.email && (
                             <button
                               onClick={() => sendEmail(lead.id)}
@@ -1101,6 +1237,13 @@ export function OutreachClient({
                           {lead.status === "sent" && (
                             <span className="text-[11px] text-green-600 flex items-center gap-1">
                               <Check size={12} /> Trimis
+                              <button
+                                onClick={() => setStatus(lead.id, "new")}
+                                title="Reset — readu lead-ul în listă"
+                                className="ml-1 px-1.5 py-0.5 rounded text-[10px] text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--bg-3)]"
+                              >
+                                ↺ reset
+                              </button>
                             </span>
                           )}
 
@@ -1130,7 +1273,7 @@ export function OutreachClient({
             </tbody>
           </table>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

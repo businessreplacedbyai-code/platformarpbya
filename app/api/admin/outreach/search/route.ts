@@ -34,7 +34,7 @@ async function searchGooglePlaces(query: string, city: string, apiKey: string) {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": apiKey,
       "X-Goog-FieldMask":
-        "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.primaryType",
+        "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.primaryType,places.location",
     },
     body: JSON.stringify({
       textQuery,
@@ -106,10 +106,12 @@ async function searchOne(
     const address = String(p.formattedAddress ?? "");
     const phone = String(p.nationalPhoneNumber ?? "");
     const rawWebsite = String(p.websiteUri ?? "");
-    // Facebook/Instagram/TikTok nu contează ca site real
     const website = isRealWebsite(rawWebsite) ? rawWebsite : "";
     const rating = p.rating ? Number(p.rating) : null;
     const reviewCount = p.userRatingCount ? Number(p.userRatingCount) : null;
+    const loc = p.location as { latitude?: number; longitude?: number } | null;
+    const lat = loc?.latitude ?? null;
+    const lng = loc?.longitude ?? null;
 
     try {
       const existing = await prisma.outreachLead.findUnique({ where: { placeId } });
@@ -136,10 +138,11 @@ async function searchOne(
           city,
           phone: phone || null,
           website: website || null,
-          // Dacă URL-ul original era social media, îl salvăm separat
           socialUrl: !isRealWebsite(rawWebsite) && rawWebsite ? rawWebsite : null,
           rating,
           reviewCount,
+          lat,
+          lng,
           status: "new",
         },
       });

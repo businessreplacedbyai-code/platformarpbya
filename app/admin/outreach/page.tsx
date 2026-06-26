@@ -21,6 +21,8 @@ export default async function OutreachPage() {
           sentAt: l.sentAt ?? null,
           repliedAt: l.repliedAt ?? null,
           ignoredAt: l.ignoredAt ?? null,
+          lat: l.lat ?? null,
+          lng: l.lng ?? null,
         }))}
         hasApiKey={hasApiKey}
       />

@@ -191,12 +191,12 @@ export function ROICalculator() {
                 href="/contact"
                 className="btn btn-primary px-5 py-3 text-[14px] w-full justify-center group"
               >
-                <span>Cere o analiză gratuită</span>
+                <span>Cere audit gratuit</span>
                 <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
               </Link>
 
               <p className="mt-4 text-[11px] text-[var(--ink-3)] text-center">
-                Estimare orientativă. Cifrele exacte ți le confirmăm într-un audit gratuit de 30 minute.
+                Estimare orientativă. Cifrele exacte ți le confirmăm în auditul gratuit.
               </p>
             </div>
           </div>

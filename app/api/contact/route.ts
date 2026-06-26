@@ -13,39 +13,69 @@ import { scoreLead } from "@/lib/lead-scoring";
 
 export const runtime = "nodejs";
 
+// Formularul trimite "" pentru câmpurile nealese — le tratăm ca lipsă, altfel enum-urile pică validarea.
+const blank = (v: unknown) => (typeof v === "string" && v.trim() === "" ? undefined : v);
+
 const schema = z.object({
   // Step 1
-  name: z.string().min(2).max(120),
-  business: z.string().min(2).max(160),
-  phone: z.string().min(9).max(30),
-  email: z.string().email().max(160),
+  name: z
+    .string({ error: "Numele este obligatoriu" })
+    .min(2, "Numele trebuie să aibă minim 2 caractere")
+    .max(120, "Numele e prea lung"),
+  business: z
+    .string({ error: "Numele afacerii este obligatoriu" })
+    .min(2, "Numele afacerii trebuie să aibă minim 2 caractere")
+    .max(160, "Numele afacerii e prea lung"),
+  phone: z
+    .string({ error: "Telefonul este obligatoriu" })
+    .min(9, "Telefonul e prea scurt (format: 07XX XXX XXX)")
+    .max(30, "Telefonul e prea lung"),
+  email: z
+    .string({ error: "Emailul este obligatoriu" })
+    .email("Emailul nu e valid (ex: nume@firma.ro)")
+    .max(160, "Emailul e prea lung"),
   // Step 2
-  cui: z.string().optional(),
-  sector: z
-    .enum(["horeca", "retail", "medical", "beauty", "imobiliare", "servicii", "altul"])
-    .optional(),
-  employees: z.enum(["1", "2-5", "6-20", "21-50", "50+"]).optional(),
-  city: z.string().max(120).optional(),
-  website: z.string().max(200).optional(),
+  cui: z.preprocess(blank, z.string().optional()),
+  sector: z.preprocess(
+    blank,
+    z
+      .enum(["horeca", "retail", "medical", "beauty", "imobiliare", "servicii", "altul"])
+      .optional()
+  ),
+  employees: z.preprocess(blank, z.enum(["1", "2-5", "6-20", "21-50", "50+"]).optional()),
+  city: z.preprocess(blank, z.string().max(120).optional()),
+  website: z.preprocess(blank, z.string().max(200).optional()),
   // Step 3
-  monthlyBudget: z.enum(["<500", "500-1500", "1500-3000", "3000+"]).optional(),
-  urgency: z.enum(["asap", "1-3luni", "3-6luni", "exploring"]).optional(),
+  monthlyBudget: z.preprocess(
+    blank,
+    z.enum(["<500", "500-1500", "1500-3000", "3000+"]).optional()
+  ),
+  urgency: z.preprocess(blank, z.enum(["asap", "1-3luni", "3-6luni", "exploring"]).optional()),
   painPoints: z.array(z.string()).max(20).optional(),
   agentsWanted: z.array(z.string()).max(20).optional(),
-  message: z.string().max(2000).optional(),
+  message: z.preprocess(blank, z.string().max(2000).optional()),
   // Interes (agenți AI / site / ambele)
-  interestType: z.enum(["ai-agents", "website", "both", "unsure"]).optional(),
-  projectType: z.enum(["presentation", "shop", "platform", "landing", "redesign"]).optional(),
+  interestType: z.preprocess(
+    blank,
+    z.enum(["ai-agents", "website", "both", "unsure"]).optional()
+  ),
+  projectType: z.preprocess(
+    blank,
+    z.enum(["presentation", "shop", "platform", "landing", "redesign"]).optional()
+  ),
   websiteFeatures: z.array(z.string()).max(20).optional(),
-  currentWebsite: z.string().max(300).optional(),
-  designStyle: z.enum(["minimal", "premium-3d", "bold", "classic"]).optional(),
-  deadline: z.enum(["urgent", "1luna", "2-3luni", "flexibil"]).optional(),
-  referenceUrls: z.string().max(1000).optional(),
+  currentWebsite: z.preprocess(blank, z.string().max(300).optional()),
+  designStyle: z.preprocess(
+    blank,
+    z.enum(["minimal", "premium-3d", "bold", "classic"]).optional()
+  ),
+  deadline: z.preprocess(blank, z.enum(["urgent", "1luna", "2-3luni", "flexibil"]).optional()),
+  referenceUrls: z.preprocess(blank, z.string().max(1000).optional()),
   // UTM
-  utmSource: z.string().max(100).optional(),
-  utmMedium: z.string().max(100).optional(),
-  utmCampaign: z.string().max(100).optional(),
-  referrer: z.string().max(500).optional(),
+  utmSource: z.preprocess(blank, z.string().max(100).optional()),
+  utmMedium: z.preprocess(blank, z.string().max(100).optional()),
+  utmCampaign: z.preprocess(blank, z.string().max(100).optional()),
+  referrer: z.preprocess(blank, z.string().max(500).optional()),
   // Honeypot (must be empty)
   website_url: z.string().max(0).optional(),
 });
@@ -66,12 +96,13 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      // Primul mesaj concret, ca utilizatorul să știe exact ce să corecteze.
+      const firstMsg =
+        Object.values(fieldErrors).flat().filter(Boolean)[0] ||
+        "Verifică datele introduse";
       return NextResponse.json(
-        {
-          success: false,
-          error: "Date invalide",
-          issues: parsed.error.flatten().fieldErrors,
-        },
+        { success: false, error: firstMsg, issues: fieldErrors },
         { status: 400 }
       );
     }
@@ -84,7 +115,11 @@ export async function POST(req: Request) {
 
     if (!isValidRomanianPhone(data.phone)) {
       return NextResponse.json(
-        { success: false, error: "Număr de telefon românesc invalid" },
+        {
+          success: false,
+          error: "Numărul de telefon nu pare valid. Folosește formatul 07XX XXX XXX sau +40 7XX XXX XXX.",
+          issues: { phone: ["Telefon românesc invalid"] },
+        },
         { status: 400 }
       );
     }

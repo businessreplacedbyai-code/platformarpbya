@@ -159,10 +159,10 @@ export function Quiz() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
-              href={`/contact?agent=${RECOMMENDATIONS[top[0].tag].slug}`}
+              href={`/agenti/${RECOMMENDATIONS[top[0].tag].slug}`}
               className="btn btn-primary px-6 py-3 text-[14px] flex-1 justify-center"
             >
-              Cere analiză gratuită pentru {RECOMMENDATIONS[top[0].tag].name}
+              Vezi {RECOMMENDATIONS[top[0].tag].name}
               <ArrowRight size={14} />
             </Link>
             <button

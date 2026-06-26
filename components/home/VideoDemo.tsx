@@ -81,7 +81,7 @@ export function VideoDemo() {
             )}
 
             {!hasVideo && (
-              <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(167,139,250,0.15),transparent_60%)]">
+              <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15),transparent_60%)]">
                 <div className="text-center px-6">
                   <div className="h-display text-3xl md:text-5xl text-white mb-3">
                     Demo în pregătire

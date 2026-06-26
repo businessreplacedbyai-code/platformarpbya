@@ -29,24 +29,23 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-[var(--ink)] mb-3">3. Accesul la servicii</h2>
-            <p>Serviciile devin active după:</p>
+            <p>Accesul la platformă devine activ după:</p>
             <ul className="list-disc ml-5 mt-2 space-y-1">
-              <li>Semnarea contractului de prestări servicii</li>
-              <li>Achitarea taxei de setup</li>
-              <li>Completarea formularului de onboarding</li>
+              <li>Crearea contului (cu email și parolă sau cu Google)</li>
+              <li>Activarea unui plan plătit sau a perioadei de trial gratuit</li>
             </ul>
-            <p className="mt-3">Accesul la portalul client se face prin credențialele transmise pe email. Clientul este responsabil pentru păstrarea confidențialității datelor de autentificare.</p>
+            <p className="mt-3">Accesul la contul client se face prin credențialele alese la înregistrare. Clientul este responsabil pentru păstrarea confidențialității datelor de autentificare.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-[var(--ink)] mb-3">4. Prețuri și plată</h2>
-            <p>Prețurile sunt exprimate în EUR și facturate în RON la cursul BNR din ziua emiterii facturii, dacă nu se convine altfel. Plata se efectuează în termen de <strong>14 zile</strong> de la emiterea facturii. Întârzierea plății atrage penalități de 0,1%/zi din suma datorată.</p>
-            <p className="mt-3">Abonamentele se reînnoiesc automat lunar, dacă nu se solicită rezilierea cu minim 30 de zile înainte de scadență.</p>
+            <p>Prețurile planurilor sunt exprimate în USD și se achită online, în avans, prin procesatorul de plăți (Stripe). Factura fiscală se emite în RON, la cursul BNR din ziua emiterii, și se transmite prin e-Factura. Plata se face la momentul abonării.</p>
+            <p className="mt-3">Abonamentele se reînnoiesc automat (lunar sau anual, în funcție de plan) până la anularea de către Client din contul propriu. Anularea oprește reînnoirea de la următoarea perioadă; perioada deja plătită rămâne activă.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-[var(--ink)] mb-3">5. Garanție 30 de zile</h2>
-            <p>Oferim o garanție de <strong>30 de zile</strong> de la data go-live. Dacă nu observi îmbunătățiri măsurabile față de situația inițială, returnăm integral taxa lunară aferentă primei luni. Garanția nu acoperă taxa de setup și nu se aplică în cazul în care Clientul nu a furnizat informațiile necesare configurării.</p>
+            <h2 className="text-xl font-semibold text-[var(--ink)] mb-3">5. Audit gratuit și anulare</h2>
+            <p>Înainte de a începe, oferim un <strong>audit și un demo gratuit</strong>, fără obligații. După contractare, anularea se face oricând prin notificare; serviciul rămâne activ până la finalul perioadei deja plătite. Nu există contract pe termen lung forțat.</p>
           </section>
 
           <section>

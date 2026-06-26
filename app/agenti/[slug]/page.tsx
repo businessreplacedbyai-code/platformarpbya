@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { agents } from "@/lib/agents";
+import { AGENT_PRICES } from "@/lib/pricing";
 import { Button } from "@/components/ui/Button";
 import { Check, Phone } from "lucide-react";
 import { CTAFinal } from "@/components/home/CTAFinal";
@@ -18,7 +19,7 @@ export async function generateMetadata({
   if (!a) return { title: "Agent" };
   return {
     title: `${a.name} — ${a.role} | Agent AI ReplacedByAI`,
-    description: `${a.description} Preț estimativ: de la €${a.setupFrom} setup + €${a.monthlyFrom}/lună. Cere o analiză gratuită.`,
+    description: `${a.description} Instalat de noi pe afacerea ta. Audit și demo gratuit, fără obligații.`,
     alternates: { canonical: `https://www.replacedbyai.ro/agenti/${a.slug}` },
     openGraph: {
       title: `${a.name} — ${a.role}`,
@@ -40,6 +41,7 @@ export default async function AgentPage({
   if (!a) notFound();
 
   const Icon = a.icon;
+  const price = AGENT_PRICES.find((p) => p.slug === a.slug) ?? { monthly: 490, setup: 490 };
 
   const serviceSchema = {
     "@context": "https://schema.org",
@@ -54,12 +56,12 @@ export default async function AgentPage({
     areaServed: { "@type": "Country", name: "Romania" },
     offers: {
       "@type": "Offer",
-      priceCurrency: "EUR",
-      price: a.monthlyFrom,
+      priceCurrency: "RON",
+      price: price.monthly,
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: a.monthlyFrom,
-        priceCurrency: "EUR",
+        price: price.monthly,
+        priceCurrency: "RON",
         unitCode: "MON",
         referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "MON" },
       },
@@ -98,7 +100,7 @@ export default async function AgentPage({
         </p>
         <div className="flex flex-wrap gap-3">
           <Button href="/contact" variant="primary" arrow size="lg">
-            Cere o analiză gratuită
+            Cere audit gratuit
           </Button>
           <Button href="/agenti" variant="secondary" size="lg">
             Vezi toți agenții
@@ -129,40 +131,41 @@ export default async function AgentPage({
       </section>
 
       <section className="px-6 max-w-5xl mx-auto py-20 border-t border-[var(--border)]">
-        <p className="eyebrow mb-4">Preț estimativ</p>
+        <p className="eyebrow mb-4">Preț</p>
         <h2 className="h-display text-3xl md:text-5xl mb-10">
           Cât costă <span className="gradient-text">{a.name}</span>
         </h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="rounded-3xl border border-[var(--border)] bg-[var(--bg-2)] p-8 md:p-10">
-            <p className="eyebrow mb-3">Setup unic</p>
+            <p className="eyebrow mb-3">Abonament lunar</p>
             <div className="h-display text-5xl md:text-6xl mb-2 text-[var(--ink)]">
-              €{a.setupFrom}
+              {price.monthly} lei<span className="text-[var(--ink-3)] text-2xl">/lună</span>
             </div>
             <p className="text-[14px] text-[var(--ink-3)] leading-relaxed">
-              Configurare, integrare cu sistemele tale (CRM, telefonie, calendar),
-              antrenare pe datele afacerii, testare și go-live.
+              Instalat și optimizat de noi pe afacerea ta. Hosting, mentenanță și
+              suport incluse. Anulezi oricând, fără contract.
             </p>
           </div>
           <div className="rounded-3xl border border-[var(--border)] bg-[var(--bg-2)] p-8 md:p-10">
-            <p className="eyebrow mb-3">Abonament lunar</p>
+            <p className="eyebrow mb-3">Setup (o dată)</p>
             <div className="h-display text-5xl md:text-6xl mb-2 text-[var(--ink)]">
-              €{a.monthlyFrom}
-              <span className="text-[var(--ink-3)] text-2xl">/lună</span>
+              {price.setup} lei
             </div>
             <p className="text-[14px] text-[var(--ink-3)] leading-relaxed">
-              Hosting, mentenanță, monitorizare 24/7, actualizări lunare și
-              suport tehnic prioritar.
+              Configurare completă pe afacerea ta: voce, scenarii, integrare cu
+              telefonul și calendarul. Live în ~5 zile.
             </p>
           </div>
         </div>
         <p className="mt-6 text-[13px] text-[var(--ink-3)]">
-          * Preț estimativ. Tariful final depinde de volum, integrări și complexitatea
-          fluxurilor. Primește o ofertă exactă după analiza gratuită.
+          Începe cu un <strong>audit + demo gratuit</strong> — vezi cum sună agentul pe afacerea ta înainte să plătești ceva.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button href="/contact" variant="primary" arrow size="lg">
-            Cere ofertă personalizată
+            Cere audit gratuit
+          </Button>
+          <Button href="/preturi" variant="secondary" size="lg">
+            Vezi prețuri
           </Button>
         </div>
       </section>

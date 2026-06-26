@@ -44,13 +44,14 @@ export async function loginAction(formData: FormData): Promise<void> {
   if (staff) {
     const ok = await bcrypt.compare(password, staff.passwordHash);
     if (!ok) fail(next);
+    const role = (staff.role as StaffRole) || "OWNER";
     await createAdminSession({
       sub: staff.id,
       email: staff.email,
       name: staff.name ?? undefined,
-      staffRole: "OWNER" as StaffRole,
+      staffRole: role,
     });
-    redirect(next || "/admin");
+    redirect(next || (role === "CALLER" ? "/caller" : "/admin"));
   }
 
   // 2) Bootstrap primul Owner din env, doar dacă nu există niciun staff

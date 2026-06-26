@@ -130,7 +130,7 @@ export default async function OGImage() {
             <span style={{ color: "#3A3933" }}>·</span>
             <span>24/7, fără greșeli</span>
             <span style={{ color: "#3A3933" }}>·</span>
-            <span>de la €89/lună</span>
+            <span>de la 490 lei/lună</span>
           </div>
           <span style={{ fontSize: 25, color: AMBER, fontWeight: 500 }}>
             replacedbyai.ro →

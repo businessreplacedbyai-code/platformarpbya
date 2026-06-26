@@ -101,6 +101,22 @@ export async function requestAgent(agentSlug: string, message?: string) {
   return { ok: true };
 }
 
+// Cerere „extra / custom" din cont — trimite email la admin (nu auto-provision).
+export async function requestExtra(formData: FormData) {
+  const client = await requireClient();
+  const message = String(formData.get("message") || "").trim();
+  if (!message) redirect("/portal/extra?err=empty");
+  const safe = message.replace(/</g, "&lt;").slice(0, 4000);
+  sendEmail({
+    to: ADMIN_NOTIFY,
+    subject: `Cerere extra/custom — ${client.businessName}`,
+    html: `<p><b>${client.businessName}</b> · ${client.contactName} · ${client.email}</p>
+<p>Plan: ${client.planKey ?? "—"} · slug: ${client.slug}</p>
+<p>Mesaj:</p><p>${safe}</p>`,
+  }).catch((e) => console.error("extra request email failed", e));
+  redirect("/portal/extra?sent=1");
+}
+
 export async function changePasswordAction(formData: FormData) {
   const current = String(formData.get("current") || "");
   const next = String(formData.get("next") || "");

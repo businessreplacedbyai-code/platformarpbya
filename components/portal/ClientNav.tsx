@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Bot, ShoppingBag, ListChecks, LogOut, CreditCard, UserCircle } from "lucide-react";
+import { LayoutDashboard, Bot, ListChecks, LogOut, CreditCard, UserCircle, Plus } from "lucide-react";
 
 const nav = [
   { href: "/portal", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/portal/agents", label: "Agenții mei", icon: Bot },
-  { href: "/portal/marketplace", label: "Adaugă agent", icon: ShoppingBag },
   { href: "/portal/implementation", label: "Implementare", icon: ListChecks },
+  { href: "/portal/extra", label: "Extra & contact", icon: Plus },
   { href: "/portal/billing", label: "Facturare", icon: CreditCard },
   { href: "/portal/account", label: "Cont", icon: UserCircle },
 ];
@@ -25,7 +25,7 @@ export function ClientNav({
   const path = usePathname();
   return (
     <header className="border-b border-[var(--border)] bg-[var(--bg-2)] sticky top-0 z-30 backdrop-blur-md bg-[var(--bg-2)]/85">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-6">
         <Link href="/portal" className="flex items-center gap-2">
           <span className="w-8 h-8 rounded-lg bg-[var(--ink)] text-[var(--bg-2)] flex items-center justify-center text-[13px] font-bold">
             R

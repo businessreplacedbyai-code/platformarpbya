@@ -10,13 +10,13 @@ export const metadata = {
 const values = [
   {
     num: "01",
-    title: "Construim, nu consultăm",
-    body: "Nu vindem PowerPoint-uri. Implementăm agenți care lucrează de a doua zi.",
+    title: "Produs, nu consultanță",
+    body: "Nu vindem PowerPoint-uri. Instalăm agenți care lucrează de a doua zi.",
   },
   {
     num: "02",
-    title: "Rezultate sau bani înapoi",
-    body: "Dacă nu vedem îmbunătățiri în 30 de zile, nu plătești nimic.",
+    title: "Audit gratuit, fără risc",
+    body: "Îți facem un demo pe afacerea ta înainte să plătești ceva. Te convinge → instalăm. Nu → l-ai văzut gratis.",
   },
   {
     num: "03",
@@ -41,9 +41,9 @@ export default function DesprePage() {
             în același timp.
           </p>
           <p>
-            Am început să construim agenți AI în 2024. Implementăm agenți
-            personalizați pentru afaceri din România — de la restaurante și clinici
-            la magazine online și firme de servicii.
+            Am început să construim agenți AI în 2024. Azi e o platformă cu care
+            orice afacere din România își face singură agenți și site-uri — de la
+            restaurante și clinici la magazine online și firme de servicii.
           </p>
           <p className="text-[var(--ink-2)]">
             Misiunea noastră: să facem din fiecare IMM din România o companie care

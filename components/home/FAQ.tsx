@@ -5,8 +5,8 @@ import { Plus } from "lucide-react";
 
 const faqs = [
   {
-    q: "Cât durează implementarea unui agent?",
-    a: "Între 24 și 72 de ore de la prima discuție. Depinde de complexitatea integrărilor necesare.",
+    q: "Cât durează implementarea?",
+    a: "Instalăm agentul în ~5 zile lucrătoare de la audit. Tu nu faci nimic tehnic — ne ocupăm noi de configurare, voce și integrări.",
   },
   {
     q: "Trebuie să schimb ceva în afacerea mea?",
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "Pot testa înainte să plătesc?",
-    a: "Da. Oferim o perioadă de test de 14 zile pentru orice agent, fără card necesar.",
+    a: "Da. Începi cu un audit și un demo de agent gratuit, pe afacerea ta — vezi rezultatul înainte să plătești ceva.",
   },
   {
     q: "Funcționează și pentru afaceri mici?",

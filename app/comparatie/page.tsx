@@ -41,13 +41,13 @@ export default function ComparatiePage() {
 
         <section className="mt-20 text-center">
           <h2 className="h-display text-3xl md:text-4xl mb-4">
-            Vrei o estimare pentru afacerea ta?
+            Gata să începi?
           </h2>
           <p className="text-[var(--ink-2)] mb-8 max-w-xl mx-auto">
-            Analiză gratuită de 30 de minute. Îți spunem exact ce agent are sens și ce economisești.
+            Cere un audit și un demo gratuit — îți arătăm cât pierzi și cum sună agentul pe afacerea ta. Fără obligații.
           </p>
           <Link href="/contact" className="btn btn-primary px-6 py-3 text-[15px]">
-            Cere analiza gratuită
+            Cere audit gratuit
           </Link>
         </section>
       </div>

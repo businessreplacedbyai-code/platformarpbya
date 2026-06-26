@@ -25,15 +25,15 @@ export const posts: Post[] = [
 <h2>Structura prețului: setup + abonament lunar</h2>
 <p>Un agent AI are două componente de cost:</p>
 <ul>
-  <li><strong>Setup one-time</strong> — configurarea agentului pe specificul afacerii tale (de la 39€ la 499€, în funcție de complexitate).</li>
-  <li><strong>Abonament lunar</strong> — pentru funcționarea continuă, suport și actualizări (de la 69€ la 1.200€/lună).</li>
+  <li><strong>Setup one-time</strong> — o singură dată, pentru provizionarea numărului și a agentului (între $19 și $29, în funcție de plan). În trial e gratis.</li>
+  <li><strong>Abonament lunar</strong> — pentru funcționarea continuă, suport și actualizări (de la $49 la $199/lună).</li>
 </ul>
 
-<h2>Prețuri pe tip de agent</h2>
-<p>Pentru un singur agent, prețurile pornesc de la <strong>69€/lună</strong> (ex: un asistent de contabilitate) și ajung la <strong>179€/lună</strong> pentru un agent vocal care preia apeluri non-stop. Pachetele complete (3-6 agenți) pornesc de la <strong>249€/lună</strong>, cu economii semnificative față de cumpărarea individuală.</p>
+<h2>Prețuri pe plan</h2>
+<p>Noi instalăm tot, pe afacerea ta. Pachete în lei: <strong>Esențial de la 490 lei/lună</strong> (un agent + site), <strong>Complet 890 lei/lună</strong> (agent vocal + programări + toate canalele) și <strong>Pro 1.490 lei/lună</strong> pentru volume mari și multi-locație, plus un setup unic. Totul configurat de noi — tu nu te atingi de nimic tehnic.</p>
 
-<h2>Pilot de 30 de zile la 99€</h2>
-<p>Dacă vrei să testezi fără risc, există un <strong>Pilot de 30 de zile la 99€</strong>: un agent configurat și live în 48 de ore. Dacă te convinge, suma se deduce din primul abonament. Dacă nu, primești banii înapoi.</p>
+<h2>Audit și demo gratuit</h2>
+<p>Dacă vrei să testezi fără risc, începi cu un <strong>audit și un demo gratuit</strong>: îți arătăm unde pierzi clienți și îți facem un agent demo pe afacerea ta. Dacă te convinge, ți-l instalăm. Fără obligații.</p>
 
 <h2>Comparația care contează: AI vs angajat</h2>
 <p>Un angajat de front-office (recepție, telefon, programări) costă în România 3.000-4.500 lei net/lună, plus taxe, concedii, training și fluctuație. Costul real total depășește 6.000 lei/lună.</p>
@@ -44,7 +44,7 @@ export const posts: Post[] = [
   <li>Configurare completă pe afacerea ta (produse, prețuri, proceduri, ton)</li>
   <li>Integrare cu sistemele existente (calendar, WhatsApp, telefon)</li>
   <li>Suport și optimizare continuă</li>
-  <li>Garanție 30 de zile — bani înapoi</li>
+  <li>Audit și demo gratuit — vezi rezultatul înainte să plătești</li>
   <li>Fără contract pe termen lung — anulezi oricând</li>
 </ul>
 
@@ -198,8 +198,8 @@ export const posts: Post[] = [
 
 <h2>Costul unui agent AI</h2>
 <ul>
-  <li>Abonament: <strong>de la 69€ la 179€/lună</strong> (~350-900 lei)</li>
-  <li>Setup one-time: 39€-99€</li>
+  <li>Abonament: <strong>de la $49 la $199/lună</strong> (~230-950 lei)</li>
+  <li>Setup one-time: $19-$29 (gratis în trial)</li>
   <li>Zero taxe, zero concedii, zero fluctuație</li>
   <li>Lucrează <strong>24/7</strong>, nu 8 ore</li>
   <li>Răspunde la apeluri/mesaje simultane nelimitate</li>
@@ -283,7 +283,7 @@ export const posts: Post[] = [
 </ul>
 
 <h2>Rezultate reale</h2>
-<p>Un restaurant din Cluj a trecut de la 34% apeluri ratate la <strong>0%</strong>, a prins comenzi la 23:30 pentru a doua zi, și a redus costul de telefonie cu 86% — de la ~9.000 lei/lună (doi angajați) la 249€/lună. Recenziile Google au urcat de la 4,1 la 4,6 în două luni.</p>
+<p>Un restaurant din Cluj a trecut de la 34% apeluri ratate la <strong>0%</strong>, a prins comenzi la 23:30 pentru a doua zi, și a redus costul de telefonie cu ~90% — de la ~9.000 lei/lună (doi angajați) la $199/lună. Recenziile Google au urcat de la 4,1 la 4,6 în două luni.</p>
 
 <h2>Ce NU se schimbă</h2>
 <p>Numărul tău rămâne același. Personalul nu e concediat — e mutat pe servit și interacțiunea față în față, unde prezența umană chiar contează. Nimeni nu mai stă 8 ore cu telefonul la ureche.</p>
@@ -313,8 +313,8 @@ export const posts: Post[] = [
 </ul>
 <p>Începe cu UNUL. Cel care doare cel mai tare.</p>
 
-<h2>Pasul 2: testează cu un pilot, fără risc</h2>
-<p>Nu te angaja pe termen lung din prima. Un <strong>Pilot de 30 de zile la 99€</strong> îți dă un agent configurat și live, pe care îl testezi pe afacerea ta reală. Dacă te convinge, continui. Dacă nu, primești banii înapoi.</p>
+<h2>Pasul 2: testează gratis, fără risc</h2>
+<p>Nu te angaja pe termen lung din prima. Începi cu un <strong>audit și un demo gratuit</strong>: îți facem un agent demo pe afacerea ta reală. Dacă te convinge, ți-l instalăm și pornești. Anulezi oricând.</p>
 
 <h2>Pasul 3: lasă-l să lucreze, apoi extinde</h2>
 <p>După ce primul agent își dovedește valoarea (de obicei în primele 2-3 săptămâni), adaugi următorul. Mulți clienți încep cu un agent de programări și, după ce văd rezultatele, adaugă agentul vocal și pe cel de social media.</p>
@@ -381,12 +381,12 @@ export const posts: Post[] = [
 <ul>
   <li><strong>0% apeluri ratate</strong> — agentul preia indiferent de câte linii sună simultan</li>
   <li><strong>Disponibil 24/7</strong>, inclusiv noaptea — au prins comenzi la 23:30 pentru a doua zi</li>
-  <li><strong>Cost lunar: 249 EUR</strong> față de 9.000 lei anterior</li>
+  <li><strong>Cost lunar: $199</strong> (planul Business) față de 9.000 lei anterior</li>
   <li><strong>Timp de răspuns mediu: 2 secunde</strong> față de 40 secunde cu oameni</li>
   <li>Recenzii Google: media a urcat de la 4,1 la 4,6 în două luni</li>
 </ul>
 
-<p>Calculul simplu: de la ~9.000 lei/lună la ~1.240 lei/lună (249 EUR la cursul actual). O <strong>reducere de 86%</strong> a costului de telefonie, cu performanță mai bună.</p>
+<p>Calculul simplu: de la ~9.000 lei/lună la ~900 lei/lună ($199 la cursul actual). O <strong>reducere de ~90%</strong> a costului de telefonie, cu performanță mai bună.</p>
 
 <h2>Ce a rămas la oameni</h2>
 

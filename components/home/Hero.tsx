@@ -2,15 +2,17 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { ArrowRight, Sparkles, Volume2 } from "lucide-react";
+import { ArrowRight, Volume2 } from "lucide-react";
 
 const words = ["Afacerea", "ta", "nu", "mai", "are", "nevoie", "de", "angajați."];
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90svh] w-full flex flex-col items-center justify-center overflow-hidden pt-20 pb-20 px-6">
-      {/* Subtle background */}
-      <div className="absolute inset-0 pointer-events-none">
+    <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-24 pb-20 px-6">
+      {/* Background — grand animated gold aurora */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="aurora" />
+        <div className="aurora-3" />
         <div className="absolute inset-0 bg-grid" />
         <div className="noise" />
       </div>
@@ -20,9 +22,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 mb-10 px-3.5 py-1.5 rounded-full glass text-[13px] text-[var(--ink-2)]"
+          className="inline-flex items-center gap-2.5 mb-10 pl-3 pr-3.5 py-1.5 rounded-full glass text-[13px] text-[var(--ink-2)]"
         >
-          <Sparkles size={13} className="text-[var(--accent)]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] pulse-dot shadow-[0_0_8px_var(--accent)]" />
           <span>Lansare: 15 agenți AI pentru IMM-uri românești</span>
           <span className="text-[var(--ink-4)]">·</span>
           <span className="text-[var(--ink)] flex items-center gap-1 font-medium">
@@ -30,7 +32,7 @@ export function Hero() {
           </span>
         </motion.div>
 
-        <h1 className="h-display text-[14vw] sm:text-[10vw] md:text-[7.5vw] lg:text-[112px] text-[var(--ink)] mb-8 max-w-[14ch] mx-auto">
+        <h1 className="h-display text-[15vw] sm:text-[11vw] md:text-[8vw] lg:text-[124px] text-[var(--ink)] mb-9 max-w-[13ch] mx-auto">
           {words.map((w, i) => (
             <motion.span
               key={i}
@@ -44,7 +46,7 @@ export function Hero() {
               className="inline-block mr-[0.22em]"
             >
               {w === "angajați." ? (
-                <span className="gradient-text">{w}</span>
+                <span className="shimmer-gold">{w}</span>
               ) : (
                 w
               )}
@@ -58,8 +60,8 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.7 }}
           className="text-lg md:text-xl text-[var(--ink-2)] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          Implementăm agenți AI care preiau apeluri, vând, programează, răspund și
-          facturează. <span className="text-[var(--ink)]">24/7. Fără greșeli.</span>
+          Instalăm agenți AI care preiau apeluri, vând și programează clienții tăi — 24/7.
+          <span className="text-[var(--ink)]"> Tu nu te atingi de nimic tehnic.</span>
         </motion.p>
 
         <motion.div
@@ -69,7 +71,7 @@ export function Hero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-3"
         >
           <Button href="/contact" variant="primary" size="lg" arrow>
-            Cere o analiză gratuită
+            Cere audit gratuit
           </Button>
           <Button href="#audio-demo" variant="secondary" size="lg">
             <Volume2 size={14} className="inline mr-1.5 -mt-0.5" />
@@ -83,7 +85,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 1.1 }}
           className="mt-6 text-[13px] text-[var(--ink-3)]"
         >
-          Răspundem cât mai repede · Fără contract pe termen lung
+          Audit + demo gratuit · fără obligații · instalat de noi
         </motion.p>
 
         {/* Product preview mockup */}

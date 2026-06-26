@@ -17,9 +17,42 @@ model AdminUser {
   email        String   @unique
   passwordHash String
   name         String?
-  // Staff role: OWNER (acces total) > ADMIN > EDITOR > VIEWER
+  // Staff role: OWNER (acces total) > ADMIN > EDITOR > VIEWER > CALLER (cold-call)
   role         String   @default("OWNER")
+  notifyEmail  String?  // mail unde primește lista zilnică (caller)
   createdAt    DateTime @default(now())
+}
+
+// ─── DEALURI ÎNCHISE (logate de caller, livrate de admin) ──────────────
+model Deal {
+  id            String   @id @default(cuid())
+  businessName  String
+  contactName   String?
+  phone         String?
+  city          String?
+  packageWanted String?   // ce vrea clientul
+  value         Int?      // valoare estimată (lei)
+  notes         String?
+  status        String   @default("nou") // nou | in_lucru | livrat
+  callerEmail   String?
+  leadId        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
+// ─── USAGE / METERING SELF-SERVE (limite pe plan, anti-pierdere) ─────
+model ClientUsage {
+  id        String   @id @default(cuid())
+  clientId  String
+  period    String   // YYYY-MM (perioada de facturare)
+  resource  String   // aiGen | voiceMin | site
+  amount    Int      @default(0)
+  updatedAt DateTime @updatedAt
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, period, resource])
 }
 
 // ─── LEADS (din formularul de contact public) ─────────
@@ -140,6 +173,7 @@ model Client {
 
   apiKeys         ClientApiKey[]
   webhooks        ClientWebhook[]
+  usage           ClientUsage[]
 
   // Relations
   intake          ClientIntake?
@@ -469,10 +503,14 @@ model OutreachLead {
   rating        Float?
   reviewCount   Int?
 
+  lat           Float?
+  lng           Float?
+
   socialUrl     String?   // Facebook/Instagram (nu contează ca site real)
 
   email         String?
   emailSource   String?
+  ownerName     String?
 
   messageSubject String?
   messageBody   String?

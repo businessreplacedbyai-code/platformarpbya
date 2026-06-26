@@ -4,7 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ChromeGate } from "@/components/layout/ChromeGate";
-import { PromoStrip } from "@/components/layout/PromoStrip";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -23,11 +23,11 @@ const SITE_URL = "https://www.replacedbyai.ro";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "ReplacedByAI — Agenți AI pentru afaceri din România",
+    default: "ReplacedByAI — Agenți AI & Web Development România",
     template: "%s | ReplacedByAI",
   },
   description:
-    "ReplacedByAI implementează agenți AI care preiau apeluri, vând, programează și răspund clienților 24/7. Plus site-uri premium, magazine online și platforme digitale custom pentru afaceri din România.",
+    "ReplacedByAI construiește site-uri profesionale și instalează agenți AI care preiau apeluri, vând și programează 24/7. Web development + automatizare AI — tot ce are nevoie afacerea ta, sub un singur acoperiș.",
   applicationName: "ReplacedByAI",
   authors: [{ name: "ReplacedByAI", url: SITE_URL }],
   creator: "ReplacedByAI",
@@ -36,14 +36,21 @@ export const metadata: Metadata = {
   keywords: [
     "agenți AI România",
     "agenție AI România",
+    "web development România",
+    "creare site web România",
+    "site web profesional afaceri",
+    "dezvoltare web IMM",
     "agent vocal AI",
-    "automatizare afaceri",
+    "automatizare afaceri România",
     "AI pentru IMM",
     "chatbot România",
     "inteligență artificială afaceri",
     "VoiceBot AI",
     "agent AI vânzări",
     "agent AI programări",
+    "website pentru restaurant",
+    "website pentru cafenea",
+    "website pentru salon",
     "ReplacedByAI",
   ],
   alternates: {
@@ -53,9 +60,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "ReplacedByAI — Agenți AI pentru afaceri din România",
+    title: "ReplacedByAI — Agenți AI & Web Development România",
     description:
-      "Agenți AI care preiau apeluri, vând, programează și răspund clienților 24/7. Înlocuiește joburile repetitive cu inteligență artificială.",
+      "Construim site-uri profesionale și instalăm agenți AI vocali care preiau apeluri, vând și programează 24/7. Demo gratuit, fără obligații.",
     url: SITE_URL,
     siteName: "ReplacedByAI",
     locale: "ro_RO",
@@ -63,9 +70,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ReplacedByAI — Agenți AI pentru afaceri din România",
+    title: "ReplacedByAI — AI & Web Development România",
     description:
-      "Agenți AI care preiau apeluri, vând, programează și facturează 24/7.",
+      "Site-uri profesionale + agenți AI care preiau apeluri, vând și programează 24/7.",
   },
   robots: {
     index: true,
@@ -93,14 +100,14 @@ const orgSchema = {
   logo: `${SITE_URL}/logo-mark.png`,
   image: `${SITE_URL}/opengraph-image`,
   description:
-    "ReplacedByAI implementează agenți de inteligență artificială pentru afaceri din România. Agenți vocali, programări automate, vânzări și suport clienți 24/7.",
+    "ReplacedByAI construiește site-uri profesionale și implementează agenți AI vocali pentru afaceri din România — preiau apeluri, programări, vânzări și suport 24/7. Web development + AI, instalat de noi.",
   email: "contact@replacedbyai.ro",
   address: {
     "@type": "PostalAddress",
     addressCountry: "RO",
   },
   areaServed: { "@type": "Country", name: "Romania" },
-  knowsAbout: ["Artificial Intelligence", "AI Agents", "Business Automation", "Voice AI", "Chatbots"],
+  knowsAbout: ["Artificial Intelligence", "AI Agents", "Business Automation", "Voice AI", "Chatbots", "Web Development", "Website Design", "Next.js", "Business Websites"],
   sameAs: [
     "https://www.linkedin.com/company/replacedbyai",
     "https://www.facebook.com/replacedbyai",
@@ -144,10 +151,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        <ChromeGate><PromoStrip /></ChromeGate>
         <Navbar />
         <main className="flex-1">{children}</main>
         <ChromeGate><Footer /></ChromeGate>
+        <CookieBanner />
       </body>
     </html>
   );

@@ -13,7 +13,7 @@ function getSecret() {
   return new TextEncoder().encode(secret);
 }
 
-export type StaffRole = "OWNER" | "ADMIN" | "EDITOR" | "VIEWER";
+export type StaffRole = "OWNER" | "ADMIN" | "EDITOR" | "VIEWER" | "CALLER";
 
 export type SessionPayload = {
   sub: string;
@@ -25,6 +25,7 @@ export type SessionPayload = {
 };
 
 const STAFF_RANK: Record<StaffRole, number> = {
+  CALLER: 0,
   VIEWER: 1,
   EDITOR: 2,
   ADMIN: 3,
@@ -71,6 +72,15 @@ export async function createClientSession(
     maxAge: MAX_AGE,
   });
 }
+
+// Pentru route handlers (ex: OAuth callback) care își setează singure cookie-ul
+// direct pe NextResponse — returnează doar token-ul semnat.
+export async function createClientToken(
+  p: Omit<SessionPayload, "role"> & { clientSlug: string }
+) {
+  return sign({ ...p, role: "client" });
+}
+export const CLIENT_MAX_AGE = MAX_AGE;
 
 export async function destroyAdminSession() {
   const jar = await cookies();

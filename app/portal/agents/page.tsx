@@ -2,9 +2,8 @@ import { getClientSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { agents as catalogAgents } from "@/lib/agents";
-import { getEntitlement, VALID_AGENTS } from "@/lib/provisioning";
-import { chooseAgent } from "../actions";
-import { Sparkles, CheckCircle2, Loader2, Plus, Clock } from "lucide-react";
+import { getEntitlement } from "@/lib/provisioning";
+import { Sparkles, CheckCircle2, Loader2, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -31,10 +30,6 @@ export default async function MyAgents({
   if (!client) redirect("/login?type=client");
 
   const ent = await getEntitlement(client.id);
-  const taken = new Set(client.agents.filter((a) => a.status !== "canceled").map((a) => a.agentSlug));
-  const available = VALID_AGENTS.filter((s) => !taken.has(s)).map(
-    (s) => catalogAgents.find((c) => c.slug === s)
-  ).filter(Boolean);
 
   const banner = sp.ok === "added"
     ? { t: "Agent adăugat — se configurează automat. Te anunțăm când e activ.", ok: true }
@@ -132,43 +127,17 @@ export default async function MyAgents({
         </div>
       )}
 
-      {/* Alegere agenți (dacă mai are sloturi) */}
-      {ent.remaining > 0 && available.length > 0 && (
-        <section>
-          <div className="flex items-baseline justify-between mb-4">
-            <h2 className="h-display text-xl">Adaugă un agent</h2>
-            <span className="text-[12px] text-[var(--ink-3)]">
-              {ent.slots >= 99 ? "Nelimitat" : `${ent.remaining} sloturi libere`}
-            </span>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {available.map((a) => a && (
-              <form key={a.slug} action={chooseAgent} className="rounded-2xl border border-[var(--border)] bg-[var(--bg-2)] p-5 flex flex-col">
-                <input type="hidden" name="agentSlug" value={a.slug} />
-                <div className="w-10 h-10 rounded-xl bg-[var(--bg-3)] flex items-center justify-center mb-3">
-                  {a.icon ? <a.icon size={17} /> : <Sparkles size={17} />}
-                </div>
-                <div className="text-[10px] eyebrow text-[var(--ink-3)] mb-1">{a.role}</div>
-                <h3 className="text-[14.5px] font-medium mb-1.5">{a.name}</h3>
-                <p className="text-[12px] text-[var(--ink-2)] leading-relaxed mb-4 flex-1">{a.short}</p>
-                <button type="submit" className="w-full h-9 rounded-lg text-[12.5px] font-medium flex items-center justify-center gap-1.5" style={{ background: "var(--ink)", color: "var(--bg)" }}>
-                  <Plus size={13} /> Activează agentul
-                </button>
-              </form>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Fără plan → spre facturare */}
-      {!ent.planKey && (
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-2)] p-8 text-center">
-          <p className="text-[14px] text-[var(--ink-2)] mb-4">Alege un plan ca să activezi agenți.</p>
-          <a href="/portal/billing" className="inline-block px-5 py-2.5 rounded-xl bg-[var(--ink)] text-[var(--bg)] text-[13.5px]">
-            Vezi planuri
-          </a>
-        </div>
-      )}
+      {/* Done-for-you: clientul cere agent, nu și-l activează singur */}
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-2)] p-6 text-center">
+        <Sparkles size={24} className="mx-auto text-[var(--ink-3)] mb-2" />
+        <p className="text-[14px] font-medium mb-1">Vrei un agent în plus?</p>
+        <p className="text-[13px] text-[var(--ink-3)] mb-4 max-w-md mx-auto">
+          Ni-l ceri și ți-l configurăm noi pe afacerea ta — fără să te atingi de nimic tehnic.
+        </p>
+        <a href="/portal/extra" className="inline-block px-5 py-2.5 rounded-xl bg-[var(--ink)] text-[var(--bg-2)] text-[13.5px]">
+          Cere un agent
+        </a>
+      </section>
     </>
   );
 }

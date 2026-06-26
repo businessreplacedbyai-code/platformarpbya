@@ -227,6 +227,9 @@ export function ContactFormPro() {
 
   const errors = useMemo(() => validate(form, step), [form, step]);
   const canNext = Object.keys(errors).length === 0;
+  // Erorile per câmp apar doar după prima încercare de a continua — nu din start.
+  const [tried, setTried] = useState(false);
+  const shownErrors = tried ? errors : {};
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -255,7 +258,28 @@ export function ContactFormPro() {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        setServerError(json.error || "A apărut o eroare.");
+        // Dacă serverul indică câmpuri concrete, întoarce userul la pasul cu problema.
+        const fields: string[] = json.issues ? Object.keys(json.issues) : [];
+        const step1Fields = ["name", "business", "phone", "email"];
+        if (fields.some((f) => step1Fields.includes(f))) setStep(1);
+        const labels: Record<string, string> = {
+          name: "Nume",
+          business: "Numele afacerii",
+          phone: "Telefon",
+          email: "Email",
+          cui: "CUI",
+          city: "Oraș",
+          website: "Website",
+          message: "Mesaj",
+        };
+        const which = fields.map((f) => labels[f] || f).join(", ");
+        setServerError(
+          json.error
+            ? which
+              ? `${json.error} (câmp: ${which})`
+              : json.error
+            : "A apărut o eroare. Reîncearcă."
+        );
         setStatus("error");
         return;
       }
@@ -280,10 +304,15 @@ export function ContactFormPro() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          if (!canNext) {
+            setTried(true);
+            return;
+          }
+          setTried(false);
           if (step < 3) {
-            if (canNext) setStep((step + 1) as Step);
+            setStep((step + 1) as Step);
           } else {
-            if (canNext) submit();
+            submit();
           }
         }}
         className="space-y-5"
@@ -300,14 +329,14 @@ export function ContactFormPro() {
         />
 
         {step === 1 && (
-          <Step1 form={form} setField={setField} errors={errors} />
+          <Step1 form={form} setField={setField} errors={shownErrors} />
         )}
         {step === 2 && (
           <Step2
             form={form}
             setField={setField}
             cuiState={cuiState}
-            errors={errors}
+            errors={shownErrors}
           />
         )}
         {step === 3 && (
@@ -338,7 +367,7 @@ export function ContactFormPro() {
           </button>
 
           {step < 3 ? (
-            <Button type="submit" variant="primary" arrow disabled={!canNext}>
+            <Button type="submit" variant="primary" arrow>
               Continuă
             </Button>
           ) : (

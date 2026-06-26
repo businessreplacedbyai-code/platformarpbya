@@ -10,13 +10,13 @@ const badges = [
   },
   {
     icon: Zap,
-    label: "Implementare simplă",
-    sub: "noi ne ocupăm de tot",
+    label: "Instalat de noi",
+    sub: "nu te atingi de nimic tehnic",
   },
   {
     icon: ShieldCheck,
-    label: "Garanție 30 zile",
-    sub: "nu te potrivește? recuperezi banii",
+    label: "Live în 5 zile",
+    sub: "rezultate rapid, fără contract",
   },
   {
     icon: Headphones,
