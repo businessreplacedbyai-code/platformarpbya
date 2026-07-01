@@ -38,6 +38,17 @@ export const CITIES: City[] = [
   { slug: "tulcea", name: "Tulcea", county: "Tulcea", region: "Dobrogea" },
   { slug: "slatina", name: "Slatina", county: "Olt", region: "Oltenia" },
   { slug: "alba-iulia", name: "Alba Iulia", county: "Alba", region: "Transilvania" },
+  { slug: "vaslui", name: "Vaslui", county: "Vaslui", region: "Moldova" },
+  { slug: "giurgiu", name: "Giurgiu", county: "Giurgiu", region: "Muntenia" },
+  { slug: "deva", name: "Deva", county: "Hunedoara", region: "Transilvania" },
+  { slug: "zalau", name: "Zalău", county: "Sălaj", region: "Transilvania" },
+  { slug: "sfantu-gheorghe", name: "Sfântu Gheorghe", county: "Covasna", region: "Transilvania" },
+  { slug: "targu-jiu", name: "Târgu Jiu", county: "Gorj", region: "Oltenia" },
+  { slug: "drobeta-turnu-severin", name: "Drobeta-Turnu Severin", county: "Mehedinți", region: "Oltenia" },
+  { slug: "miercurea-ciuc", name: "Miercurea Ciuc", county: "Harghita", region: "Transilvania" },
+  { slug: "alexandria", name: "Alexandria", county: "Teleorman", region: "Muntenia" },
+  { slug: "slobozia", name: "Slobozia", county: "Ialomița", region: "Muntenia" },
+  { slug: "calarasi", name: "Călărași", county: "Călărași", region: "Muntenia" },
 ];
 
 export const getCity = (slug: string) => CITIES.find((c) => c.slug === slug);

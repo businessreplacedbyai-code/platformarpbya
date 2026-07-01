@@ -13,6 +13,25 @@ type MapData = { total: number; leads: Lead[]; cities: string[]; categories: str
 
 const CATEGORIES = ["stomatolog", "clinica", "salon", "restaurant", "cafenea", "hotel", "farmacie", "auto", "avocat", "contabil", "imobiliare", "it", "retail"];
 
+// ── Scor de potențial: cine e cel mai probabil să cumpere ─────────────────
+// Logică cold-call: fără site = nevoie clară · multe recenzii = afacere reală
+// cu încasări (își permite) · rating bun = ține la reputație · patron găsit = suni direct.
+function potentialScore(l: Lead): number {
+  let s = 0;
+  if (!l.website) s += 50;
+  s += (Math.min(l.reviewCount ?? 0, 200) / 200) * 30;
+  const r = l.rating ?? 0;
+  if (r >= 4.0) s += 15;
+  else if (r >= 3.5) s += 8;
+  if (l.ownerName) s += 5;
+  return Math.round(s);
+}
+function potentialTier(s: number): { label: string; bg: string; fg: string; bd: string } | null {
+  if (s >= 75) return { label: "🔥 fierbinte", bg: "#FEF2F2", fg: "#B91C1C", bd: "#FECACA" };
+  if (s >= 55) return { label: "potențial bun", bg: "#FFF7ED", fg: "#C2410C", bd: "#FED7AA" };
+  return null;
+}
+
 export function CallerClient({ initialEmail }: { initialEmail: string }) {
   const [data, setData] = useState<MapData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,7 +102,12 @@ export function CallerClient({ initialEmail }: { initialEmail: string }) {
     return l.ownerName ?? null;
   }
 
-  const leads = (data?.leads || []).filter((l) => l.phone);
+  // Sortate după potențial: suni întâi firmele cu cea mai mare șansă de deal.
+  const leads = (data?.leads || [])
+    .filter((l) => l.phone)
+    .slice()
+    .sort((a, b) => potentialScore(b) - potentialScore(a));
+  const hotCount = leads.filter((l) => potentialScore(l) >= 75).length;
   const select = "h-10 px-3 rounded-xl text-[14px] bg-[var(--bg)] border border-[var(--border)]";
 
   return (
@@ -91,7 +115,8 @@ export function CallerClient({ initialEmail }: { initialEmail: string }) {
       <header className="mb-4">
         <h1 className="h-display text-xl mb-1">Lista ta de apeluri</h1>
         <p className="text-[13px] text-[var(--ink-3)] mb-3">
-          {loading ? "se încarcă…" : `${leads.length} de sunat`} · <span className="text-[var(--ink-1)] font-medium">{called.size} sunate</span> · <span className="text-emerald-700 font-medium">{dealsToday} deal-uri azi</span>
+          {loading ? "se încarcă…" : `${leads.length} de sunat`}{hotCount > 0 && <> · <span className="text-red-700 font-medium">🔥 {hotCount} fierbinți</span></>} · <span className="text-[var(--ink-1)] font-medium">{called.size} sunate</span> · <span className="text-emerald-700 font-medium">{dealsToday} deal-uri azi</span>
+          <span className="block text-[11px] text-[var(--ink-3)] mt-0.5">ordonate după potențial — sună de sus în jos</span>
         </p>
         <div className="flex gap-2">
           <button onClick={() => setPanel((p) => (p === "script" ? "none" : "script"))}
@@ -157,6 +182,7 @@ export function CallerClient({ initialEmail }: { initialEmail: string }) {
             const done = isCalled(l);
             const o = ownerOf(l);
             const digits = (l.phone || "").replace(/\D/g, "");
+            const tier = potentialTier(potentialScore(l));
             return (
               <div key={l.id} className="rounded-2xl border border-[var(--border)] bg-[var(--bg-2)] p-4">
                 <div className="flex items-start justify-between gap-2 mb-1">
@@ -166,7 +192,10 @@ export function CallerClient({ initialEmail }: { initialEmail: string }) {
                       {l.category} · {l.city}{l.rating != null ? ` · ⭐ ${l.rating}` : ""}
                     </div>
                   </div>
-                  {!l.website && <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-200">fără site</span>}
+                  <div className="shrink-0 flex flex-col items-end gap-1">
+                    {tier && <span className="text-[10px] px-1.5 py-0.5 rounded font-medium border" style={{ background: tier.bg, color: tier.fg, borderColor: tier.bd }}>{tier.label}</span>}
+                    {!l.website && <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-200">fără site</span>}
+                  </div>
                 </div>
 
                 <div className="text-[12.5px] mb-3">

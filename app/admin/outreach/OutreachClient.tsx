@@ -131,10 +131,21 @@ const CATEGORIES = [
   { value: "retail", label: "Magazine / Retail" },
 ];
 
-const CITIES = [
-  "Iași", "Suceava", "Bacău", "Botoșani", "Piatra Neamț",
-  "Roman", "Vaslui", "Bârlad", "Focșani", "Galați",
+// Acoperire NAȚIONALĂ — reședințe de județ + orașe secundare puternice,
+// grupate pe regiuni istorice pentru selecție rapidă în cold-call.
+const REGIONS: { region: string; cities: string[] }[] = [
+  { region: "București & Ilfov", cities: ["București", "Voluntari", "Otopeni", "Pantelimon"] },
+  { region: "Moldova", cities: ["Iași", "Bacău", "Suceava", "Botoșani", "Piatra Neamț", "Roman", "Vaslui", "Bârlad", "Focșani", "Galați", "Onești", "Rădăuți"] },
+  { region: "Muntenia", cities: ["Ploiești", "Pitești", "Buzău", "Brăila", "Târgoviște", "Câmpina", "Călărași", "Giurgiu", "Slobozia", "Alexandria"] },
+  { region: "Oltenia", cities: ["Craiova", "Râmnicu Vâlcea", "Slatina", "Târgu Jiu", "Drobeta-Turnu Severin"] },
+  { region: "Transilvania", cities: ["Cluj-Napoca", "Brașov", "Sibiu", "Târgu Mureș", "Alba Iulia", "Bistrița", "Deva", "Hunedoara", "Sfântu Gheorghe", "Miercurea Ciuc", "Zalău", "Turda", "Mediaș", "Sebeș", "Reghin"] },
+  { region: "Banat", cities: ["Timișoara", "Reșița", "Lugoj", "Caransebeș"] },
+  { region: "Crișana", cities: ["Oradea", "Arad", "Salonta"] },
+  { region: "Maramureș", cities: ["Baia Mare", "Satu Mare", "Sighetu Marmației"] },
+  { region: "Dobrogea", cities: ["Constanța", "Tulcea", "Mangalia", "Medgidia"] },
 ];
+
+const ALL_CITIES = REGIONS.flatMap((r) => r.cities);
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   new: { label: "Nou", color: "#6B7280" },
@@ -161,6 +172,7 @@ export function OutreachClient({
   // Search controls — multi-select supported
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["restaurant"]);
   const [selectedCities, setSelectedCities] = useState<string[]>(["Iași"]);
+  const [citySearch, setCitySearch] = useState("");
   const [searchMsg, setSearchMsg] = useState("");
   const [isSearching, startSearchTransition] = useTransition();
 
@@ -582,6 +594,15 @@ export function OutreachClient({
       prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
     );
   }
+  // Selectează / deselectează toate orașele vizibile dintr-o regiune.
+  function toggleRegion(cities: string[], allOn: boolean) {
+    setSelectedCities((prev) => {
+      if (allOn) return prev.filter((c) => !cities.includes(c));
+      const set = new Set(prev);
+      cities.forEach((c) => set.add(c));
+      return [...set];
+    });
+  }
 
   // ═══ RENDER ═══════════════════════════════════════════════════════════
   return (
@@ -668,27 +689,73 @@ export function OutreachClient({
             </div>
           </div>
 
-          {/* Cities */}
+          {/* Cities — toată România, grupate pe regiuni + căutare */}
           <div>
-            <div className="text-[11px] uppercase tracking-wider text-[var(--ink-3)] mb-2">
-              Orașe ({selectedCities.length} selectate)
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[11px] uppercase tracking-wider text-[var(--ink-3)]">
+                Orașe ({selectedCities.length}/{ALL_CITIES.length} · toată România)
+              </div>
+              {selectedCities.length > 0 && (
+                <button
+                  onClick={() => setSelectedCities([])}
+                  className="text-[10.5px] text-[var(--ink-3)] hover:text-[var(--ink)] underline"
+                >
+                  golește
+                </button>
+              )}
             </div>
-            <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
-              {CITIES.map((c) => {
-                const on = selectedCities.includes(c);
+
+            <input
+              value={citySearch}
+              onChange={(e) => setCitySearch(e.target.value)}
+              placeholder="caută oraș… (ex: Cluj, Timișoara, Constanța)"
+              className="w-full h-8 px-2.5 mb-2 text-[12px] rounded-lg bg-[var(--bg)] border border-[var(--border)] focus:outline-none focus:ring-1 focus:ring-[var(--ink-3)]"
+            />
+
+            <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+              {REGIONS.map((r) => {
+                const q = citySearch.trim().toLowerCase();
+                const cities = q ? r.cities.filter((c) => c.toLowerCase().includes(q)) : r.cities;
+                if (cities.length === 0) return null;
+                const allOn = cities.every((c) => selectedCities.includes(c));
                 return (
-                  <button
-                    key={c}
-                    onClick={() => toggleCity(c)}
-                    className="px-2.5 py-1 rounded-md text-[11.5px] font-medium transition-all"
-                    style={{
-                      background: on ? "var(--ink)" : "var(--bg)",
-                      color: on ? "var(--bg)" : "var(--ink-2)",
-                      border: `1px solid ${on ? "var(--ink)" : "var(--border)"}`,
-                    }}
-                  >
-                    {c}
-                  </button>
+                  <div key={r.region}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--ink-3)]">
+                        {r.region}
+                      </span>
+                      <button
+                        onClick={() => toggleRegion(cities, allOn)}
+                        className="text-[10px] px-1.5 py-0.5 rounded font-medium transition-colors"
+                        style={{
+                          background: allOn ? "var(--ink)" : "var(--bg)",
+                          color: allOn ? "var(--bg)" : "var(--ink-3)",
+                          border: `1px solid ${allOn ? "var(--ink)" : "var(--border)"}`,
+                        }}
+                      >
+                        {allOn ? "scoate tot" : "tot județul"}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {cities.map((c) => {
+                        const on = selectedCities.includes(c);
+                        return (
+                          <button
+                            key={c}
+                            onClick={() => toggleCity(c)}
+                            className="px-2.5 py-1 rounded-md text-[11.5px] font-medium transition-all"
+                            style={{
+                              background: on ? "var(--ink)" : "var(--bg)",
+                              color: on ? "var(--bg)" : "var(--ink-2)",
+                              border: `1px solid ${on ? "var(--ink)" : "var(--border)"}`,
+                            }}
+                          >
+                            {c}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
               })}
             </div>
