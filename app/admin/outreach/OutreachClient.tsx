@@ -147,6 +147,9 @@ const REGIONS: { region: string; cities: string[] }[] = [
 
 const ALL_CITIES = REGIONS.flatMap((r) => r.cities);
 
+// Zona de start (home) — Moldova, zona mea. Restul țării rămâne la un click.
+const HOME_CITIES = REGIONS.find((r) => r.region === "Moldova")?.cities ?? ["Iași"];
+
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   new: { label: "Nou", color: "#6B7280" },
   ready: { label: "Gata de trimis", color: "#2563EB" },
@@ -171,7 +174,7 @@ export function OutreachClient({
 
   // Search controls — multi-select supported
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["restaurant"]);
-  const [selectedCities, setSelectedCities] = useState<string[]>(["Iași"]);
+  const [selectedCities, setSelectedCities] = useState<string[]>(HOME_CITIES);
   const [citySearch, setCitySearch] = useState("");
   const [searchMsg, setSearchMsg] = useState("");
   const [isSearching, startSearchTransition] = useTransition();
